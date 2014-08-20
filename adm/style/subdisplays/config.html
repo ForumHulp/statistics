@@ -1,0 +1,21 @@
+<form id="acp_statistics" method="post" action="{U_ACTION}">
+	<fieldset>
+		<legend>{options.LEGEND}</legend>
+		<dl>
+			<dt>View / Table</dt>
+			<dd><span style="float:left;">Max records in view</span> <span style="margin-left:30px;">Max records in table</span></dd>
+		</dl>
+		<!-- BEGIN options -->
+		<dl>
+			<dt><label for="{options.KEY}">{options.TITLE}{L_COLON}</label><!-- IF options.S_EXPLAIN --><br /><span>{options.TITLE_EXPLAIN}</span><!-- ENDIF --></dt>
+			<dd>{options.CONTENT}</dd>
+		</dl>
+	<!-- END options -->
+
+	<p class="submit-buttons">
+		<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+	</p>
+	{S_FORM_TOKEN}
+	</fieldset>
+</form>

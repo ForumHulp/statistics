@@ -1,0 +1,54 @@
+<table id="statistics_table" class="statistics_table">
+<thead>
+    <tr>
+        <th class="row-1 row-counter">#</th>
+        <th class="row-2 row-time">{L_TIME}
+          	<a href="{U_ACTION}&amp;screen=online&amp;sk=t&amp;sd=a" title="{L_ASCENDING}"><i class="fa fa-arrow-up"<!-- IF S_SORT_KEY == 't' and S_SORT_DIR == 'a' --> id="act-arrow"<!-- ENDIF -->></i></a> 
+            <a href="{U_ACTION}&amp;screen=online&amp;sk=t&amp;sd=d" title="{L_DESCENDING}"><i class="fa fa-arrow-down"<!-- IF S_SORT_KEY == 't' and S_SORT_DIR == 'd' --> id="act-arrow"<!-- ENDIF -->></i></a>
+		</th>
+        <th class="row-3 row-user">{L_USER}
+        	<a href="{U_ACTION}&amp;screen=online&amp;sk=u&amp;sd=a" title="{L_ASCENDING}"><i class="fa fa-arrow-up"<!-- IF S_SORT_KEY == 'u' and S_SORT_DIR == 'a' --> id="act-arrow"<!-- ENDIF -->></i></a> 
+            <a href="{U_ACTION}&amp;screen=online&amp;sk=u&amp;sd=d" title="{L_DESCENDING}"><i class="fa fa-arrow-down"<!-- IF S_SORT_KEY == 'u' and S_SORT_DIR == 'd' --> id="act-arrow"<!-- ENDIF -->></i></a>
+       	</th>
+        <th class="row-4 row-module">{L_MODULE}
+           	<a href="{U_ACTION}&amp;screen=online&amp;sk=m&amp;sd=a" title="{L_ASCENDING}"><i class="fa fa-arrow-up"<!-- IF S_SORT_KEY == 'm' and S_SORT_DIR == 'a' --> id="act-arrow"<!-- ENDIF -->></i></a> 
+            <a href="{U_ACTION}&amp;screen=online&amp;sk=m&amp;sd=d" title="{L_DESCENDING}"><i class="fa fa-arrow-down"<!-- IF S_SORT_KEY == 'm' and S_SORT_DIR == 'd' --> id="act-arrow"<!-- ENDIF -->></i></a>
+		</th>
+        <th class="row-5 row-country">{L_COUNTRY}
+			<a href="{U_ACTION}&amp;screen=online&amp;sk=d&amp;sd=a" title="{L_ASCENDING}"><i class="fa fa-arrow-up"<!-- IF S_SORT_KEY == 'd' and S_SORT_DIR == 'a' --> id="act-arrow"<!-- ENDIF -->></i></a> 
+            <a href="{U_ACTION}&amp;screen=online&amp;sk=d&amp;sd=d" title="{L_DESCENDING}"><i class="fa fa-arrow-down"<!-- IF S_SORT_KEY == 'd' and S_SORT_DIR == 'd' --> id="act-arrow"<!-- ENDIF -->></i></a>
+		</th>
+        <th class="row-6 row-host">{L_HOST}
+        	<a href="{U_ACTION}&amp;screen=online&amp;sk=h&amp;sd=a" title="{L_ASCENDING}"><i class="fa fa-arrow-up"<!-- IF S_SORT_KEY == 'h' and S_SORT_DIR == 'a' --> id="act-arrow"<!-- ENDIF -->></i></a> 
+            <a href="{U_ACTION}&amp;screen=online&amp;sk=h&amp;sd=d" title="{L_DESCENDING}"><i class="fa fa-arrow-down"<!-- IF S_SORT_KEY == 'h' and S_SORT_DIR == 'd' --> id="act-arrow"<!-- ENDIF -->></i></a>
+		</th>	
+        <th class="row-7 row-ip">{L_IP}<i id="circle" class="fa fa-circle-o-notch fa-spin"></i><span id="LoadError" title="{L_CRON_STATUS_ERROR_EXPLAIN}"><i class="fa fa-warning"></i><span id="LoadErrorTimeout">{L_CRON_STATUS_TIMEOUT}</span><span id="LoadPageError">{L_CRON_STATUS_ERROR}</span></span></th>
+    </tr>
+</thead>
+<tbody>
+    <!-- BEGIN onlinerow -->
+    <tr class=<!-- IF onlinerow.S_ROW_COUNT is even -->"row1"<!-- ELSE -->"row2"<!-- ENDIF -->>
+        <td>{onlinerow.COUNTER}</td>
+        <td>{onlinerow.TIJD}</td>
+        <td title="{onlinerow.AGENT}"><img src="{EXT_PATH}/adm/style/images/{onlinerow.FLAG}" alt="{onlinerow.UNAME}" height="10" border="0" />{onlinerow.UNAME}</td>
+        <td><a href="{onlinerow.MODULEURL}">{onlinerow.MODULE}</a></td>
+        <td><img src="{EXT_PATH}/adm/style/images/flags/{onlinerow.DFLAG}" alt="{onlinerow.DDESC}" border="0" width="16" height="10" />{onlinerow.DDESC}</td>
+        <td title="{onlinerow.HOST}"><img src="{EXT_PATH}/adm/style/images/host.gif" border="0" />{onlinerow.HOST}</td>
+        <td><a href="http://whois.domaintools.com/{onlinerow.IP}" target="_blank">{onlinerow.IP}</a></td>
+    </tr>
+    <!-- BEGINELSE -->
+    <tr>
+        <td colspan="7">{L_ACP_NO_ITEMS}</td>
+    </tr>
+    <!-- END onlinerow -->
+    <!-- IF .pagination -->
+	<tr class="row3">
+        <td colspan="7">
+            <div class="pagination">
+                <!-- INCLUDE pagination.html -->
+            </div>
+        </td>
+    </tr>
+    <!-- ENDIF -->
+</tbody>
+</table>

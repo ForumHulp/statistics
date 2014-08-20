@@ -1,0 +1,26 @@
+imports:
+    - { resource: tables.yml }
+
+services:
+    forumhulp.statistics.listener:
+        class: forumhulp\statistics\event\listener
+        arguments:
+            - @config
+            - @controller.helper
+            - @user
+            - @dbal.conn
+            - %tables.online_table%
+            - %core.php_ext%
+        tags:
+            - { name: event.listener }
+    cron.task.core.statistics:
+        class: forumhulp\statistics\cron\task\core\delete_statistics
+        arguments:
+            - %core.root_path%
+            - %core.php_ext%
+            - @config
+            - @dbal.conn
+        calls:
+            - [set_name, [cron.task.core.statistics]]
+        tags:
+            - { name: cron.task }
