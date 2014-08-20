@@ -24,7 +24,7 @@ To use, navigate in the ACP to `General -> Quick Acces -> Board Statistics`.
 ## Update
 1. Download the [latest ZIP-archive of `master` branch of this repository](https://github.com/ForumHulp/statistics/archive/master.zip).
 2. Navigate in the ACP to `Customise -> Extension Management -> Manage extensions` and click Board Statistics => `Disable`.
-3. Copy the contents of `referrer-master` folder to `FORUM_DIRECTORY/ext/forumhulp/statistics/`.
+3. Copy the contents of `statistics-master` folder to `FORUM_DIRECTORY/ext/forumhulp/statistics/`.
 4. Navigate in the ACP to `Customise -> Extension Management -> Manage extensions` and click Board Statistics => `Enable`.
 5. Click `Details` or `Re-Check all versions` link to follow updates.
 6. Or use our Upload Extensions extension
@@ -32,7 +32,7 @@ To use, navigate in the ACP to `General -> Quick Acces -> Board Statistics`.
 ## Uninstallation
 Navigate in the ACP to `Customise -> Extension Management -> Manage extensions` and click Board Statistics => `Disable`.
 
-To permanently uninstall, click `Delete Data` and then you can safely delete the `/ext/forumhulp/statistics/` folder.
+To permanently uninstall, click `Delete Data` and then you can safely delete the `/ext/forumhulp/statistics/` folder or use our Upload Extensions extension to delet all files and folders.
 
 ## License
 [GNU General Public License v2](http://opensource.org/licenses/GPL-2.0)
