@@ -87,10 +87,10 @@ class delete_statistics extends \phpbb\cron\task\base
 		$this->store($search_aray, 8);
 		
 		unset($module_aray, $browser_aray, $os_aray, $country_aray, $user_aray, $screen_aray, $referer_aray, $search_aray);
-//		$sql = 'TRUNCATE TABLE ' . $tables['online'];
-//		$this->db->sql_query($sql);
-//		$sql = 'OPTIMIZE TABLE ' . $tables['online'];
-//		$this->db->sql_query($sql);
+		$sql = 'TRUNCATE TABLE ' . $tables['online'];
+		$this->db->sql_query($sql);
+		$sql = 'OPTIMIZE TABLE ' . $tables['online'];
+		$this->db->sql_query($sql);
 
 		add_log('admin', 'LOG_REFERRER_REMOVED', 'Prune statistics', (int) 12);
 		$this->config->set('delete_statistics_last_gc', strtotime('midnight', time()));

@@ -44,9 +44,7 @@ class listener implements EventSubscriberInterface
     static public function getSubscribedEvents()
     {
         return array(
-		//	'core.user_setup'					=> 'get_ref',
 			'core.page_footer'					=> 'get_ref',
-	//		'core.adm_setup'					=> 'load_language_on_setup',
 		);
     }
 	
@@ -55,15 +53,6 @@ class listener implements EventSubscriberInterface
 	 * @return null
 	 * @access public
 	 */
-	public function load_language_on_setup($event)
-	{
-		$lang_set_ext = $event['lang_set_ext'];
-		$lang_set_ext[] = array(
-			'ext_name' => 'forumhulp/statistics',
-			'lang_set' => 'statistics',
-		);
-		$event['lang_set_ext'] = $lang_set_ext;
-	}
 
 	public function get_modules()
 	{
@@ -88,14 +77,11 @@ class listener implements EventSubscriberInterface
 	function get_ref($event)
 	{
 		global $request, $template;
-		//$this->load_language_on_setup($event);
 	
-		if ($this->user->page['script_path'] != '/adm/' /* || strpos($event['user_data']['session_page'], 'app.php/ext') === false */)
+		if ($this->user->page['script_path'] != '/adm/')
 		{
 			$ref_url = strtolower($this->user->referer);
 		
-		$ref_url = 'http://google.nl?q=test+forum+john&t-ikke';
-
 			if (!empty($ref_url) && (strpos($ref_url, $this->config['server_name']) === false))
 			{
 				if (strpos($ref_url, 'sid=') !== false)
@@ -106,7 +92,7 @@ class listener implements EventSubscriberInterface
 				
 				$data['referer'] = parse_url(htmlspecialchars(strip_tags($ref_url)));
 				
-				$sql = 'SELECT DISTINCT query FROM tbl_statistics_se WHERE name like "%' . substr($data['referer']['host'], 0, strrpos($data['referer']['host'], '.')) . '"';
+				$sql = 'SELECT DISTINCT query FROM ' . $this->se_table . ' WHERE name like "%' . substr($data['referer']['host'], 0, strrpos($data['referer']['host'], '.')) . '"';
 				$result = $this->db->sql_query($sql);
 				$row = $this->db->sql_fetchrow($result);
 				
@@ -121,7 +107,7 @@ class listener implements EventSubscriberInterface
 					$searchwords = str_replace('+', ' ', $searchwords);
 				}
 			}
-//print_r($this->user->page);
+
 			if ($this->user->page['forum'] && is_numeric($this->user->page['forum']))
 			{
 				$data['module'] = $this->user->page['forum'];

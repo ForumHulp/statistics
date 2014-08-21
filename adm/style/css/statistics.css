@@ -24,8 +24,14 @@ overview td:nth-child(1) {
  width: 20px;
 }
 
-.statistics_table .graph_table {
-  table-layout: fixed;
+.statistics_table {
+  table-layout: fixed; 
+  width: 100%;
+  white-space: nowrap;
+}
+
+.graph_table {
+  table-layout: fixed; 
   width: 100%;
   white-space: nowrap;
 }
@@ -36,6 +42,7 @@ overview td:nth-child(1) {
   text-overflow: ellipsis;
   text-align:left;
 }
+
 .graph_table td {
   white-space: nowrap;
   overflow: hidden;
@@ -79,16 +86,16 @@ overview td:nth-child(1) {
 
 /* Module */
 .row-module {
-  width: 30%;
+  width: 19%;
 }
 .row-views {
   width: 10%;
 }
 .row-total {
-  width: 15%;
+  width: 17%;
 }
 .row-graph {
-  width: 45%;
+  width: 50%;
 }
 .row-graph span a{
   color: #fff;

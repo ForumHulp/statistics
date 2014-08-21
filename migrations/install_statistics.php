@@ -87,7 +87,7 @@ class install_statistics extends \phpbb\db\migration\migration
 						'module'		=> array('VCHAR:50', ''),
 						'scr_res'		=> array('VCHAR:25', ''),
 						'page'			=> array('VCHAR:255', ''),
-						'referer'		=> array('VCHAR:255', ''),
+						'referer'		=> array('VCHAR:500', ''),
 						'se_terms' 		=> array('VCHAR:500', ''),
 					),
 					'PRIMARY_KEY'		=> 'id',

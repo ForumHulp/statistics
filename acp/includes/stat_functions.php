@@ -22,10 +22,9 @@ class stat_functions
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
 		
-		$config = new \phpbb\config\config(array());
 		foreach ($row as $key => $value)
 		{
-			$config->set('statistics_' . $key, $value, 0);
+			$config['statistics_' . $key] = $value;
 		}
 	}
 
@@ -204,7 +203,9 @@ class stat_functions
 			'SUBTITLE'			=> $user->lang['REFERRALS'],
 		));
 
-		$sql = 'SELECT COUNT(name) AS total_entries, MIN(first) AS firstdate, MAX(last) AS lastdate FROM ' . $tables['archive'] . ' WHERE cat = 7';
+		$sql = ($overall) ? 'SELECT COUNT(name) AS total_entries, MIN(first) AS firstdate, MAX(last) AS lastdate FROM ' . $tables['archive'] . ' WHERE cat = 7' :
+				'SELECT COUNT(DISTINCT referer) AS total_entries FROM ' . $tables['online'] . ' WHERE referer <> "" AND referer not LIKE "%' . $config['server_name']. '%"';
+		
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
 		$total_entries = $row['total_entries'];
@@ -227,12 +228,11 @@ class stat_functions
 				FROM ' . $tables['archive'] . ' o WHERE cat = 7
 				GROUP BY name ORDER BY ' . $sql_sort :
 				
-				'SELECT SUBSTR(referer, 1, IF(LOCATE("?", referer, 8), LOCATE("?", referer, 8) -1, LENGTH(referer))) AS domain, referer, COUNT(referer) AS total_per_referer, 
-				(SELECT COUNT(referer) FROM ' . $tables['online'] . ' WHERE referer <> "") as total,
-				COUNT(referer) / (SELECT COUNT(referer) FROM ' . $tables['online'] . ' WHERE referer <> "") AS percent 
-				FROM ' . $tables['online'] . ' o WHERE referer <> ""
-				GROUP BY SUBSTR(referer, 1, IF(LOCATE("?", referer, 8), LOCATE("?", referer, 8) -1, LENGTH(referer))) ORDER BY ' . $sql_sort;
-		
+				'SELECT DISTINCT referer AS domain, COUNT(referer) AS total_per_referer,
+				(SELECT COUNT(referer) AS total_entries FROM ' . $tables['online'] . ' WHERE referer <> "" AND referer not LIKE "%' . $config['server_name']. '%") AS total
+				 FROM ' . $tables['online'] . ' WHERE referer <> "" AND referer not LIKE "%'. $config['server_name'] . '%"
+				 GROUP BY referer ORDER BY ' . $sql_sort;
+				
 		$result = $db->sql_query_limit($sql, $config['statistics_max_referer'], $start);
 		$counter = 0; $graphstr = '';
 		while ($row = $db->sql_fetchrow($result))
@@ -245,7 +245,7 @@ class stat_functions
 				'MODULETOTAL'	=> round((($row['total_per_referer'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_referer'] . ' of ' . $row['total'] . ')'
 				)
 			);
-			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($row['domain']) . '\', ' . $row['total_per_referer'] . ']';
+			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode(substr($row['domain'], 0, 20)) . '\', ' . $row['total_per_referer'] . ']';
 		}
 		$template->assign_vars(array('GRAPH' => '[' . $graphstr . ']'));
 	}
