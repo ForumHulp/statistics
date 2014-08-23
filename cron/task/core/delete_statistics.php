@@ -8,11 +8,11 @@
 */
 
 namespace forumhulp\statistics\cron\task\core;
-if (!class_exists('forumhulp\statistics\cron\task\core\Browser')) {
-	require_once('browser.php');
+if (!class_exists('find_os'))
+{
+	include('find_os.' . $this->php_ext);
 }
-use \Browser;
-
+use find_os;
 /**
 * @ignore
 */
@@ -44,6 +44,7 @@ class delete_statistics extends \phpbb\cron\task\base
 		$this->db = $db;
 
 	}
+
 	/**
 	* Runs this cron task.
 	*
@@ -51,24 +52,26 @@ class delete_statistics extends \phpbb\cron\task\base
 	*/
 	public function run()
 	{
-		global $phpbb_container;
+		global $phpbb_container, $info;
 			
 		$tables['config'] 	= $phpbb_container->getParameter('tables.config_table');
 		$tables['online'] 	= $phpbb_container->getParameter('tables.online_table');
 		$tables['domain'] 	= $phpbb_container->getParameter('tables.domain_table');
 		$tables['se']	  	= $phpbb_container->getParameter('tables.se_table');
 		$tables['archive']	= $phpbb_container->getParameter('tables.archive_table');
-
-
+	
+	  	$os = new find_os();
 		$module_aray = $browser_aray = $os_aray = $country_aray = $user_aray = $screen_aray = $referer_aray = $search_aray = array();
 		$sql = 'SELECT time, uname, agent, ip_addr, module, host, domain, scr_res, page, referer, se_terms FROM ' . $tables['online'];
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$module_aray	= ($row['module'] != '') ? $this->count_array($module_aray, $row['module']) : NULL;
-//			$browser		= $this->find_browser($row['agent']);
-//			$browser_aray	= ($browser['browser'] != '') ? $this->count_array($browser_aray, $browser['browser']) : NULL;
-//			$os_aray		= ($browser['os'] != '') ? $this->count_array($platform_aray, $browser['os']) : NULL;
+			
+			$os->setUserAgent($row['agent']);
+			$browser_aray	= ($row['agent'] != '') ? $this->count_array($browser_aray, $os->getBrowser() . ' ' . $os->getVersion()) : NULL;
+			$os_aray		= ($row['agent'] != '') ? $this->count_array($os_aray, $os->getPlatform()) : NULL;
+
 			$country_aray	= ($row['domain'] != '') ? $this->count_array($country_aray, $row['domain']) : NULL;
 			$user_aray		= ($row['uname'] != '') ? $this->count_array($user_aray, $row['uname']) : NULL;
 			$screen_aray	= ($row['scr_res'] != '') ? $this->count_array($screen_aray, $row['scr_res']) : NULL;
@@ -78,8 +81,8 @@ class delete_statistics extends \phpbb\cron\task\base
 		$this->db->sql_freeresult($result);
 
 		$this->store($module_aray, 1);
-//		$this->store($browser_aray, 2);
-//		$this->store($os_aray, 3);
+		$this->store($browser_aray, 2);
+		$this->store($os_aray, 3);
 		$this->store($country_aray, 4);
 		$this->store($user_aray, 5);
 		$this->store($screen_aray, 6);
@@ -100,43 +103,47 @@ class delete_statistics extends \phpbb\cron\task\base
 	public function store($aray, $cat)
 	{
 		global $phpbb_container;
-		$tables['archive']	= $phpbb_container->getParameter('tables.archive_table');
-
-		$sconfig = $this->get_config();
 		
-		foreach ($aray as $key => $value)
-		{ 
-			$sql = 'SELECT COUNT(name) AS counter FROM ' . $tables['archive'] . ' WHERE cat = ' . $cat . ' AND name = "' . $key . '"';
-			$result = $this->db->sql_query($sql);
-			$counter = (int) $this->db->sql_fetchfield('counter');
-			if ($counter == 0)
-			{
-				$sql_ary = array(
-					'cat'		=> $cat,
-					'name'		=> $key,
-					'hits'		=> $value,
-					'first'		=> time(),
-					'last'		=> time(),
-				);
-
-				$sql = 'INSERT INTO ' . $tables['archive'] . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
-			} else
-			{
-				$sql = 'UPDATE ' . $tables['archive'] . ' SET hits = hits + ' . $value . ', last = ' . time() .' WHERE cat = ' . $cat . ' AND name = "' . $key . '"';
-			}
-			$this->db->sql_query($sql);
-		
-			$sql = 'SELECT hits, last FROM ' . $tables['archive'] . ' WHERE cat = ' . $cat . ' ORDER BY hits DESC LIMIT '. $sconfig[$cat] .', 1';
-			$result = $this->db->sql_query($sql);
-			$prune = $this->db->sql_fetchrow($result);
-			if ($prune)
-			{
-				$sql = 'DELETE FROM ' . $tables['archive'] . ' WHERE cat = ' . $cat . ' AND hits < ' . $prune['hits'] . ' AND last < ' . $prune['last'];
+		if (sizeof($aray))
+		{
+			$tables['archive']	= $phpbb_container->getParameter('tables.archive_table');
+	
+			$sconfig = $this->get_config();
+			
+			foreach ($aray as $key => $value)
+			{ 
+				$sql = 'SELECT COUNT(name) AS counter FROM ' . $tables['archive'] . ' WHERE cat = ' . $cat . ' AND name = "' . $key . '"';
+				$result = $this->db->sql_query($sql);
+				$counter = (int) $this->db->sql_fetchfield('counter');
+				if ($counter == 0)
+				{
+					$sql_ary = array(
+						'cat'		=> $cat,
+						'name'		=> $key,
+						'hits'		=> $value,
+						'first'		=> time(),
+						'last'		=> time(),
+					);
+	
+					$sql = 'INSERT INTO ' . $tables['archive'] . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+				} else
+				{
+					$sql = 'UPDATE ' . $tables['archive'] . ' SET hits = hits + ' . $value . ', last = ' . time() .' WHERE cat = ' . $cat . ' AND name = "' . $key . '"';
+				}
 				$this->db->sql_query($sql);
+			
+				$sql = 'SELECT hits, last FROM ' . $tables['archive'] . ' WHERE cat = ' . $cat . ' ORDER BY hits DESC LIMIT '. $sconfig[$cat] .', 1';
+				$result = $this->db->sql_query($sql);
+				$prune = $this->db->sql_fetchrow($result);
+				if ($prune)
+				{
+					$sql = 'DELETE FROM ' . $tables['archive'] . ' WHERE cat = ' . $cat . ' AND hits < ' . $prune['hits'] . ' AND last < ' . $prune['last'];
+					$this->db->sql_query($sql);
+				}
 			}
+			$sql = 'OPTIMIZE TABLE ' . $tables['archive'];
+			$this->db->sql_query($sql);
 		}
-		$sql = 'OPTIMIZE TABLE ' . $tables['archive'];
-		$this->db->sql_query($sql);
 	}
 
 	public function get_config()
@@ -158,30 +165,6 @@ class delete_statistics extends \phpbb\cron\task\base
 		return $sconfig;
 	}
 	
-	public function find_browser($agent)
-	{
-		global $phpbb_container;
-
-/*		
-$browser12 = new Browser();
-		$browser12->setUserAgent($agent);
-		return array('browser' => $browser12->getBrowser() . ' ' . $browser12->getVersion(), 'os' => $browser12->getPlatform());
-*/
-
-
-		Browser::setUserAgent($agent);
-
-$test =	Browser::getBrowser();
-
-//		$browser12 = new Browser();
-//		$browser12->reset();
-//		$browser12->setUserAgent($agent);
-//$test =	$browser12->getBrowser();
-		add_log('admin', 'LOG_REFERRER_REMOVED', $test, (int) 14);
-		
-//		return array('browser' => $browser12->getBrowser() . ' ' . $browser12->getVersion(), 'os' => $browser12->getPlatform());	}
-	}
-
 	public function count_array($aray, $row1)
 	{
 		$found = 0; 
@@ -215,7 +198,7 @@ $test =	Browser::getBrowser();
 	{
 		$host = @parse_url($url, PHP_URL_HOST);
 		if (!$host) $host = $url;
-		if (substr($host, 0, 4) == "www.") $host = substr($host, 4);
+		if (substr($host, 0, 4) == 'www.') $host = substr($host, 4);
 
 		return $host;
 	}
@@ -239,6 +222,8 @@ $test =	Browser::getBrowser();
 	public function should_run()
 	{
 		return $this->config['delete_statistics_last_gc'] < time() - $this->config['delete_statistics_gc'] && 
-				(date("Y-m-d", time()) != date("Y-m-d", $this->config['delete_statistics_last_gc']));
+				(date('Y-m-d', time()) != date('Y-m-d', $this->config['delete_statistics_last_gc']));
 	}
 }
+
+?>

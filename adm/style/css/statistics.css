@@ -86,7 +86,7 @@ overview td:nth-child(1) {
 
 /* Module */
 .row-module {
-  width: 19%;
+  width: 28%;
 }
 .row-views {
   width: 10%;
@@ -95,7 +95,7 @@ overview td:nth-child(1) {
   width: 17%;
 }
 .row-graph {
-  width: 50%;
+  width: 45%;
 }
 .row-graph span a{
   color: #fff;

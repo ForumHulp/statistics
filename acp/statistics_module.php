@@ -99,6 +99,18 @@ class statistics_module
 				stat_functions::countries($start, $this->u_action, $overall);
 			break;
 
+			case 'browsers':
+				$template->assign_vars(array('ACT' => 'browsers'));
+				$this->page_title = 'ACP_STATISTICS';
+				stat_functions::browsers($start, $this->u_action, $overall);
+			break;
+
+			case 'os':
+				$template->assign_vars(array('ACT' => 'os'));
+				$this->page_title = 'ACP_STATISTICS';
+				stat_functions::os($start, $this->u_action, $overall);
+			break;
+
 			case 'referrals':
 				$template->assign_vars(array('ACT' => 'referrals'));
 				$this->page_title = 'ACP_STATISTICS';
