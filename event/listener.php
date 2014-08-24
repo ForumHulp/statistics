@@ -99,7 +99,7 @@ class listener implements EventSubscriberInterface
 		if ($this->user->page['script_path'] != '/adm/')
 		{
 			$ref_url = strtolower($this->user->referer);
-		
+
 			if (!empty($ref_url) && (strpos($ref_url, $this->config['server_name']) === false))
 			{
 				if (strpos($ref_url, 'sid=') !== false)
@@ -124,8 +124,11 @@ class listener implements EventSubscriberInterface
 					$searchwords = str_replace(',', ' ', $searchwords);
 					$searchwords = str_replace('+', ' ', $searchwords);
 				}
+			} else
+			{
+				$ref_url = '';
 			}
-
+			
 			if ($this->user->page['forum'] && is_numeric($this->user->page['forum']))
 			{
 				$data['module'] = $this->user->page['forum'];
