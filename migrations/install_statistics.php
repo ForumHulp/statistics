@@ -123,7 +123,8 @@ class install_statistics extends \phpbb\db\migration\migration
 				$this->table_prefix . 'statistics_config',
 				$this->table_prefix . 'statistics_domains',
 				$this->table_prefix . 'statistics_online',
-				$this->table_prefix . 'statistics_archive'
+				$this->table_prefix . 'statistics_archive',
+				$this->table_prefix . 'statistics_se'
 			)
 		);
 	}
@@ -152,7 +153,7 @@ class install_statistics extends \phpbb\db\migration\migration
 		global $db;
 		// before we fill anything in this table, we truncate it.
 		$db->sql_query('TRUNCATE TABLE ' . $this->table_prefix . 'statistics_config');
-		$sql = 'INSERT INTO ' . $this->table_prefix . 'statistics_config' . ' (max_modules) VALUES(20)';
+		$sql = 'INSERT INTO ' . $this->table_prefix . 'statistics_config' . ' (custom_pages) VALUES("")';
 		$db->sql_query($sql);
 
 		$db->sql_query('TRUNCATE TABLE ' . $this->table_prefix . 'statistics_domains');
