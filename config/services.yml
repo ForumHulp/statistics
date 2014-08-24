@@ -11,6 +11,7 @@ services:
             - @dbal.conn
             - %tables.online_table%
             - %tables.config_table%
+            - %tables.se_table%
             - %core.php_ext%
         tags:
             - { name: event.listener }

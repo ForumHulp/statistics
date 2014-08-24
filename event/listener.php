@@ -25,6 +25,7 @@ class listener implements EventSubscriberInterface
 	protected $db;
 	protected $online_table;
 	protected $config_table;
+	protected $se_table;
 	protected $php_ext;
 
     /**
@@ -33,7 +34,7 @@ class listener implements EventSubscriberInterface
     * @param \phpbb\controller\helper    $helper        Controller helper object
     */
     public function __construct(\phpbb\config\config $config, \phpbb\controller\helper $helper, \phpbb\user $user, \phpbb\db\driver\driver_interface $db, 
-								$online_table, $config_table, $php_ext)
+								$online_table, $config_table, $se_table, $php_ext)
     {
         $this->config = $config;
 		$this->helper = $helper;
@@ -41,6 +42,7 @@ class listener implements EventSubscriberInterface
 		$this->db = $db;
 		$this->online_table = $online_table;
 		$this->config_table = $config_table;
+		$this->se_table = $se_table;
 		$this->php_ext = $php_ext;
     }
 
