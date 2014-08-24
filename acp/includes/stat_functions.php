@@ -64,9 +64,9 @@ class stat_functions
 	
 	public static function get_modules()
 	{
-		global $db, $user;
+		global $db, $config, $user;
 		$user->add_lang(array('ucp', 'mcp', 'common'));
-		$modules = array();
+		$modules = $cp = array();
 		$sql = 'SELECT forum_id, forum_name FROM ' . FORUMS_TABLE;
 		$result = $db->sql_query($sql);
 		while ($row = $db->sql_fetchrow($result))
@@ -83,7 +83,16 @@ class stat_functions
 		$module_pages = array('FORUM_INDEX' => $user->lang['FORUM_INDEX'], 'VIEWING_FAQ' => $user->lang['VIEWING_FAQ'], 'VIEWING_MCP' => $user->lang['VIEWING_MCP'], 
 							  'SEARCHING_FORUMS' => $user->lang['SEARCHING_FORUMS'], 'VIEWING_ONLINE' => $user->lang['VIEWING_ONLINE'], 'VIEWING_MEMBERS' => $user->lang['VIEWING_MEMBERS'], 
 							  'VIEWING_UCP' => $user->lang['VIEWING_UCP']);
-		return array_replace($module_pages, $modules);
+		
+		$m = unserialize($config['statistics_custom_pages']);
+		if (sizeof($m) > 1)
+		{
+			foreach($m as $value)
+			{
+				(isset($user->lang[$value])) ? $cp[$value] = $user->lang[$value] : NULL;
+			}
+		}
+		return array_replace($module_pages, $modules, $cp);
 	}
 
 	public static function online($start = 0, $uaction = '')
@@ -130,7 +139,7 @@ class stat_functions
 				'FLAG'		=> ($row['uname'] != 'Anonymous') ? 'online-user.gif' : 'offline-user.gif',
 				'UNAME'		=> $row['uname'],
 				'AGENT'		=> $row['agent'],
-				'MODULE'	=> isset($modules[$row['module']]) ? $modules[$row['module']] : '',
+				'MODULE'	=> isset($modules[$row['module']]) ? $modules[$row['module']] : 'Module not found',
 				'MODULEURL'	=> '/' . $row['page'],
 				'DFLAG'		=> $row['domain'].'.gif',
 				'DDESC'		=> $row['description'],
@@ -732,7 +741,7 @@ class stat_functions
 		$db->sql_freeresult($result);
 
 		$pagination = $phpbb_container->get('pagination');
-		$base_url = $uaction . '&amp;screen=modules&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir;
+		$base_url = $uaction . '&amp;screen=modules&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '');
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_modules'], $start);
 
 		$template->assign_vars(array('ROWSPAN'		=> $total_entries,
@@ -760,12 +769,12 @@ class stat_functions
 			$counter += 1;
 			$template->assign_block_vars('onlinerow', array(
 				'COUNTER'   	=> $start + $counter,
-				'NAME'			=> $modules[$row['module']],
+				'NAME'			=> isset($modules[$row['module']]) ? $modules[$row['module']] : 'Module not found',
 				'MODULECOUNT'	=> $row['total_per_module'],
 				'MODULETOTAL'	=> round((($row['total_per_module'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_module'] . ' of ' . $row['total'] . ')'
 				)
 			);
-			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($modules[$row['module']]) . '\', ' . $row['total_per_module'] . ']';
+			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode(isset($modules[$row['module']]) ? $modules[$row['module']] : 'Module not found') . '\', ' . $row['total_per_module'] . ']';
 		}
 		$template->assign_vars(array('GRAPH' => '[' . $graphstr . ']'));
 	}
@@ -939,11 +948,29 @@ class stat_functions
 			$db->sql_query($sql);
 		}
 		
+		if (($request->is_set('dell_custom_page') ||  $request->is_set('submit_custom_page')) && ($request->variable('custom_page', '') != '' && $request->variable('custom_value', '') != ''))
+		{
+			$sql = 'SELECT custom_pages FROM ' . $tables['config'];
+			$result = $db->sql_query($sql);
+			$row = $db->sql_fetchfield('custom_pages');
+			$row = unserialize($row);
+			if ($request->is_set('dell_custom_page'))
+			{
+				unset($row[$request->variable('custom_page', '')]);
+			} else
+			{
+				$row[$request->variable('custom_page', '')] = strtoupper($request->variable('custom_value', ''));
+			}
+			asort($row);
+			$sql = 'UPDATE ' . $tables['config'] . ' SET custom_pages = "' . $db->sql_escape(serialize($row)) . '"';
+			$db->sql_query($sql);
+		}
+		
 		$sql = 'SELECT * FROM ' . $tables['config'];
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
 
-		for ($i = 0; $i < sizeof($row) / 2; $i++)
+		for ($i = 0; $i < floor(sizeof($row) / 2); $i++)
 		{
 			$template->assign_block_vars('options', array(
 				'KEY'			=> strtoupper(key($row)),
@@ -955,8 +982,16 @@ class stat_functions
 			));
 			next($row);
 		}
+		
+		$modules_ext = unserialize($row['custom_pages']);
+		$options = '';
+		foreach($modules_ext as $key => $value)
+		{
+			$options .= '<option value="' . $key . '">' . $value . '</option>';
+		}
 
 		$template->assign_vars(array(
+			'OPTIONLIST'		=> $options,
 			'U_ACTION'			=> $uaction . '&amp;screen=config',
 			'SUB_DISPLAY'		=> 'config'
 		));

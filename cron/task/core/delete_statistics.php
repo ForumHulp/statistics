@@ -53,7 +53,6 @@ class delete_statistics extends \phpbb\cron\task\base
 	public function run()
 	{
 		global $phpbb_container, $info;
-			
 		$tables['config'] 	= $phpbb_container->getParameter('tables.config_table');
 		$tables['online'] 	= $phpbb_container->getParameter('tables.online_table');
 		$tables['domain'] 	= $phpbb_container->getParameter('tables.domain_table');
@@ -64,7 +63,10 @@ class delete_statistics extends \phpbb\cron\task\base
 		$module_aray = $browser_aray = $os_aray = $country_aray = $user_aray = $screen_aray = $referer_aray = $search_aray = array();
 		$sql = 'SELECT time, uname, agent, ip_addr, module, host, domain, scr_res, page, referer, se_terms FROM ' . $tables['online'];
 		$result = $this->db->sql_query($sql);
-		while ($row = $this->db->sql_fetchrow($result))
+		$starttime = explode(' ', microtime());
+		$starttime = $starttime[1] + $starttime[0];
+		$row_count = 0;
+		while (still_on_time() && $row = $this->db->sql_fetchrow($result))
 		{
 			$module_aray	= ($row['module'] != '') ? $this->count_array($module_aray, $row['module']) : NULL;
 			
@@ -77,7 +79,11 @@ class delete_statistics extends \phpbb\cron\task\base
 			$screen_aray	= ($row['scr_res'] != '') ? $this->count_array($screen_aray, $row['scr_res']) : NULL;
 			$referer_aray	= ($row['referer'] != '') ? $this->count_array($referer_aray, $this->url_to_domain($row['referer'])) : NULL;
 			$search_aray	= ($row['se_terms'] != '') ? $this->split_array($search_aray, $row['se_terms']) : NULL;
+			$row_count++;
 		}
+		$mtime = explode(' ', microtime());
+		$totaltime = $mtime[0] + $mtime[1] - $starttime;
+		$rows_per_second = $row_count / $totaltime;
 		$this->db->sql_freeresult($result);
 
 		$this->store($module_aray, 1);
@@ -94,8 +100,10 @@ class delete_statistics extends \phpbb\cron\task\base
 		$this->db->sql_query($sql);
 		$sql = 'OPTIMIZE TABLE ' . $tables['online'];
 		$this->db->sql_query($sql);
+		$mtime = explode(' ', microtime());
+		$totaltime2 = $mtime[0] + $mtime[1] - $starttime;
 
-		add_log('admin', 'LOG_REFERRER_REMOVED', 'Prune statistics', (int) 12);
+		add_log('admin', 'LOG_STATISTICS_PRUNED', $totaltime2, $rows_per_second);
 		$this->config->set('delete_statistics_last_gc', strtotime('midnight', time()));
 	}
 

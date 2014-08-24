@@ -61,6 +61,7 @@ $lang = array_merge($lang, array(
 'MAX_AVERAGES'	=> 'میانگین',
 'MAX_SCREENS'	=> 'رزولوشن صفحه',
 'MAX_ONLINE'	=> 'آنلاین',
+	'DELL'				=> 'Delete',
 'MAX_COUNTRIES_EXPLAIN'	=> 'حداکثر گزارش های قابل نمایش قبل از صفحه بندی بر اساس دستورات, در جدول بیشترین گزارش جهت پاکسازی.',
 'MAX_REFERER_EXPLAIN'	=> 'حداکثر گزارش های قابل نمایش قبل از صفحه بندی بر اساس دستورات, در جدول بیشترین گزارش جهت پاکسازی.',
 'MAX_SE_EXPLAIN'	=> 'حداکثر گزارش های قابل نمایش قبل از صفحه بندی بر اساس دستورات, در جدول بیشترین گزارش جهت پاکسازی.',
@@ -73,4 +74,7 @@ $lang = array_merge($lang, array(
 'MAX_AVERAGES_EXPLAIN'	=> 'حداکثر گزارش های قابل نمایش قبل از صفحه بندی بر اساس دستورات, در جدول بیشترین گزارش جهت پاکسازی.',
 'MAX_SCREENS_EXPLAIN'	=> 'حداکثر گزارش های قابل نمایش قبل از صفحه بندی بر اساس دستورات, در جدول بیشترین گزارش جهت پاکسازی.',
 'MAX_ONLINE_EXPLAIN'	=> 'حداکثر گزارش های قابل نمایش قبل از صفحه بندی بر اساس دستورات, در جدول بیشترین گزارش جهت پاکسازی.',
+
+	'CUSTOM_PAGES'				=> 'Custom Pages',
+	'CUSTOM_PAGES_EXPLAIN'		=> 'Fill in your custom page name and language variable to show your extension in Board Statistics. Select your extension for deleting or change it.',
 ));

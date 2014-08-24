@@ -18,5 +18,6 @@ if (empty($lang) || !is_array($lang))
 }
 
 $lang = array_merge($lang, array(
-'ACP_STATISTICS'	=> 'آمار و اطلاعات انجمن',
+	'ACP_STATISTICS'	=> 'آمار و اطلاعات انجمن',
+	'LOG_STATISTICS_PRUNED'		=> '<strong>Board Statistics pruned</strong><br />» %1$.1f seconds used, %2$.1f  rows per second',
 ));

@@ -1,6 +1,6 @@
-<form id="acp_statistics" method="post" action="{U_ACTION}" style="float: left; width:60%;">
-	<fieldset>
-		<legend>{options.LEGEND}</legend>
+<fieldset>
+	<legend>{options.LEGEND}</legend>
+	<form id="acp_statistics" method="post" action="{U_ACTION}" style="float: left; width:50%;">
 		<dl>
 			<dt>View / Table</dt>
 			<dd><span style="float:left;">View</span> <span style="margin-left:10px;">Archive</span></dd>
@@ -10,20 +10,34 @@
 			<dt><label for="{options.KEY}">{options.TITLE}{L_COLON}</label><!-- IF options.S_EXPLAIN --><br /><span>{options.TITLE_EXPLAIN}</span><!-- ENDIF --></dt>
 			<dd>{options.CONTENT}</dd>
 		</dl>
-	<!-- END options -->
+		<!-- END options -->
 
 	<p class="submit-buttons">
 		<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
 		<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
 	</p>
 	{S_FORM_TOKEN}
-	</fieldset>
-</form>
+	</form>
 
-<form style="float: right; width:40%;">
-	<fieldset>
-		<legend>{options.LEGEND}</legend>
-        test
+	<form method="post" action="{U_ACTION}" style="float: right; width:50%;">
+		<dl>
+			<dt>Custom pages</dt>
+			<dd></dd>
+		</dl>
+    	<dl>
+        	<dt><label for="custom_pages">{L_CUSTOM_PAGES}{L_COLON}</label><br /><span>{L_CUSTOM_PAGES_EXPLAIN}</span></dt>
+			<dd><select name="custom_pages" id="custom_pages">{OPTIONLIST}</select></dd>
+			<dd><input type="text" name="custom_page" id="custom_page" size="20" value="" title="file name"/>
+                <input type="text" name="custom_value" id="custom_value" size="20" value="" title="language variable"/>
+            </dd>
+		</dl>
+
+	<p class="submit-buttons">
+		<input class="button1" type="submit" id="dell_custom_page" name="dell_custom_page" value="{L_DELL}" />&nbsp;
+        <input class="button1" type="submit" id="submit_custom_page" name="submit_custom_page" value="{L_SUBMIT}" />&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+	</p>
+	{S_FORM_TOKEN}
 	</fieldset>
 </form>
 

@@ -10,6 +10,7 @@ services:
             - @user
             - @dbal.conn
             - %tables.online_table%
+            - %tables.config_table%
             - %core.php_ext%
         tags:
             - { name: event.listener }

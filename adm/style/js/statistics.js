@@ -36,12 +36,22 @@
 	}
 	var interval = setInterval(progress, 1000);
 	
-		$("a.simpledialog").simpleDialog({
+	$("a.simpledialog").simpleDialog({
 	    opacity: 0.1,
 	    width: '650px',
 		height: '600px'
 	});
 
+	$("#custom_pages").change(function()
+	{
+		/* setting currently changed option value to option variable */
+		var val = $("#custom_pages").val();
+		$('#custom_page').val(val);
+	
+		$('#custom_value').val($('#custom_pages option:selected').text());
+		
+	});
+	
 	if (typeof graph !== 'undefined')
 	{
             $(function () {

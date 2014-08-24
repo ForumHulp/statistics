@@ -47,5 +47,42 @@ $lang = array_merge($lang, array(
     'COUNTRY'	=> 'Land',
 	'HOST'		=> 'Host',	
     'IP'		=> 'IP adres',
+
+	// Module
+	'MODULE_FORUM'	=> 'Modules / Forums',
+	'VIEWS'			=> 'Hits',
+	'PERC'			=> 'Percentage',
+	'GRAPH'			=> 'Grafiek',
+	
+	//Config
+	'MAX_COUNTRIES'		=> 'Landen',
+	'MAX_REFERER'		=> 'Referrals',
+	'MAX_SE'			=> 'Zoek machines',
+	'MAX_SE_TERMS'		=> 'Zoek termen',
+	'MAX_BROWSERS'		=> 'Browsers',
+	'MAX_CRAWL'			=> 'Web Crawlers',
+	'MAX_OS'			=> 'Computer Systemen',
+	'MAX_MODULES'		=> 'Modules',
+	'MAX_USERS'			=> 'Gebruikers',
+	'MAX_AVERAGES'		=> 'Gemilden',
+	'MAX_SCREENS'		=> 'Scherm Resoluties',
+	'MAX_ONLINE'		=> 'Online',
+	'DELL'				=> 'Delete',
+
+	'MAX_COUNTRIES_EXPLAIN'		=> 'Aantal records in online modus per pagina, in table maximum aantal records.',
+	'MAX_REFERER_EXPLAIN'		=> 'Aantal records in online modus per pagina, in table maximum aantal records',
+	'MAX_SE_EXPLAIN'			=> 'Aantal records in online modus per pagina, in table maximum aantal records',
+	'MAX_SE_TERMS_EXPLAIN'		=> 'Aantal records in online modus per pagina, in table maximum aantal records',
+	'MAX_BROWSERS_EXPLAIN'		=> 'Aantal records in online modus per pagina, in table maximum aantal records',
+	'MAX_CRAWL_EXPLAIN'			=> 'Aantal records in online modus per pagina, in table maximum aantal records',
+	'MAX_OS_EXPLAIN'			=> 'Aantal records in online modus per pagina, in table maximum aantal records',
+	'MAX_MODULES_EXPLAIN'		=> 'Aantal records in online modus per pagina, in table maximum aantal records',
+	'MAX_USERS_EXPLAIN'			=> 'Aantal records in online modus per pagina, in table maximum aantal records',
+	'MAX_AVERAGES_EXPLAIN'		=> 'Aantal records in online modus per pagina, in table maximum aantal records',
+	'MAX_SCREENS_EXPLAIN'		=> 'Aantal records in online modus per pagina, in table maximum aantal records',
+	'MAX_ONLINE_EXPLAIN'		=> 'Aantal records in online modus per pagina, in table maximum aantal records',
+	
+	'CUSTOM_PAGES'				=> 'Custom Pagina\'s',
+	'CUSTOM_PAGES_EXPLAIN'		=> 'Pagina naam en taal variabele van jouw extensie voor Board Statistics. Selecteer jouw extensie om te verwijderen of te wijzigen.',
 	
 ));

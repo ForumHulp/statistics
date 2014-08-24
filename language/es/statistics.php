@@ -66,6 +66,7 @@ $lang = array_merge($lang, array(
 	'MAX_AVERAGES'		=> 'Promedios',
 	'MAX_SCREENS'		=> 'Resoluciones de pantalla',
 	'MAX_ONLINE'		=> 'Online',
+	'DELL'				=> 'Delete',
 
 	'MAX_COUNTRIES_EXPLAIN'		=> 'Número máximo de registros en la vista de pantalla antes de la paginación está en orden, en la tabla de registros máximos para purgar',
 	'MAX_REFERER_EXPLAIN'		=> 'Número máximo de registros en la vista de pantalla antes de la paginación está en orden, en la tabla de registros máximos para purgar',
@@ -79,5 +80,8 @@ $lang = array_merge($lang, array(
 	'MAX_AVERAGES_EXPLAIN'		=> 'Número máximo de registros en la vista de pantalla antes de la paginación está en orden, en la tabla de registros máximos para purgar',
 	'MAX_SCREENS_EXPLAIN'		=> 'Número máximo de registros en la vista de pantalla antes de la paginación está en orden, en la tabla de registros máximos para purgar',
 	'MAX_ONLINE_EXPLAIN'		=> 'Número máximo de registros en la vista de pantalla antes de la paginación está en orden, en la tabla de registros máximos para purgar',
+
+	'CUSTOM_PAGES'				=> 'Custom Pages',
+	'CUSTOM_PAGES_EXPLAIN'		=> 'Fill in your custom page name and language variable to show your extension in Board Statistics. Select your extension for deleting or change it.',
 
 ));

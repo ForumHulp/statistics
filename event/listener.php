@@ -24,6 +24,7 @@ class listener implements EventSubscriberInterface
 	protected $user;
 	protected $db;
 	protected $online_table;
+	protected $config_table;
 	protected $php_ext;
 
     /**
@@ -31,13 +32,15 @@ class listener implements EventSubscriberInterface
     *
     * @param \phpbb\controller\helper    $helper        Controller helper object
     */
-    public function __construct(\phpbb\config\config $config, \phpbb\controller\helper $helper, \phpbb\user $user, \phpbb\db\driver\driver_interface $db, $online_table, $php_ext)
+    public function __construct(\phpbb\config\config $config, \phpbb\controller\helper $helper, \phpbb\user $user, \phpbb\db\driver\driver_interface $db, 
+								$online_table, $config_table, $php_ext)
     {
         $this->config = $config;
 		$this->helper = $helper;
 		$this->user = $user;
 		$this->db = $db;
 		$this->online_table = $online_table;
+		$this->config_table = $config_table;
 		$this->php_ext = $php_ext;
     }
 
@@ -70,6 +73,16 @@ class listener implements EventSubscriberInterface
 		while ($row = $db->sql_fetchrow($result))
 		{
 			(isset($user->lang[$row['module_langname']])) ? $modules[$row['module_langname']] = $user->lang[$row['module_langname']] : NULL;
+		}
+		
+		
+		$sql = 'SELECT custom_pages FROM ' . $this->config_table;
+		$result = $db->sql_query($sql);
+		$row = $db->sql_fetchfield('custom_pages');
+		$row = unserialize($row);
+		foreach($row as $key => $value)
+		{
+			(isset($user->lang[$value])) ? $modules[$value] = $user->lang[$value] : NULL;
 		}
 		return $modules;
 	}
