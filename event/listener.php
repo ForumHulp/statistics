@@ -80,9 +80,12 @@ class listener implements EventSubscriberInterface
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchfield('custom_pages');
 		$row = unserialize($row);
-		foreach($row as $key => $value)
+		if (sizeof($row) > 1)
 		{
-			(isset($user->lang[$value])) ? $modules[$value] = $user->lang[$value] : NULL;
+			foreach($row as $key => $value)
+			{
+				(isset($user->lang[$value])) ? $modules[$value] = $user->lang[$value] : NULL;
+			}
 		}
 		return $modules;
 	}
