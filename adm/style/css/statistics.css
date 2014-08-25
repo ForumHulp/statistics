@@ -101,7 +101,7 @@ overview td:nth-child(1) {
   color: #fff;
 }
 
-.fa-arrow-up, .fa-arrow-down {float:right; color:#fff; padding: 0 2px;}
+.fa-arrow-up, .fa-arrow-down, .fa-circle {float:right; color:#fff; padding: 0 2px;}
 
 #act-arrow {color:#CECECE;}
 

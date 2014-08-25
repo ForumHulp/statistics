@@ -85,7 +85,7 @@ class stat_functions
 							  'VIEWING_UCP' => $user->lang['VIEWING_UCP']);
 		
 		$m = unserialize($config['statistics_custom_pages']);
-		if (sizeof($m) > 1)
+		if (sizeof($m) > 0)
 		{
 			foreach($m as $value)
 			{
@@ -845,6 +845,48 @@ class stat_functions
 		$template->assign_vars(array('GRAPH' => '[' . $graphstr . ']'));
 	}
 
+	public static function stats($start = 0, $uaction = '', $overall = 0)
+	{
+		global $db, $config, $user, $tables, $request, $template;
+
+		// sort keys, direction en sql
+		$sort_key	= $request->variable('sk', 'd');
+		$month = $request->variable('m', date('n', time()));
+		$year = $request->variable('y', date('Y', time()));
+
+		$template->assign_vars(array(
+			'U_ACTION'			=> $uaction,
+			'S_SORT_KEY'		=> $sort_key,
+			'SUB_DISPLAY'		=> 'stats',
+			'PREV'				=> ($sort_key != 'm') ? '&amp;m=' . ($month - 1) . '&amp;y=' . $year : '&amp;m=12&amp;y=' . ($year - 1),
+			'NEXT'				=> ($sort_key != 'm') ? '&amp;m=' . ($month + 1) . '&amp;y=' . $year : '&amp;m=12&amp;y=' . ($year + 1),
+			'SUBTITLE'			=> $user->lang['AVERAGES'],
+		));
+
+		if ($sort_key == 'd')
+		{
+			$sql =  'SELECT hits, month, day FROM ' . $tables['stats'] . ' WHERE year = ' . $year . ' AND month = ' . $month . ' ORDER BY year, month, day ASC';
+		} else if ($sort_key == 'm')
+		{
+			$sql =  'SELECT SUM(hits) AS hits, month, year FROM ' . $tables['stats'] . ' WHERE year = ' . $year . ' GROUP BY month ORDER BY year, month ASC';
+		} else
+		{
+			$sql =  'SELECT SUM(hits) AS hits, year FROM ' . $tables['stats'] . ' GROUP BY year ORDER BY year ASC';
+		}
+		$result = $db->sql_query($sql);
+		$graphstr = $datestr ='';
+		while ($row = $db->sql_fetchrow($result))
+		{
+			$graphstr .= (($graphstr == '') ? '' : ', ') . '' . $row['hits'] . '';
+			$datestr .= (($datestr == '') ? '' : ', ') . '\'' . html_entity_decode(
+						(($sort_key == 'd') ? $row['day'] . ' ' . $row['month'] : (($sort_key == 'm') ? $row['month'] . '<br>' . $row['year'] : $row['year']))) . '\'';
+		}
+		$template->assign_vars(array(
+			'STATS' => '[' . $graphstr . ']', 'DATES' => '[' . $datestr . ']', 
+			'TITLE' => '\'' . (($sort_key == 'd') ? 'Daily overview ' . date("F",mktime(0,0,0,$month,1,2014)) . ' ' . $year : 
+						(($sort_key == 'm') ? 'Monthly overview ' . $year : 'Yearly overview')) . '\''));
+	}
+	
 	public static function users($start = 0, $uaction = '', $overall = 0)
 	{
 		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
@@ -985,11 +1027,14 @@ class stat_functions
 		
 		$modules_ext = unserialize($row['custom_pages']);
 		$options = '';
-		foreach($modules_ext as $key => $value)
+		if (sizeof($modules_ext) > 0)
 		{
-			$options .= '<option value="' . $key . '">' . $value . '</option>';
+			foreach($modules_ext as $key => $value)
+			{
+				$options .= '<option value="' . $key . '">' . $value . '</option>';
+			}
 		}
-
+		
 		$template->assign_vars(array(
 			'OPTIONLIST'		=> $options,
 			'U_ACTION'			=> $uaction . '&amp;screen=config',

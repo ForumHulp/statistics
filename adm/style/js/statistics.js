@@ -47,8 +47,7 @@
 		/* setting currently changed option value to option variable */
 		var val = $("#custom_pages").val();
 		$('#custom_page').val(val);
-	
-		$('#custom_value').val($('#custom_pages option:selected').text());
+		if (val != '') {$('#custom_value').val($('#custom_pages option:selected').text())} else  {$('#custom_value').val('')};
 		
 	});
 	
@@ -112,4 +111,69 @@
 			});
 		});
 	}
+	
+	if (typeof stats !== 'undefined')
+	{
+		$(function () {
+			var chart;
+			$(document).ready(function() {
+				chart = new Highcharts.Chart({
+					chart: {
+						renderTo: 'chart',
+						type: 'column'
+					},
+					title: {
+						text: '',
+					},
+					subtitle: {
+						text: title
+					},
+					credits: {
+						enabled: false,
+						text: 'ForumHulp.com',
+						href: 'http://forumhulp.com'
+					},
+					xAxis: {
+						categories: dates
+					},
+					yAxis: {
+						min: 0,
+						title: {
+							text: 'hits'
+						}
+					},
+					legend: {
+						enabled: false,
+						layout: 'vertical',
+						backgroundColor: '#FFFFFF',
+						align: 'left',
+						verticalAlign: 'top',
+						x: 100,
+						y: 70,
+						floating: true,
+						shadow: true
+					},
+					tooltip: {
+						formatter: function() {
+							return ''+
+								this.x +': '+ this.y +' hits';
+						}
+					},
+					plotOptions: {
+						column: {
+							pointPadding: 0.2,
+							borderWidth: 0
+						}
+					},
+						series: [{
+						name: 'Hits',
+						data: stats
+			
+					}]
+				});
+			});
+			
+		});
+	}
+
 })(jQuery, window, document);

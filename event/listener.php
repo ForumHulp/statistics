@@ -82,7 +82,8 @@ class listener implements EventSubscriberInterface
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchfield('custom_pages');
 		$row = unserialize($row);
-		if (sizeof($row) > 1)
+		
+		if (sizeof($row) > 0)
 		{
 			foreach($row as $key => $value)
 			{

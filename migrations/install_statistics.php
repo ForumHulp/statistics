@@ -112,6 +112,20 @@ class install_statistics extends \phpbb\db\migration\migration
 						'last'		=> array('INDEX', 'last'),
                     )
 				),
+				$this->table_prefix . 'statistics'	=> array(
+					'COLUMNS'			=> array(
+						'year'			=> array('UINT:4', 0),
+						'month'			=> array('UINT:4', 0),
+						'day'			=> array('UINT:4', 0),
+						'hits'			=> array('UINT:11', 0),
+					),
+                    'KEYS'			=> array(
+						'id'		=> array('UNIQUE', array('year', 'month', 'day')),
+						'year'		=> array('INDEX', 'year'),
+                        'month'		=> array('INDEX', 'month'),
+						'day'		=> array('INDEX', 'day'),
+                    )
+				),
 			)
 		);
 	}
@@ -124,7 +138,8 @@ class install_statistics extends \phpbb\db\migration\migration
 				$this->table_prefix . 'statistics_domains',
 				$this->table_prefix . 'statistics_online',
 				$this->table_prefix . 'statistics_archive',
-				$this->table_prefix . 'statistics_se'
+				$this->table_prefix . 'statistics_se',
+				$this->table_prefix . 'statistics'
 			)
 		);
 	}
@@ -153,7 +168,7 @@ class install_statistics extends \phpbb\db\migration\migration
 		global $db;
 		// before we fill anything in this table, we truncate it.
 		$db->sql_query('TRUNCATE TABLE ' . $this->table_prefix . 'statistics_config');
-		$sql = 'INSERT INTO ' . $this->table_prefix . 'statistics_config' . ' (custom_pages) VALUES("")';
+		$sql = 'INSERT INTO ' . $this->table_prefix . 'statistics_config' . ' (custom_pages) VALUES("a:0:{}")';
 		$db->sql_query($sql);
 
 		$db->sql_query('TRUNCATE TABLE ' . $this->table_prefix . 'statistics_domains');

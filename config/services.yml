@@ -12,6 +12,7 @@ services:
             - %tables.online_table%
             - %tables.config_table%
             - %tables.se_table%
+            - %tables.stats_table%
             - %core.php_ext%
         tags:
             - { name: event.listener }
@@ -22,6 +23,10 @@ services:
             - %core.php_ext%
             - @config
             - @dbal.conn
+            - %tables.online_table%
+            - %tables.config_table%
+            - %tables.archive_table%
+            - %tables.stats_table%
         calls:
             - [set_name, [cron.task.core.statistics]]
         tags:

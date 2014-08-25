@@ -28,6 +28,11 @@ class delete_statistics extends \phpbb\cron\task\base
 	protected $config;
 	protected $db;
 
+	protected $online_table;
+	protected $config_table;
+	protected $archive_table;
+	protected $stats_table;
+
 	/**
 	* Constructor.
 	*
@@ -36,13 +41,16 @@ class delete_statistics extends \phpbb\cron\task\base
 	* @param phpbb_config $config The config
 	* @param phpbb_db_driver $db The db connection
 	*/
-	public function __construct($phpbb_root_path, $php_ext, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db )
+	public function __construct($phpbb_root_path, $php_ext, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, $online_table, $config_table, $archive_table, $stats_table )
 	{
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
 		$this->config = $config;
 		$this->db = $db;
-
+		$this->online_table = $online_table;
+		$this->config_table = $config_table;
+		$this->archive_table = $archive_table;
+		$this->stats_table = $stats_table;
 	}
 
 	/**
@@ -53,19 +61,14 @@ class delete_statistics extends \phpbb\cron\task\base
 	public function run()
 	{
 		global $phpbb_container, $info;
-		$tables['config'] 	= $phpbb_container->getParameter('tables.config_table');
-		$tables['online'] 	= $phpbb_container->getParameter('tables.online_table');
-		$tables['domain'] 	= $phpbb_container->getParameter('tables.domain_table');
-		$tables['se']	  	= $phpbb_container->getParameter('tables.se_table');
-		$tables['archive']	= $phpbb_container->getParameter('tables.archive_table');
 	
 	  	$os = new find_os();
 		$module_aray = $browser_aray = $os_aray = $country_aray = $user_aray = $screen_aray = $referer_aray = $search_aray = array();
-		$sql = 'SELECT time, uname, agent, ip_addr, module, host, domain, scr_res, page, referer, se_terms FROM ' . $tables['online'];
+		$sql = 'SELECT time, uname, agent, ip_addr, module, host, domain, scr_res, page, referer, se_terms FROM ' . $this->online_table;
 		$result = $this->db->sql_query($sql);
 		$starttime = explode(' ', microtime());
 		$starttime = $starttime[1] + $starttime[0];
-		$row_count = 0;
+		$row_count = $start_day = 0;
 		while (still_on_time() && $row = $this->db->sql_fetchrow($result))
 		{
 			$module_aray	= ($row['module'] != '') ? $this->count_array($module_aray, $row['module']) : NULL;
@@ -80,10 +83,8 @@ class delete_statistics extends \phpbb\cron\task\base
 			$referer_aray	= ($row['referer'] != '') ? $this->count_array($referer_aray, $this->url_to_domain($row['referer'])) : NULL;
 			$search_aray	= ($row['se_terms'] != '') ? $this->split_array($search_aray, $row['se_terms']) : NULL;
 			$row_count++;
+			$start_day = (!$start_day) ? $row['time'] : $start_day;
 		}
-		$mtime = explode(' ', microtime());
-		$totaltime = $mtime[0] + $mtime[1] - $starttime;
-		$rows_per_second = $row_count / $totaltime;
 		$this->db->sql_freeresult($result);
 
 		$this->store($module_aray, 1);
@@ -96,14 +97,25 @@ class delete_statistics extends \phpbb\cron\task\base
 		$this->store($search_aray, 8);
 		
 		unset($module_aray, $browser_aray, $os_aray, $country_aray, $user_aray, $screen_aray, $referer_aray, $search_aray);
-		$sql = 'TRUNCATE TABLE ' . $tables['online'];
+		$sql = 'TRUNCATE TABLE ' . $this->online_table;
 		$this->db->sql_query($sql);
-		$sql = 'OPTIMIZE TABLE ' . $tables['online'];
+		$sql = 'OPTIMIZE TABLE ' . $this->online_table;
+		$this->db->sql_query($sql);
+		
+		$sql_ary = array(
+			'year'		=> date('Y', $start_day),
+			'month'		=> date('n', $start_day),
+			'day'		=> date('j', $start_day),
+			'hits'		=> $row_count,
+		);
+		
+		$sql = 'INSERT INTO ' . $this->stats_table . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 		$this->db->sql_query($sql);
 		$mtime = explode(' ', microtime());
-		$totaltime2 = $mtime[0] + $mtime[1] - $starttime;
+		$totaltime = $mtime[0] + $mtime[1] - $starttime;
+		$rows_per_second = $row_count / $totaltime;
 
-		add_log('admin', 'LOG_STATISTICS_PRUNED', $totaltime2, $rows_per_second);
+		add_log('admin', 'LOG_STATISTICS_PRUNED', $totaltime, $rows_per_second);
 		$this->config->set('delete_statistics_last_gc', strtotime('midnight', time()));
 	}
 
@@ -114,13 +126,13 @@ class delete_statistics extends \phpbb\cron\task\base
 		
 		if (sizeof($aray))
 		{
-			$tables['archive']	= $phpbb_container->getParameter('tables.archive_table');
+			$this->archive_table	= $phpbb_container->getParameter('tables.archive_table');
 	
 			$sconfig = $this->get_config();
 			
 			foreach ($aray as $key => $value)
 			{ 
-				$sql = 'SELECT COUNT(name) AS counter FROM ' . $tables['archive'] . ' WHERE cat = ' . $cat . ' AND name = "' . $key . '"';
+				$sql = 'SELECT COUNT(name) AS counter FROM ' . $this->archive_table . ' WHERE cat = ' . $cat . ' AND name = "' . $key . '"';
 				$result = $this->db->sql_query($sql);
 				$counter = (int) $this->db->sql_fetchfield('counter');
 				if ($counter == 0)
@@ -133,23 +145,23 @@ class delete_statistics extends \phpbb\cron\task\base
 						'last'		=> time(),
 					);
 	
-					$sql = 'INSERT INTO ' . $tables['archive'] . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+					$sql = 'INSERT INTO ' . $this->archive_table . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 				} else
 				{
-					$sql = 'UPDATE ' . $tables['archive'] . ' SET hits = hits + ' . $value . ', last = ' . time() .' WHERE cat = ' . $cat . ' AND name = "' . $key . '"';
+					$sql = 'UPDATE ' . $this->archive_table . ' SET hits = hits + ' . $value . ', last = ' . time() .' WHERE cat = ' . $cat . ' AND name = "' . $key . '"';
 				}
 				$this->db->sql_query($sql);
 			
-				$sql = 'SELECT hits, last FROM ' . $tables['archive'] . ' WHERE cat = ' . $cat . ' ORDER BY hits DESC LIMIT '. $sconfig[$cat] .', 1';
+				$sql = 'SELECT hits, last FROM ' . $this->archive_table . ' WHERE cat = ' . $cat . ' ORDER BY hits DESC LIMIT '. $sconfig[$cat] .', 1';
 				$result = $this->db->sql_query($sql);
 				$prune = $this->db->sql_fetchrow($result);
 				if ($prune)
 				{
-					$sql = 'DELETE FROM ' . $tables['archive'] . ' WHERE cat = ' . $cat . ' AND hits < ' . $prune['hits'] . ' AND last < ' . $prune['last'];
+					$sql = 'DELETE FROM ' . $this->archive_table . ' WHERE cat = ' . $cat . ' AND hits < ' . $prune['hits'] . ' AND last < ' . $prune['last'];
 					$this->db->sql_query($sql);
 				}
 			}
-			$sql = 'OPTIMIZE TABLE ' . $tables['archive'];
+			$sql = 'OPTIMIZE TABLE ' . $this->archive_table;
 			$this->db->sql_query($sql);
 		}
 	}
@@ -157,9 +169,8 @@ class delete_statistics extends \phpbb\cron\task\base
 	public function get_config()
 	{
 		global $db, $phpbb_container;
-		$tables['config']	= $phpbb_container->getParameter('tables.config_table');
 
-		$sql = 'SELECT * FROM ' . $tables['config'];
+		$sql = 'SELECT * FROM ' . $this->config_table;
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
 		$sconfig = array();

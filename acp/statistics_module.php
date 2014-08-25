@@ -27,6 +27,7 @@ class statistics_module
 		$tables['domain'] 	= $phpbb_container->getParameter('tables.domain_table');
 		$tables['se']	  	= $phpbb_container->getParameter('tables.se_table');
 		$tables['archive']	= $phpbb_container->getParameter('tables.archive_table');
+		$tables['stats']	= $phpbb_container->getParameter('tables.stats_table');
 		
 		stat_functions::get_config();
 
@@ -145,6 +146,12 @@ class statistics_module
 				$template->assign_vars(array('ACT' => 'screens'));
 				$this->page_title = 'ACP_STATISTICS';
 				stat_functions::screens($start, $this->u_action, $overall);
+			break;
+
+			case 'stats':
+				$template->assign_vars(array('ACT' => 'stats'));
+				$this->page_title = 'ACP_STATISTICS';
+				stat_functions::stats($start, $this->u_action, $overall);
 			break;
 
 			case 'users':
