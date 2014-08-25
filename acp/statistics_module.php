@@ -151,7 +151,13 @@ class statistics_module
 			case 'stats':
 				$template->assign_vars(array('ACT' => 'stats'));
 				$this->page_title = 'ACP_STATISTICS';
-				stat_functions::stats($start, $this->u_action, $overall);
+				stat_functions::stats($start, $this->u_action);
+			break;
+
+			case 'ustats':
+				$template->assign_vars(array('ACT' => 'ustats'));
+				$this->page_title = 'ACP_STATISTICS';
+				stat_functions::ustats($start, $this->u_action);
 			break;
 
 			case 'users':

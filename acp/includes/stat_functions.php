@@ -845,7 +845,7 @@ class stat_functions
 		$template->assign_vars(array('GRAPH' => '[' . $graphstr . ']'));
 	}
 
-	public static function stats($start = 0, $uaction = '', $overall = 0)
+	public static function stats($start = 0, $uaction = '')
 	{
 		global $db, $config, $user, $tables, $request, $template;
 
@@ -887,6 +887,30 @@ class stat_functions
 						(($sort_key == 'm') ? 'Monthly overview ' . $year : 'Yearly overview')) . '\''));
 	}
 	
+	public static function ustats($start = 0, $uaction = '')
+	{
+		global $db, $config, $user, $tables, $request, $template;
+
+		$template->assign_vars(array(
+			'U_ACTION'			=> $uaction,
+			'SUB_DISPLAY'		=> 'stats',
+			'SUBTITLE'			=> $user->lang['USERSTATS'],
+		));
+
+		$sql =  'SELECT  MAX(DATE(FROM_UNIXTIME(time))) AS date, HOUR(FROM_UNIXTIME(time)) as hour, COUNT(id) as hits 
+				FROM ' . $tables['online'] . ' GROUP BY hour order by date, hour ASC';
+		$result = $db->sql_query($sql);
+		$graphstr = $datestr ='';
+		while ($row = $db->sql_fetchrow($result))
+		{
+			$graphstr .= (($graphstr == '') ? '' : ', ') . '' . $row['hits'] . '';
+			$datestr .= (($datestr == '') ? '' : ', ') . '\'' . html_entity_decode($row['hour']) . '\'';
+		}
+		$template->assign_vars(array(
+			'STATS' => '[' . $graphstr . ']', 'DATES' => '[' . $datestr . ']', 
+			'TITLE' => '\'Hourly overview\''));
+	}
+
 	public static function users($start = 0, $uaction = '', $overall = 0)
 	{
 		global $db, $config, $user, $tables, $request, $template, $phpbb_container;

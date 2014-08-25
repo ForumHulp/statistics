@@ -1,25 +1,31 @@
-<table class="graph_table">
+<table class="graph_table" border="1">
 <thead>
     <tr>
-        <th class="row-2 row-module">{SUBTITLE}</th>
+        <th class="row-2 row-module" <!-- IF not S_SORT_KEY --> colspan="4"<!-- ENDIF -->>{SUBTITLE}</th>
+        <!-- IF S_SORT_KEY -->
         <th class="row-3 row-views">{L_DAILY}
         	<a href="{U_ACTION}&amp;screen={ACT}&amp;sk=d" title="{L_DAILY_GRAPH}"><i class="fa fa-circle"<!-- IF S_SORT_KEY == 'd' --> id="act-arrow"<!-- ENDIF -->></i></a></th>
         <th class="row-4 row-total">{L_MONTHLY}
            	<a href="{U_ACTION}&amp;screen={ACT}&amp;sk=m" title="{L_MONTHLY_GRAPH}"><i class="fa fa-circle"<!-- IF S_SORT_KEY == 'm'  --> id="act-arrow"<!-- ENDIF -->></i></a></th>
         <th class="row-5 row-graph">{L_YEARLY}
         <a href="{U_ACTION}&amp;screen={ACT}&amp;sk=y" title="{L_YEARLY_GRAPH}"><i class="fa fa-circle"<!-- IF S_SORT_KEY == 'y'  --> id="act-arrow"<!-- ENDIF -->></i></a></th>
+        <!-- ENDIF -->
     </tr>
 </thead>
 <tbody>
     <!-- IF STATS -->
     <tr>
        <td colspan="4">
-       <table>
+       <table style="width:100%;">
        <tr>
+       <!-- IF PREV -->
        <td><!-- IF S_SORT_KEY neq 'y' -->
        <a href="{U_ACTION}&amp;screen={ACT}&amp;sk={S_SORT_KEY}{PREV}"><i class="fa fa-mail-reply" style="float:left;font-size: large;"></i></a><!-- ENDIF --></td>
+       <!-- ENDIF -->
        <td style="width:100%; text-align:center"><div id="chart" style="width: 90%; height: 230px; margin: auto;"></div></td>
+       <!-- IF NEXT -->
        <td style="text-align:right;"><!-- IF S_SORT_KEY neq 'y' --><a href="{U_ACTION}&amp;screen={ACT}&amp;sk={S_SORT_KEY}{NEXT}"><i class="fa fa-mail-forward" style="float:left;font-size:large;"></i></a><!-- ENDIF --></td>
+       <!-- ENDIF -->
        </tr>
        </table>
 		<script>
@@ -31,7 +37,7 @@
     </tr>
     <!-- ELSE -->
     <tr>
-        <td colspan="4">{L_ACP_NO_ITEMS}</td>
+        <td<!-- IF not S_SORT_KEY --> colspan="4"<!-- ENDIF -->>{L_ACP_NO_ITEMS}</td>
     </tr>
     <!-- ENDIF -->
     </tbody>
