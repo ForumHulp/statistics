@@ -76,20 +76,6 @@ class listener implements EventSubscriberInterface
 		{
 			(isset($user->lang[$row['module_langname']])) ? $modules[$row['module_langname']] = $user->lang[$row['module_langname']] : NULL;
 		}
-		
-		
-		$sql = 'SELECT custom_pages FROM ' . $this->config_table;
-		$result = $db->sql_query($sql);
-		$row = $db->sql_fetchfield('custom_pages');
-		$row = unserialize($row);
-		
-		if (sizeof($row) > 0)
-		{
-			foreach($row as $key => $value)
-			{
-				(isset($user->lang[$value])) ? $modules[$value] = $user->lang[$value] : NULL;
-			}
-		}
 		return $modules;
 	}
 
@@ -129,7 +115,7 @@ class listener implements EventSubscriberInterface
 			{
 				$ref_url = '';
 			}
-			
+
 			if ($this->user->page['forum'] && is_numeric($this->user->page['forum']))
 			{
 				$data['module'] = $this->user->page['forum'];
@@ -137,6 +123,19 @@ class listener implements EventSubscriberInterface
 			{
 				$module_pages = array('index.php' => 'FORUM_INDEX', 'faq.php' => 'VIEWING_FAQ', 'mcp.php' => 'VIEWING_MCP', 'search.php' => 'SEARCHING_FORUMS', 
 									  'viewonline.php', 'VIEWING_ONLINE', 'memberlist.php' => 'VIEWING_MEMBERS', 'ucp.php' => 'VIEWING_UCP');
+				
+				$sql = 'SELECT custom_pages FROM ' . $this->config_table;
+				$result = $this->db->sql_query($sql);
+				$row = $this->db->sql_fetchfield('custom_pages');
+				$row = unserialize($row);
+				
+				if (sizeof($row) > 0)
+				{
+					foreach($row as $key => $value)
+					{
+						$module_pages[$key] = $value;
+					}
+				}
 				$data['module'] = (isset($module_pages[$this->user->page['page_name']])) ? $module_pages[$this->user->page['page_name']] : NULL;
 				
 			} else
