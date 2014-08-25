@@ -156,11 +156,10 @@ class listener implements EventSubscriberInterface
 			
 			if (isset($data['module']) && $data['module'] !== '')
 			{
-				$data['host'] = @gethostbyaddr(($this->user->data['session_ip'] == '127.0.0.1' ? '82.161.128.140' : $this->user->data['session_ip']));
+				$data['host'] = @gethostbyaddr(($this->user->data['session_ip']));
 				$aray = explode('.', $data['host']);
 				$data['domain'] = strtolower($aray[sizeof($aray) -1]);
-				$data['domain'] = (!file_exists('./ext/forumhulp/statistics//adm/style/images/flags/' . $data['domain'] . '.gif')) ? 'cc' : $data['domain'];
-				$data['screen_res'] = 1000;
+				$data['domain'] = (!file_exists('./ext/forumhulp/statistics//adm/style/images/flags/' . $data['domain'] . '.gif')) ? 'lo' : $data['domain'];
 
 				if (!$request->is_set($this->config['cookie_name'] . '_statistics_res', \phpbb\request\request_interface::COOKIE))
 				{
