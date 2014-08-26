@@ -1,6 +1,6 @@
 <fieldset>
 	<legend>{options.LEGEND}</legend>
-	<form id="acp_statistics" method="post" action="{U_ACTION}" style="float: left; width:50%;">
+	<form class="acp_statistics_cfg" method="post" action="{U_ACTION}" style="float:left; width:50%;">
 		<dl>
 			<dt>View / Table</dt>
 			<dd><span style="float:left;">View</span> <span style="margin-left:10px;">Archive</span></dd>
@@ -19,7 +19,7 @@
 	{S_FORM_TOKEN}
 	</form>
 
-	<form method="post" action="{U_ACTION}" style="float: right; width:50%;">
+	<form class="acp_statistics_cfg" method="post" action="{U_ACTION}" style="float:right; width:50%;">
 		<dl>
 			<dt>Custom pages</dt>
 			<dd></dd>
@@ -38,6 +38,35 @@
 		<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
 	</p>
 	{S_FORM_TOKEN}
-	</fieldset>
-</form>
+	</form>
+    
+	<form class="acp_statistics_cfg" method="post" action="{U_ACTION}" style="float:right; width:50%;">
+		<dl>
+			<dt>Start screen</dt>
+			<dd></dd>
+		</dl>
+    	<dl>
+        	<dt><label for="start_screen">{L_START_SCREEN}{L_COLON}</label><br /><span>{L_START_SCREEN_EXPLAIN}</span></dt>
+			<dd><select name="start_screen" id="start_screen"><option value="">-----</option>{OPTIONLISTSC}</select></dd>
+            <dd>Overall displays: <input type="checkbox" name="archive" value="1" {ARCHIVE} /></dd>
+		</dl>
 
+	<p class="submit-buttons">
+        <input class="button1" type="submit" id="submit_start_screen" name="submit_start_screen" value="{L_SUBMIT}" />&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+	</p>
+	{S_FORM_TOKEN}
+	</form>
+    
+	<form class="acp_statistics_cfg" id="del_stat" method="post" action="{U_ACTION}" style="float:right; width:50%;" data-ajax="true">
+		<dl>
+			<dt>Archive Tables</dt>
+			<dd></dd>
+		</dl>
+    	<dl>
+        	<dt><label for="submit_del_stat">{L_DEL_STAT}{L_COLON}</label><br /><span>{L_DEL_STAT_EXPLAIN}</span></dt>
+			<dd><input class="button1" type="submit" id="submit_del_stat" name="submit_del_stat" value="Truncate archive tables" /></dd>
+		</dl>
+	{S_FORM_TOKEN}
+	</form>
+</fieldset>

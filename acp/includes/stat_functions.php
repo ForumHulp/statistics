@@ -166,7 +166,6 @@ class stat_functions
 			'S_SORT_DIR'		=> $sort_dir,
 			'SUB_DISPLAY'		=> 'graph',
 			'SUBTITLE'			=> $user->lang['BROWSERS'],
-			'OVERALL'			=> ($overall) ? '<a href="">Today</a>' : '<a href="">Overall</a>'
 		));
 
 		$sql = ($overall) ? 'SELECT COUNT(DISTINCT name) AS total_entries, MIN(first) AS firstdate, MAX(last) AS lastdate FROM ' . $tables['archive'] . ' WHERE cat = 2' : 
@@ -240,11 +239,11 @@ class stat_functions
 		}
 
 		$pagination = $phpbb_container->get('pagination');
-		$base_url = $uaction . '&amp;screen=browsers&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '');
+		$base_url = $uaction . '&amp;screen=browsers&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '&amp;overall=0');
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_browsers'], $start);
 
 		$template->assign_vars(array('ROWSPAN'		=> $total_entries,
-									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '',$base_url) : $base_url.'&amp;overall=1',
+									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0',$base_url) : $base_url.'&amp;overall=1',
 									 'GRAPH' 		=> '[' . $graphstr . ']'));
 	}
 	
@@ -263,8 +262,7 @@ class stat_functions
 			'S_SORT_KEY'		=> $sort_key,
 			'S_SORT_DIR'		=> $sort_dir,
 			'SUB_DISPLAY'		=> 'graph',
-			'SUBTITLE'			=> $user->lang['BROWSERS'],
-			'OVERALL'			=> ($overall) ? '<a href="">Today</a>' : '<a href="">Overall</a>'
+			'SUBTITLE'			=> $user->lang['SYSTEMS'],
 		));
 
 		$sql = ($overall) ? 'SELECT COUNT(DISTINCT name) AS total_entries, MIN(first) AS firstdate, MAX(last) AS lastdate FROM ' . $tables['archive'] . ' WHERE cat = 3' : 
@@ -339,11 +337,11 @@ class stat_functions
 		}
 
 		$pagination = $phpbb_container->get('pagination');
-		$base_url = $uaction . '&amp;screen=os&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '');
+		$base_url = $uaction . '&amp;screen=os&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '&amp;overall=0');
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_browsers'], $start);
 
 		$template->assign_vars(array('ROWSPAN'		=> $total_entries,
-									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '',$base_url) : $base_url.'&amp;overall=1',
+									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0',$base_url) : $base_url.'&amp;overall=1',
 									 'GRAPH' 		=> '[' . $graphstr . ']'));
 	}
 
@@ -363,7 +361,6 @@ class stat_functions
 			'S_SORT_DIR'		=> $sort_dir,
 			'SUB_DISPLAY'		=> 'graph',
 			'SUBTITLE'			=> $user->lang['COUNTRIES'],
-			'OVERALL'			=> ($overall) ? '<a href="">Today</a>' : '<a href="">Overall</a>'
 		));
 
 		$sql = ($overall) ? 'SELECT COUNT(DISTINCT name) AS total_entries, MIN(first) AS firstdate, MAX(last) AS lastdate FROM ' . $tables['archive'] . ' WHERE cat = 4' : 
@@ -374,11 +371,11 @@ class stat_functions
 		$db->sql_freeresult($result);
 
 		$pagination = $phpbb_container->get('pagination');
-		$base_url = $uaction . '&amp;screen=countries&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '');
+		$base_url = $uaction . '&amp;screen=countries&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '&amp;overall=0');
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_countries'], $start);
 
 		$template->assign_vars(array('ROWSPAN'		=> $total_entries,
-									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '',$base_url) : $base_url.'&amp;overall=1',
+									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0',$base_url) : $base_url.'&amp;overall=1',
 									 'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
 									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' . 
 									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
@@ -440,11 +437,11 @@ class stat_functions
 		$db->sql_freeresult($result);
 
 		$pagination = $phpbb_container->get('pagination');
-		$base_url = $uaction . '&amp;screen=referrals&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '');
+		$base_url = $uaction . '&amp;screen=referrals&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '&amp;overall=0');
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_referer'], $start);
 
 		$template->assign_vars(array('ROWSPAN' 		=> $total_entries,
-									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '',$base_url) : $base_url.'&amp;overall=1',
+									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0',$base_url) : $base_url.'&amp;overall=1',
 									 'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
 									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' . 
 									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
@@ -504,11 +501,11 @@ class stat_functions
 		$db->sql_freeresult($result);
 
 		$pagination = $phpbb_container->get('pagination');
-		$base_url = $uaction . '&amp;screen=se&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '');
+		$base_url = $uaction . '&amp;screen=se&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '&amp;overall=0');
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_se'], $start);
 
 		$template->assign_vars(array('ROWSPAN' 		=> $total_entries,
-									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '',$base_url) : $base_url.'&amp;overall=1',
+									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0',$base_url) : $base_url.'&amp;overall=1',
 									 'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
 									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' . 
 									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
@@ -587,11 +584,11 @@ class stat_functions
 		}
 
 		$pagination = $phpbb_container->get('pagination');
-		$base_url = $uaction . '&amp;screen=se_terms&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '');
+		$base_url = $uaction . '&amp;screen=se_terms&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '&amp;overall=0');
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_se_terms'], $start);
 
 		$template->assign_vars(array('ROWSPAN' 		=> $total_entries,
-									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '', $base_url) : $base_url . '&amp;overall=1',
+									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0', $base_url) : $base_url . '&amp;overall=1',
 									 'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
 									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($firstdate, 'd m \'y') . ' - ' . 
 									 					$user->format_date($lastdate, 'd m \'y') . ')': '',
@@ -654,11 +651,11 @@ class stat_functions
 		$db->sql_freeresult($result);
 
 		$pagination = $phpbb_container->get('pagination');
-		$base_url = $uaction . '&amp;screen=crawl&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir;
+		$base_url = $uaction . '&amp;screen=crawl&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '&amp;overall=0');
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_crawl'], $start);
 
 		$template->assign_vars(array('ROWSPAN' 		=> $total_entries,
-									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '', $base_url) : $base_url . '&amp;overall=1',
+									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0', $base_url) : $base_url . '&amp;overall=1',
 									 'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
 									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' . 
 									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
@@ -741,11 +738,11 @@ class stat_functions
 		$db->sql_freeresult($result);
 
 		$pagination = $phpbb_container->get('pagination');
-		$base_url = $uaction . '&amp;screen=modules&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '');
+		$base_url = $uaction . '&amp;screen=modules&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '&amp;overall=0');
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_modules'], $start);
 
 		$template->assign_vars(array('ROWSPAN'		=> $total_entries,
-									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '', $base_url) : $base_url . '&amp;overall=1',
+									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0', $base_url) : $base_url . '&amp;overall=1',
 									 'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
 									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' . 
 									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
@@ -805,11 +802,11 @@ class stat_functions
 		$db->sql_freeresult($result);
 
 		$pagination = $phpbb_container->get('pagination');
-		$base_url = $uaction . '&amp;screen=screens&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir;
+		$base_url = $uaction . '&amp;screen=screens&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '&amp;overall=0');
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_screens'], $start);
 
 		$template->assign_vars(array('ROWSPAN' 		=> $total_entries,
-									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '', $base_url) : $base_url . '&amp;overall=1',
+									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0', $base_url) : $base_url . '&amp;overall=1',
 									 'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
 									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' . 
 									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
@@ -951,11 +948,11 @@ class stat_functions
 		$db->sql_freeresult($result);
 
 		$pagination = $phpbb_container->get('pagination');
-		$base_url = $uaction . '&amp;screen=users&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir;
+		$base_url = $uaction . '&amp;screen=users&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '&amp;overall=0');
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_users'], $start);
 
 		$template->assign_vars(array('ROWSPAN' 		=> $total_entries,
-									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '', $base_url) : $base_url . '&amp;overall=1',
+									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0', $base_url) : $base_url . '&amp;overall=1',
 									 'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
 									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' . 
 									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
@@ -1003,6 +1000,72 @@ class stat_functions
 		$template->assign_vars(array('GRAPH' => '[' . $graphstr . ']'));
 	}
 
+	public static function top10($start = 0, $uaction = '' )
+	{
+		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
+		$module_aray = array(0 => 'COUNTRIES', 1 => 'REFERRALS', 2 => 'SEARCHENG', 3 => 'SEARCHTERMS', 4 => 'BROWSERS', 5 => 'CRAWLERS', 6 => 'SYSTEMS', 7 => 'MODULES', 
+							 8 => 'RESOLUTIONS', 9 => 'USERS', 10 => '10', 11 => '11');
+		$modules = self::get_modules();
+		$sql_aray[] = 'SELECT d.description AS name, o.hits FROM ' . $tables['archive'] . ' o LEFT JOIN ' . $tables['domain'] . ' d ON (d.domain = o.name) 
+						WHERE cat = 4 GROUP BY o.name ORDER BY hits DESC';
+		$sql_aray[] = 'SELECT name, hits FROM ' . $tables['archive'] . ' WHERE cat = 7 ORDER BY hits DESC';
+		$sql_aray[] = 'SELECT name, hits FROM ' . $tables['archive'] . ' WHERE cat = 7 ORDER BY hits DESC';
+		$sql_aray[] = 'SELECT name, hits FROM ' . $tables['archive'] . ' WHERE cat = 8 ORDER BY hits DESC';
+		$sql_aray[] = 'SELECT name, hits FROM ' . $tables['archive'] . ' WHERE cat = 2 ORDER BY hits DESC';
+		$sql_aray[] = 'SELECT  a.name, a.hits FROM    ' . $tables['archive'] . ' a LEFT JOIN ' . BOTS_TABLE . ' b ON a.name = b.bot_name 
+					   WHERE  a.cat = 5 AND b.bot_name IS NOT NULL ORDER BY hits DESC';
+		$sql_aray[] = 'SELECT name, hits FROM ' . $tables['archive'] . ' WHERE cat = 3 ORDER BY hits DESC';
+		$sql_aray[] = 'SELECT name, hits FROM ' . $tables['archive'] . ' WHERE cat = 1 ORDER BY hits DESC';
+		$sql_aray[] = 'SELECT name, hits FROM ' . $tables['archive'] . ' WHERE cat = 6 ORDER BY hits DESC';
+		$sql_aray[] = 'SELECT  a.name, a.hits FROM    ' . $tables['archive'] . ' a LEFT JOIN ' . USERS_TABLE . ' b ON a.name = b.username 
+					   WHERE  a.cat = 5 AND b.username IS NOT NULL ORDER BY hits DESC';
+
+		$pagination = $phpbb_container->get('pagination');
+		$base_url = $uaction . '&amp;screen=top10';
+		$pagination->generate_template_pagination($base_url, 'pagination', 'start', 12, 6, $start);
+
+		for($i = $start; $i < $start + 6; $i++)
+		{
+			$template->assign_block_vars('blocks', array(
+				'KEY'			=> $i,
+				'TITLE'			=> $module_aray[$i],
+			));
+
+			if ($i < 10)
+			{
+				$result = $db->sql_query_limit($sql_aray[$i], 10, 0);
+				$counter = 0;
+				while ($row = $db->sql_fetchrow($result))
+				{
+					$counter += 1;
+					$template->assign_block_vars('blocks.block', array(
+						'COUNTER'  	=> $counter,
+						'NAME'		=> ($i == 7) ? ((isset($modules[$row['name']])) ? $modules[$row['name']] : 'Not found') : $row['name'],
+						'HITS'		=> $row['hits']
+						)
+					);
+				}
+				if ($counter < 10)
+				{
+					for($counter + 1; $counter + 1 <= 10; $counter++)
+					{
+						$template->assign_block_vars('blocks.block', array(
+							'COUNTER'  	=> $counter + 1,
+							'NAME'		=> '',
+							'HITS'		=> ''
+							)
+						);
+					}
+				}
+			}
+		}
+		
+		$template->assign_vars(array(
+			'U_ACTION'			=> $uaction,
+			'SUB_DISPLAY'		=> 'top10'
+		));
+	}
+
 	public static function config($start = 0, $uaction = '' )
 	{
 		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
@@ -1032,11 +1095,44 @@ class stat_functions
 			$db->sql_query($sql);
 		}
 		
+		if ($request->is_set('submit_start_screen'))
+		{
+			$sql = 'UPDATE ' . $tables['config'] . ' SET start_screen = "' . $request->variable('start_screen', 'default') . '", archive=' . $request->variable('archive', 0) . '';
+			$db->sql_query($sql);
+		}
+
+		if ($request->is_set('submit_del_stat'))
+		{
+			if (!confirm_box(true))
+			{
+				confirm_box(false, $user->lang('STAT_DELETE_CONFIRM'), build_hidden_fields(array(
+					'i'					=> '\forumhulp\statistics\acp\statistics_module',
+					'mode'				=> 'stat',
+					'screen'			=> 'config',
+					'submit_del_stat'	=> true,
+				)));
+				trigger_error($user->lang('STAT_DELETE_ERROR'));
+			}
+			else
+			{
+				$db->sql_query('TRUNCATE TABLE ' . $tables['archive']);
+
+				add_log('admin', 'STAT_DELETE_SUCCESS');
+				if ($request->is_ajax())
+				{
+					trigger_error('STAT_DELETE_SUCCESS');
+				} else
+				{
+					trigger_error('STAT_DELETE_SUCCESS');
+				}
+			}
+		}
+		
 		$sql = 'SELECT * FROM ' . $tables['config'];
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
 
-		for ($i = 0; $i < floor(sizeof($row) / 2); $i++)
+		for ($i = 0; $i < floor(sizeof($row) / 2) -2; $i++)
 		{
 			$template->assign_block_vars('options', array(
 				'KEY'			=> strtoupper(key($row)),
@@ -1050,7 +1146,7 @@ class stat_functions
 		}
 		
 		$modules_ext = unserialize($row['custom_pages']);
-		$options = '';
+		$options = $optionssc = '';
 		if (sizeof($modules_ext) > 0)
 		{
 			foreach($modules_ext as $key => $value)
@@ -1058,14 +1154,26 @@ class stat_functions
 				$options .= '<option value="' . $key . '">' . $value . '</option>';
 			}
 		}
+
+
+		$module_aray = array('countries' => 'COUNTRIES', 'referrals' => 'REFERRALS', 'se' => 'SEARCHENG', 'se_terms' => 'SEARCHTERMS', 'browsers' => 'BROWSERS', 'crawl' => 'CRAWLERS',
+								'os' => 'SYSTEMS', 'modules' => 'MODULES', 
+							 'stats' => 'AVERAGES', 'screens' => 'RESOLUTIONS', 'top10' => 'OVERVIEW', 'users' => 'USERS', 'ustats' => 'USERSTATS', 'default' => 'LASTVISITS');
+		foreach($module_aray as $key => $value)
+		{
+			$selected = ($key == $row['start_screen']) ? ' selected="selected"' : '';
+			$optionssc .= '<option value="' . $key . '"' . $selected . '>' . $user->lang[$value] . '</option>';
+		}
 		
 		$template->assign_vars(array(
 			'OPTIONLIST'		=> $options,
+			'OPTIONLISTSC'		=> $optionssc,
+			'ARCHIVE'			=> ($row['archive']) ? ' checked= "checked"' : '',
 			'U_ACTION'			=> $uaction . '&amp;screen=config',
 			'SUB_DISPLAY'		=> 'config'
 		));
 	}
-	
+
 	public static function nyi($start = 0, $uaction = '' )
 	{
 		global $db, $config, $user, $tables, $request, $template, $phpbb_container;

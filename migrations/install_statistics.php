@@ -52,6 +52,8 @@ class install_statistics extends \phpbb\db\migration\migration
 						't_crawl'			=> array('UINT:4', 100),
 						't_online'			=> array('UINT:4', 100),
 						'custom_pages'		=> array('MTEXT_UNI', ''),
+						'start_screen'		=> array('VCHAR:25', 'default'),
+						'archive'			=> array('UINT:4', 0),
 					),
 				),
 				$this->table_prefix . 'statistics_domains'	=> array(

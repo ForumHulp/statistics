@@ -50,17 +50,33 @@ overview td:nth-child(1) {
   text-align:center;
 }
 
-.statistics_table td:nth-child(2) {
+.statistics_table td:nth-child(3) {
   text-align:center;
 }
 
-.graph_table td:nth-child(2) {
+.graph_table td:nth-child(2), .overview_table td:nth-child(2) {
   text-align:left;
 }
 
 .statistics_table td img, .graph_table td img {
 	margin-right:10px;
 }
+
+.overview_table {
+/*  table-layout: fixed; */
+  width: 33%;
+  float:left;
+  white-space: nowrap;
+}
+
+.overview_table td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.acp_statistics_cfg dt {width:60%;}
+.acp_statistics_cfg dd {margin: 0 0 0 60%;}
 /* Column widths are based on these cells */
 .row-counter {
   width: 4%;
@@ -99,6 +115,20 @@ overview td:nth-child(1) {
 }
 .row-graph span a{
   color: #fff;
+}
+
+/* Overview */
+.row-counter-overview {
+  width: 10%;
+  text-align:center;
+}
+.row-module-overview {
+  width: 70%;
+  text-align:left;
+}
+.row-views-overview {
+  width: 20%;
+  text-align:center;
 }
 
 .fa-arrow-up, .fa-arrow-down, .fa-circle {float:right; color:#fff; padding: 0 2px;}

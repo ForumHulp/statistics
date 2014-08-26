@@ -1,0 +1,35 @@
+<table class="statistics_table">
+<tr><td>
+<!-- BEGIN blocks -->
+<table class="overview_table">
+<thead>
+    <tr>
+        <th class="row-1 row-counter-overview">#</th>
+        <th class="row-2 row-module-overview">{blocks.TITLE}</th>
+        <th class="row-3 row-views-overview">{L_VIEWS}</th>
+    </tr>
+</thead>
+<tbody>
+    <!-- BEGIN blocks.block -->
+    <tr class=<!-- IF block.S_ROW_COUNT is even -->"row1"<!-- ELSE -->"row2"<!-- ENDIF -->>
+        <td>{blocks.block.COUNTER}</td>
+        <td>{blocks.block.NAME}</td>
+        <td>{blocks.block.HITS}</td>
+    </tr>
+    <!-- BEGINELSE -->
+    <tr>
+        <td colspan="5">{L_ACP_NO_ITEMS}</td>
+    </tr>
+    <!-- END blocks.block -->
+</tbody>
+</table>
+<!-- END blocks -->
+
+</td></tr></table>
+	<div class="pagination">
+		<!-- IF .pagination -->
+        	<!-- INCLUDE pagination.html -->
+		<!-- ELSE -->
+			{PAGE_NUMBER}
+		<!-- ENDIF -->
+	</div>
