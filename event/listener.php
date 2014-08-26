@@ -157,8 +157,8 @@ class listener implements EventSubscriberInterface
 			{
 				$data['host'] = @gethostbyaddr(($this->user->data['session_ip']));
 				$aray = explode('.', $data['host']);
-				$data['domain'] = strtolower($aray[sizeof($aray) -1]);
-				$data['domain'] = (!file_exists('./ext/forumhulp/statistics//adm/style/images/flags/' . $data['domain'] . '.gif')) ? 'lo' : $data['domain'];
+				$data['domain'] = ($this->user->data['session_ip'] = '127.0.0.1') ? 'lo' : strtolower($aray[sizeof($aray) -1]);
+				$data['domain'] = (!file_exists('./ext/forumhulp/statistics//adm/style/images/flags/' . $data['domain'] . '.gif')) ? 'un' : $data['domain'];
 
 				if (!$request->is_set($this->config['cookie_name'] . '_statistics_res', \phpbb\request\request_interface::COOKIE))
 				{

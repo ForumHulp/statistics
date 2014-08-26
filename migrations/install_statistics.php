@@ -219,7 +219,7 @@ class install_statistics extends \phpbb\db\migration\migration
 			(245, "net", "NET"), (246, "org", "ORG"), (247, "edu", "Education"), (248, "int", "INT"), (249, "arpa", "ARPA"), (250, "at", "Austria"), (251, "gov", "Governement"),
 			(252, "mil", "Miltary"), (253, "su", "Ex U.S.R.R."), (254, "reverse", "Reverse"), (255, "biz", "Businesses"), (256, "info", "INFO"), (257, "name", "NAME"),
 			(258, "pro", "PRO"), (259, "coop", "COOP"), (260, "aero", "AERO"), (261, "museum", "MUSEUM"), (262, "tv", "TV"), (263, "cs", "Serbia and Montenegro"), 
-			(264, "ps", "Palestinian Territory, Occupied"), (265, "ws", "Samoa"), (266, "lo", "Localhost")';		
+			(264, "ps", "Palestinian Territory, Occupied"), (265, "ws", "Samoa"), (266, "lo", "Localhost"), (267, "un", "Unknown")';		
 		$db->sql_query($sql);
 
 		$db->sql_query('TRUNCATE TABLE ' . $this->table_prefix . 'statistics_se');
