@@ -34,7 +34,7 @@ $lang = array_merge($lang, array(
 	'MODULES'		=> 'Modules',
 	'AVERAGES'		=> 'Gemiddelden',
 	'RESOLUTIONS'	=> 'Scherm Resoluties',
-	'OVERVIEW'		=> 'Algemeen Overzicht',
+	'OVERVIEW'		=> 'Top 10',
 	'ADMIN'			=> 'Admininstratie',
 	'USERS'			=> 'Gebruikers',
 	'USERSTATS'		=> 'Bezoekers Stats Grafieken',
@@ -84,5 +84,13 @@ $lang = array_merge($lang, array(
 	
 	'CUSTOM_PAGES'				=> 'Custom Pagina\'s',
 	'CUSTOM_PAGES_EXPLAIN'		=> 'Pagina naam en taal variabele van jouw extensie voor Board Statistics. Selecteer jouw extensie om te verwijderen of te wijzigen.',
+	
+	'START_SCREEN'				=> 'Start screen',
+	'START_SCREEN_EXPLAIN'		=> 'Choose your startscreen for Board Statistics and if you want to display archive or online.',
+
+	'DEL_STAT'					=> 'Empty archive tables',
+	'DEL_STAT_EXPLAIN'			=> 'Empty archive tables and reset Board Statistics.',
+	
+	'STAT_DELETE_CONFIRM'		=> 'Empty archive tables?',
 	
 ));

@@ -64,7 +64,7 @@ class delete_statistics extends \phpbb\cron\task\base
 	
 	  	$os = new find_os();
 		$module_aray = $browser_aray = $os_aray = $country_aray = $user_aray = $screen_aray = $referer_aray = $search_aray = array();
-		$sql = 'SELECT time, uname, agent, ip_addr, module, host, domain, scr_res, page, referer, se_terms FROM ' . $this->online_table;
+		$sql = 'SELECT time, uname, agent, ip_addr, module, host, domain, scr_res, page, referer, se_terms FROM ' . $this->online_table . ' ORDER BY id ASC';
 		$result = $this->db->sql_query($sql);
 		$starttime = explode(' ', microtime());
 		$starttime = $starttime[1] + $starttime[0];

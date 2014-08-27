@@ -1004,7 +1004,7 @@ class stat_functions
 	{
 		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
 		$module_aray = array(0 => 'COUNTRIES', 1 => 'REFERRALS', 2 => 'SEARCHENG', 3 => 'SEARCHTERMS', 4 => 'BROWSERS', 5 => 'CRAWLERS', 6 => 'SYSTEMS', 7 => 'MODULES', 
-							 8 => 'RESOLUTIONS', 9 => 'USERS', 10 => '10', 11 => '11');
+							 8 => 'RESOLUTIONS', 9 => 'USERS', 10 => 'FL_DATE', 11 => 'HOST');
 		$modules = self::get_modules();
 		$sql_aray[] = 'SELECT d.description AS name, o.hits FROM ' . $tables['archive'] . ' o LEFT JOIN ' . $tables['domain'] . ' d ON (d.domain = o.name) 
 						WHERE cat = 4 GROUP BY o.name ORDER BY hits DESC';
@@ -1012,13 +1012,22 @@ class stat_functions
 		$sql_aray[] = 'SELECT name, hits FROM ' . $tables['archive'] . ' WHERE cat = 7 ORDER BY hits DESC';
 		$sql_aray[] = 'SELECT name, hits FROM ' . $tables['archive'] . ' WHERE cat = 8 ORDER BY hits DESC';
 		$sql_aray[] = 'SELECT name, hits FROM ' . $tables['archive'] . ' WHERE cat = 2 ORDER BY hits DESC';
-		$sql_aray[] = 'SELECT  a.name, a.hits FROM    ' . $tables['archive'] . ' a LEFT JOIN ' . BOTS_TABLE . ' b ON a.name = b.bot_name 
+		$sql_aray[] = 'SELECT a.name, a.hits FROM ' . $tables['archive'] . ' a LEFT JOIN ' . BOTS_TABLE . ' b ON a.name = b.bot_name 
 					   WHERE  a.cat = 5 AND b.bot_name IS NOT NULL ORDER BY hits DESC';
 		$sql_aray[] = 'SELECT name, hits FROM ' . $tables['archive'] . ' WHERE cat = 3 ORDER BY hits DESC';
 		$sql_aray[] = 'SELECT name, hits FROM ' . $tables['archive'] . ' WHERE cat = 1 ORDER BY hits DESC';
 		$sql_aray[] = 'SELECT name, hits FROM ' . $tables['archive'] . ' WHERE cat = 6 ORDER BY hits DESC';
-		$sql_aray[] = 'SELECT  a.name, a.hits FROM    ' . $tables['archive'] . ' a LEFT JOIN ' . USERS_TABLE . ' b ON a.name = b.username 
+		$sql_aray[] = 'SELECT a.name, a.hits FROM ' . $tables['archive'] . ' a LEFT JOIN ' . USERS_TABLE . ' b ON a.name = b.username 
 					   WHERE  a.cat = 5 AND b.username IS NOT NULL ORDER BY hits DESC';
+		
+		$sql_aray[] = 'SELECT "Fisrt startdate" AS name, MIN(first) AS hits FROM ' . $tables['archive'] . ' UNION 
+					   SELECT "Last startdate" AS name, MAX(last) AS hits FROM ' . $tables['archive'] . ' 
+					   UNION SELECT "Rows" AS name, ROUND(COUNT(id), 0) AS hits FROM ' . $tables['archive'] . ' 
+					   UNION SELECT "Table size" AS name, CASE WHEN data_length + index_length < 1024 THEN CONCAT(ROUND(((data_length + index_length)), 1), " B")
+					   WHEN data_length + index_length BETWEEN 1024 AND 1048576 THEN CONCAT(ROUND(((data_length + index_length) / 1024), 1), " Kb")
+					   WHEN data_length + index_length > 1048576 THEN CONCAT(ROUND(((data_length + index_length) / 1024 / 1024), 1), " Mb")
+					   END AS hits FROM information_schema.TABLES 
+					   WHERE table_schema = "' . $db->get_db_name() . '" AND table_name = "' . $tables['archive'] . '"';
 
 		$pagination = $phpbb_container->get('pagination');
 		$base_url = $uaction . '&amp;screen=top10';
@@ -1028,10 +1037,10 @@ class stat_functions
 		{
 			$template->assign_block_vars('blocks', array(
 				'KEY'			=> $i,
-				'TITLE'			=> $module_aray[$i],
+				'TITLE'			=> $user->lang[$module_aray[$i]],
 			));
 
-			if ($i < 10)
+			if ($i < 11)
 			{
 				$result = $db->sql_query_limit($sql_aray[$i], 10, 0);
 				$counter = 0;
@@ -1041,7 +1050,7 @@ class stat_functions
 					$template->assign_block_vars('blocks.block', array(
 						'COUNTER'  	=> $counter,
 						'NAME'		=> ($i == 7) ? ((isset($modules[$row['name']])) ? $modules[$row['name']] : 'Not found') : $row['name'],
-						'HITS'		=> $row['hits']
+						'HITS'		=> ($i == 10 && $counter < 3) ? $user->format_date($row['hits'], 'd m \'y') : $row['hits']
 						)
 					);
 				}

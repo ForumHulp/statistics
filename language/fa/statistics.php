@@ -77,4 +77,12 @@ $lang = array_merge($lang, array(
 
 	'CUSTOM_PAGES'				=> 'Custom Pages',
 	'CUSTOM_PAGES_EXPLAIN'		=> 'Fill in your custom page name and language variable to show your extension in Board Statistics. Select your extension for deleting or change it.',
+	
+	'START_SCREEN'				=> 'Start screen',
+	'START_SCREEN_EXPLAIN'		=> 'Choose your startscreen for Board Statistics and if you want to display archive or online.',
+
+	'DEL_STAT'					=> 'Empty archive tables',
+	'DEL_STAT_EXPLAIN'			=> 'Empty archive tables and reset Board Statistics.',
+	
+	'STAT_DELETE_CONFIRM'		=> 'Empty archive tables?',
 ));
