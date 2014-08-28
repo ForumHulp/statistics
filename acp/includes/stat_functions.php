@@ -141,7 +141,7 @@ class stat_functions
 				'AGENT'		=> $row['agent'],
 				'MODULE'	=> isset($modules[$row['module']]) ? $modules[$row['module']] : 'Module not found',
 				'MODULEURL'	=> '/' . $row['page'],
-				'DFLAG'		=> $row['domain'].'.gif',
+				'DFLAG'		=> $row['domain'].'.png',
 				'DDESC'		=> $row['description'],
 				'HOST'		=> $row['host'],
 				'IP'		=> $row['ip_addr']
@@ -541,6 +541,32 @@ class stat_functions
 		$template->assign_vars(array('GRAPH' => '[' . $graphstr . ']'));
 	}
 
+	public static function ese($uaction = '', $action = '')
+	{
+		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
+
+		$sql = 'SELECT * FROM ' . $tables['se'] . ' ORDER BY name';
+		$result = $db->sql_query($sql);
+		$counter = 0;
+		while ($row = $db->sql_fetchrow($result))
+		{
+			$counter += 1;
+			$template->assign_block_vars('onlinerow', array(
+				'COUNTER'   	=> $counter,
+				'NAME'			=> $row['name'],
+				'QUERY'			=> $row['query'],
+				'ID'			=> $row['id']
+				)
+			);
+		}
+		$template->assign_vars(array(
+			'U_ACTION'			=> $uaction,
+			'SUB_DISPLAY'		=> 'ese',
+			'SUBTITLE'			=> $user->lang['SEARCHENG'],
+		));
+
+	}
+	
 	public static function se_terms($start = 0, $uaction = '', $overall = 0)
 	{
 		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
@@ -1078,6 +1104,40 @@ class stat_functions
 	public static function config($start = 0, $uaction = '' )
 	{
 		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
+
+		$se_name = $request->variable('se_name', array('' => ''), true);
+		$se_query = $request->variable('se_query', array('' => ''), true);
+		$se_mark = $request->variable('mark', array('' => 0), true);
+		if (sizeof($se_name) == sizeof($se_query) && $request->variable('submit_ese', ''))
+		{
+			foreach($se_name as $key => $value)
+			{
+				if ($key != -1)
+				{
+					$sql = 'UPDATE ' . $tables['se'] . ' SET name = "' . $value . '", query = "' . $se_query[$key] . '" WHERE id  = '. $key;
+				} else if ($value != '' && $se_query[$key] != '')
+				{
+					$sql = 'INSERT INTO ' . $tables['se'] . ' VALUES(NULL, "' . $value . '", "' . $se_query[$key] . '")';	
+				}
+				$db->sql_query($sql);
+			}
+		}
+		
+		if (sizeof($se_mark) && $request->variable('delmarked', ''))
+		{
+			foreach($se_mark as $key => $value)
+			{
+				$sql = 'DELETE FROM ' . $tables['se'] . ' WHERE id  = '. $key;
+				$db->sql_query($sql);
+			}
+		}
+		
+		if ($request->variable('delall', ''))
+		{
+			$sql = 'DELETE FROM ' . $tables['se'];
+			$db->sql_query($sql);
+		}
+
 
 		$sconfig = $request->variable('config', array('' => 0), true);
 		if (sizeof($sconfig))

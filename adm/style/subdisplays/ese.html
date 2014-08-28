@@ -1,0 +1,66 @@
+<script type="text/javascript">
+function marklist(id, name, state)
+{
+	var parent = document.getElementById(id) || document[id];
+
+	if (!parent)
+	{
+		return;
+	}
+
+	var rb = parent.getElementsByTagName('input');
+	
+	for (var r = 0; r < rb.length; r++)
+	{
+		if (rb[r].name.substr(0, name.length) == name)
+		{
+			rb[r].checked = state;
+		}
+	}
+}
+</script>
+<p>{L_SEARCHENG_EXPLAIN}</p>
+<form id="list" method="post" action="{U_ACTION}&amp;screen=config">
+<table id="statistics_table" class="statistics_table">
+<thead>
+    <tr>
+        <th class="row-1 row-counter">#</th>
+        <th class="row-2 row-user">{L_NAME}</th>
+        <th class="row-3 row-user">{L_QUERY}</th>
+        <th class="row-4 row-counter">{L_MARK}</th>
+    </tr>
+</thead>
+<tbody>
+    <!-- BEGIN onlinerow -->
+    <tr class=<!-- IF onlinerow.S_ROW_COUNT is even -->"row1"<!-- ELSE -->"row2"<!-- ENDIF -->>
+        <td>{onlinerow.COUNTER}</td>
+        <td><input type="text" id="se_name[{onlinerow.ID}]" name="se_name[{onlinerow.ID}]" size="30" value="{onlinerow.NAME}" /></td>
+        <td><input type="text" id="se_query[{onlinerow.ID}]" name="se_query[{onlinerow.ID}]" size="30" value="{onlinerow.QUERY}"</td>
+        <td><input type="checkbox" class="radio" id="mark[{onlinerow.ID}]" name="mark[{onlinerow.ID}]" value="{onlinerow.ID}" /></td>
+    </tr>
+    <!-- BEGINELSE -->
+    <tr>
+        <td colspan="4">{L_ACP_NO_ITEMS}</td>
+    </tr>
+    <!-- END onlinerow -->
+    <tr class=<!-- IF onlinerow.S_ROW_COUNT is even -->"row1"<!-- ELSE -->"row2"<!-- ENDIF -->>
+        <td>New</td>
+        <td><input type="text" id="se_name[-1]" name="se_name[-1]" size="30" value="" /></td>
+        <td><input type="text" id="se_query[-1]" name="se_query[-1]" size="30" value=""</td>
+        <td></td>
+    </tr>
+</tbody>
+</table>
+<!-- IF .onlinerow -->
+	<fieldset class="quick">
+	<div style="width:49%;float:left;">
+        <input class="button1" type="submit" id="submit_ese" name="submit_ese" value="{L_SUBMIT}" />&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+	</div>
+	<div style="width:49%;float:right;">
+    	<input class="button2" type="submit" name="delall" value="{L_DELETE_ALL}" />&nbsp;
+		<input class="button2" type="submit" name="delmarked" value="{L_DELETE_MARKED}" /><br />
+		<p class="small"><a href="#" onclick="marklist('list', 'mark', true); return false;">{L_MARK_ALL}</a> &bull; <a href="#" onclick="marklist('list', 'mark', false); return false;">{L_UNMARK_ALL}</a></p></div>
+	</fieldset>
+<!-- ENDIF -->
+</form>

@@ -112,6 +112,11 @@ class statistics_module
 				stat_functions::se($start, $this->u_action, $overall);
 			break;
 
+			case 'ese':
+				$this->tpl_name = 'subdisplays/ese';
+				stat_functions::ese($this->u_action, $action);
+			break;
+
 			case 'se_terms':
 				stat_functions::se_terms($start, $this->u_action, $overall);
 			break;

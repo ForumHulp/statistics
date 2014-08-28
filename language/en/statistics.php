@@ -68,6 +68,7 @@ $lang = array_merge($lang, array(
 	'MAX_SCREENS'		=> 'Screen Resolutions',
 	'MAX_ONLINE'		=> 'Online',
 	'DELL'				=> 'Delete',
+	'SEARCHENG_EXPLAIN'	=> 'Change, edit, add or delete searchengines.',
 
 	'MAX_COUNTRIES_EXPLAIN'		=> 'See explanation at modules.',
 	'MAX_REFERER_EXPLAIN'		=> 'See explanation at modules',
