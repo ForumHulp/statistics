@@ -1030,7 +1030,7 @@ class stat_functions
 	{
 		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
 		$module_aray = array(0 => 'COUNTRIES', 1 => 'REFERRALS', 2 => 'SEARCHENG', 3 => 'SEARCHTERMS', 4 => 'BROWSERS', 5 => 'CRAWLERS', 6 => 'SYSTEMS', 7 => 'MODULES', 
-							 8 => 'RESOLUTIONS', 9 => 'USERS', 10 => 'FL_DATE', 11 => 'HOST');
+							 8 => 'RESOLUTIONS', 9 => 'USERS', 10 => 'FL_DATE', 11 => 'POSTS');
 		$modules = self::get_modules();
 		$sql_aray[] = 'SELECT d.description AS name, o.hits FROM ' . $tables['archive'] . ' o LEFT JOIN ' . $tables['domain'] . ' d ON (d.domain = o.name) 
 						WHERE cat = 4 GROUP BY o.name ORDER BY hits DESC';
@@ -1054,7 +1054,8 @@ class stat_functions
 					   WHEN data_length + index_length > 1048576 THEN CONCAT(ROUND(((data_length + index_length) / 1024 / 1024), 1), " Mb")
 					   END AS hits FROM information_schema.TABLES 
 					   WHERE table_schema = "' . $db->get_db_name() . '" AND table_name = "' . $tables['archive'] . '"';
-
+		$sql_aray[] = '';
+		
 		$pagination = $phpbb_container->get('pagination');
 		$base_url = $uaction . '&amp;screen=top10';
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', 12, 6, $start);
@@ -1066,7 +1067,7 @@ class stat_functions
 				'TITLE'			=> $user->lang[$module_aray[$i]],
 			));
 
-			if ($i < 11)
+			if ($i < 12)
 			{
 				$result = $db->sql_query_limit($sql_aray[$i], 10, 0);
 				$counter = 0;
@@ -1084,10 +1085,21 @@ class stat_functions
 				{
 					for($counter + 1; $counter + 1 <= 10; $counter++)
 					{
+						if ($i == 11)
+						{
+							$aray[0] = array('name' => 'Posts per day', 'hits' => round($config['num_posts'] / ((time() - $config['board_startdate']) / 86400), 1));
+							$aray[1] = array('name' => 'Posts per month', 'hits' => round($config['num_posts'] / ((time() - $config['board_startdate']) / 2440800), 1));
+							$aray[2] = array('name' => 'Topics per day', 'hits' => round($config['num_topics'] / ((time() - $config['board_startdate']) / 86400), 1));
+							$aray[3] = array('name' => 'Topics per month', 'hits' => round($config['num_topics'] / ((time() - $config['board_startdate']) / 2440800), 1));
+							$aray[4] = array('name' => 'Forumdays', 'hits' => floor((time() - $config['board_startdate']) / 86400));
+							$aray[5] = array('name' => 'Average posts per topic', 'hits' => floor($config['num_posts'] / $config['num_topics']));
+							$aray[6] = array('name' => 'Average posts per user', 'hits' => floor($config['num_posts'] / $config['num_users']));
+						}
+						
 						$template->assign_block_vars('blocks.block', array(
 							'COUNTER'  	=> $counter + 1,
-							'NAME'		=> '',
-							'HITS'		=> ''
+							'NAME'		=> ($i == 11 && isset($aray[$counter])) ? $aray[$counter]['name'] : '',
+							'HITS'		=> ($i == 11 && isset($aray[$counter])) ? $aray[$counter]['hits'] : '',
 							)
 						);
 					}
