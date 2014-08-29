@@ -594,13 +594,14 @@ class stat_functions
 			$terms = explode(' ', $row['se_terms']);
 			foreach($terms as $key)
 			{
-				$se_terms[$key] = isset($se_terms[$key]) ? $se_terms[$key] + (int) $row['rowtotal'] : (int) $row['rowtotal'];
+				isset($se_terms[$key]) ? $se_terms[$key] = (isset($se_terms[$key]) ? $se_terms[$key] + (int) $row['rowtotal'] : (int) $row['rowtotal']) : NULL;
 			}
 			($overall) ? $firstdate = $row['firstdate'] : NULL;
 			($overall) ? $lastdate = $row['lastdate'] : NULL;
 		}
+		
 		$total_entries = sizeof($se_terms);
-
+		
 		if ($sort_key == 'd')
 		{
 			($sort_dir == 'd') ? ksort($se_terms) : krsort($se_terms);
@@ -1077,7 +1078,7 @@ class stat_functions
 					$template->assign_block_vars('blocks.block', array(
 						'COUNTER'  	=> $counter,
 						'NAME'		=> ($i == 7) ? ((isset($modules[$row['name']])) ? $modules[$row['name']] : 'Not found') : $row['name'],
-						'HITS'		=> ($i == 10 && $counter < 3) ? $user->format_date($row['hits'], 'd m \'y') : $row['hits']
+						'HITS'		=> ($i == 10 && isset($row['hits']) && $counter < 3) ? $user->format_date($row['hits'], 'd m \'y') : $row['hits']
 						)
 					);
 				}
