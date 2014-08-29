@@ -109,7 +109,8 @@ class delete_statistics extends \phpbb\cron\task\base
 			'hits'		=> $row_count,
 		);
 		
-		$sql = 'INSERT INTO ' . $this->stats_table . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+		$sql = 'INSERT INTO ' . $this->stats_table . ' ' . $this->db->sql_build_array('INSERT', $sql_ary) . ' ON DUPLICATE KEY UPDATE hits = hits + ' . $sql_ary['hits'];
+
 		$this->db->sql_query($sql);
 		$mtime = explode(' ', microtime());
 		$totaltime = $mtime[0] + $mtime[1] - $starttime;
@@ -241,7 +242,7 @@ class delete_statistics extends \phpbb\cron\task\base
 	public function should_run()
 	{
 		return $this->config['delete_statistics_last_gc'] < time() - $this->config['delete_statistics_gc'] && 
-				(date('Y-m-d', time()) != date('Y-m-d', $this->config['delete_statistics_last_gc']));
+			(date('Y-m-d', time()) != date('Y-m-d', $this->config['delete_statistics_last_gc']));
 	}
 }
 
