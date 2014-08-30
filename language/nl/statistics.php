@@ -9,12 +9,12 @@
 
 if (!defined('IN_PHPBB'))
 {
-        exit;
+	exit;
 }
 
 if (empty($lang) || !is_array($lang))
 {
-        $lang = array();
+	$lang = array();
 }
 
 $lang = array_merge($lang, array(
@@ -39,21 +39,21 @@ $lang = array_merge($lang, array(
 	'USERS'			=> 'Gebruikers',
 	'USERSTATS'		=> 'Bezoekers Stats Grafieken',
 	'LASTVISITS'	=> 'Laatste Pagina bezoeken',
-	
+
 	// Online
-    'TIME'		=> 'Tijd',
-    'USER'		=> 'Gebruiker',
-    'MODULE'	=> 'Module',
-    'COUNTRY'	=> 'Land',
+	'TIME'		=> 'Tijd',
+	'USER'		=> 'Gebruiker',
+	'MODULE'	=> 'Module',
+	'COUNTRY'	=> 'Land',
 	'HOST'		=> 'Host',	
-    'IP'		=> 'IP adres',
+	'IP'		=> 'IP adres',
 
 	// Module
 	'MODULE_FORUM'	=> 'Modules / Forums',
 	'VIEWS'			=> 'Hits',
 	'PERC'			=> 'Percentage',
 	'GRAPH'			=> 'Grafiek',
-	
+
 	//Config
 	'MAX_COUNTRIES'		=> 'Landen',
 	'MAX_REFERER'		=> 'Referrals',
@@ -81,16 +81,16 @@ $lang = array_merge($lang, array(
 	'MAX_AVERAGES_EXPLAIN'		=> 'Aantal records in online modus per pagina, in table maximum aantal records',
 	'MAX_SCREENS_EXPLAIN'		=> 'Aantal records in online modus per pagina, in table maximum aantal records',
 	'MAX_ONLINE_EXPLAIN'		=> 'Aantal records in online modus per pagina, in table maximum aantal records',
-	
+
 	'CUSTOM_PAGES'				=> 'Custom Pagina\'s',
 	'CUSTOM_PAGES_EXPLAIN'		=> 'Pagina naam en taal variabele van jouw extensie voor Board Statistics. Selecteer jouw extensie om te verwijderen of te wijzigen.',
-	
+
 	'START_SCREEN'				=> 'Start screen',
 	'START_SCREEN_EXPLAIN'		=> 'Choose your startscreen for Board Statistics and if you want to display archive or online.',
 
 	'DEL_STAT'					=> 'Empty archive tables',
 	'DEL_STAT_EXPLAIN'			=> 'Empty archive tables and reset Board Statistics.',
-	
+
 	'STAT_DELETE_CONFIRM'		=> 'Empty archive tables?',
-	
+
 ));

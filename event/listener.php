@@ -28,15 +28,14 @@ class listener implements EventSubscriberInterface
 	protected $se_table;
 	protected $php_ext;
 
-    /**
+	/**
     * Constructor
     *
     * @param \phpbb\controller\helper    $helper        Controller helper object
     */
-    public function __construct(\phpbb\config\config $config, \phpbb\controller\helper $helper, \phpbb\user $user, \phpbb\db\driver\driver_interface $db, 
-								$online_table, $config_table, $se_table, $php_ext)
-    {
-        $this->config = $config;
+	public function __construct(\phpbb\config\config $config, \phpbb\controller\helper $helper, \phpbb\user $user, \phpbb\db\driver\driver_interface $db, $online_table, $config_table, $se_table, $php_ext)
+	{
+		$this->config = $config;
 		$this->helper = $helper;
 		$this->user = $user;
 		$this->db = $db;
@@ -46,13 +45,13 @@ class listener implements EventSubscriberInterface
 		$this->php_ext = $php_ext;
     }
 
-    static public function getSubscribedEvents()
-    {
-        return array(
-			'core.page_footer'					=> 'get_ref',
+	static public function getSubscribedEvents()
+	{
+		return array(
+			'core.page_footer'	=> 'get_ref',
 		);
-    }
-	
+	}
+
 	/**
 	 * @param object $event The event object
 	 * @return null
@@ -74,7 +73,7 @@ class listener implements EventSubscriberInterface
 		$result = $db->sql_query($sql);
 		while ($row = $db->sql_fetchrow($result))
 		{
-			(isset($user->lang[$row['module_langname']])) ? $modules[$row['module_langname']] = $user->lang[$row['module_langname']] : NULL;
+			(isset($user->lang[$row['module_langname']])) ? $modules[$row['module_langname']] = $user->lang[$row['module_langname']] : null;
 		}
 		return $modules;
 	}
@@ -82,7 +81,7 @@ class listener implements EventSubscriberInterface
 	function get_ref($event)
 	{
 		global $request, $template;
-	
+
 		if ($this->user->page['script_path'] != '/adm/')
 		{
 			$ref_url = strtolower($this->user->referer);
@@ -94,13 +93,13 @@ class listener implements EventSubscriberInterface
 					$ref_url = preg_replace('/(\?)?(&amp;|&)?sid=[a-z0-9]+/', '', $ref_url);
 					$ref_url = preg_replace("/$this->php_ext(&amp;|&)+?/", "$this->php_ext?", $ref_url);
 				}
-				
+
 				$data['referer'] = parse_url(htmlspecialchars(strip_tags($ref_url)));
-				
+
 				$sql = 'SELECT DISTINCT query FROM ' . $this->se_table . ' WHERE name like "%' . substr($data['referer']['host'], 0, strrpos($data['referer']['host'], '.')) . '"';
 				$result = $this->db->sql_query($sql);
 				$row = $this->db->sql_fetchrow($result);
-				
+
 				if ($row && strpos($data['referer']['query'], $row['query'] . '=') !== false)
 				{
 					parse_str($data['referer']['query'], $query);
@@ -121,14 +120,13 @@ class listener implements EventSubscriberInterface
 				$data['module'] = $this->user->page['forum'];
 			} else if ($this->user->page['page_dir'] == '' && !$request->is_set('i'))
 			{
-				$module_pages = array('index.php' => 'FORUM_INDEX', 'faq.php' => 'VIEWING_FAQ', 'mcp.php' => 'VIEWING_MCP', 'search.php' => 'SEARCHING_FORUMS', 
-									  'viewonline.php', 'VIEWING_ONLINE', 'memberlist.php' => 'VIEWING_MEMBERS', 'ucp.php' => 'VIEWING_UCP');
-				
+				$module_pages = array('index.php' => 'FORUM_INDEX', 'faq.php' => 'VIEWING_FAQ', 'mcp.php' => 'VIEWING_MCP', 'search.php' => 'SEARCHING_FORUMS', 'viewonline.php',  'VIEWING_ONLINE', 'memberlist.php' => 'VIEWING_MEMBERS', 'ucp.php' => 'VIEWING_UCP');
+
 				$sql = 'SELECT custom_pages FROM ' . $this->config_table;
 				$result = $this->db->sql_query($sql);
 				$row = $this->db->sql_fetchfield('custom_pages');
 				$row = unserialize($row);
-				
+
 				if (sizeof($row) > 0)
 				{
 					foreach($row as $key => $value)
@@ -136,8 +134,8 @@ class listener implements EventSubscriberInterface
 						$module_pages[$key] = $value;
 					}
 				}
-				$data['module'] = (isset($module_pages[$this->user->page['page_name']])) ? $module_pages[$this->user->page['page_name']] : NULL;
-				
+				$data['module'] = (isset($module_pages[$this->user->page['page_name']])) ? $module_pages[$this->user->page['page_name']] : null;
+
 			} else
 			{
 				if (is_numeric($request->variable('i', '')))
@@ -149,10 +147,10 @@ class listener implements EventSubscriberInterface
 				} else
 				{
 					$modules = $this->get_modules();
-					(in_array(strtoupper($request->variable('i', '')), $modules)) ? $data['module'] = strtoupper($request->variable('i', '')) : NULL;
+					(in_array(strtoupper($request->variable('i', '')), $modules)) ? $data['module'] = strtoupper($request->variable('i', '')) : null;
 				}
 			}
-			
+
 			if (isset($data['module']) && $data['module'] !== '')
 			{
 				$data['host'] = @gethostbyaddr(($this->user->data['session_ip']));
@@ -168,7 +166,7 @@ class listener implements EventSubscriberInterface
 				{
 					$data['screen_res'] = $request->variable($this->config['cookie_name'] . '_statistics_res', '1024x768x32', false, \phpbb\request\request_interface::COOKIE);
 				}
-		
+
 				$fields = array(
 					'time'			=> time(),
 					'uname'			=> $this->user->data['username'],

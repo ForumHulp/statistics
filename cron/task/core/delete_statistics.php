@@ -8,11 +8,13 @@
 */
 
 namespace forumhulp\statistics\cron\task\core;
+
 if (!class_exists('find_os'))
 {
 	include('find_os.' . $this->php_ext);
 }
 use find_os;
+
 /**
 * @ignore
 */
@@ -41,7 +43,7 @@ class delete_statistics extends \phpbb\cron\task\base
 	* @param phpbb_config $config The config
 	* @param phpbb_db_driver $db The db connection
 	*/
-	public function __construct($phpbb_root_path, $php_ext, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, $online_table, $config_table, $archive_table, $stats_table )
+	public function __construct($phpbb_root_path, $php_ext, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, $online_table, $config_table, $archive_table, $stats_table)
 	{
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
@@ -61,8 +63,8 @@ class delete_statistics extends \phpbb\cron\task\base
 	public function run()
 	{
 		global $phpbb_container, $info;
-	
-	  	$os = new find_os();
+
+		$os = new find_os();
 		$module_aray = $browser_aray = $os_aray = $country_aray = $user_aray = $screen_aray = $referer_aray = $search_aray = array();
 		$sql = 'SELECT time, uname, agent, ip_addr, module, host, domain, scr_res, page, referer, se_terms FROM ' . $this->online_table . ' ORDER BY id ASC';
 		$result = $this->db->sql_query($sql);
@@ -71,17 +73,17 @@ class delete_statistics extends \phpbb\cron\task\base
 		$row_count = $start_day = 0;
 		while (still_on_time() && $row = $this->db->sql_fetchrow($result))
 		{
-			$module_aray	= ($row['module'] != '') ? $this->count_array($module_aray, $row['module']) : NULL;
-			
-			$os->setUserAgent($row['agent']);
-			$browser_aray	= ($row['agent'] != '') ? $this->count_array($browser_aray, $os->getBrowser() . ' ' . $os->getVersion()) : NULL;
-			$os_aray		= ($row['agent'] != '') ? $this->count_array($os_aray, $os->getPlatform()) : NULL;
+			$module_aray	= ($row['module'] != '') ? $this->count_array($module_aray, $row['module']) : null;
 
-			$country_aray	= ($row['domain'] != '') ? $this->count_array($country_aray, $row['domain']) : NULL;
-			$user_aray		= ($row['uname'] != '') ? $this->count_array($user_aray, $row['uname']) : NULL;
-			$screen_aray	= ($row['scr_res'] != '') ? $this->count_array($screen_aray, $row['scr_res']) : NULL;
-			$referer_aray	= ($row['referer'] != '') ? $this->count_array($referer_aray, $this->url_to_domain($row['referer'])) : NULL;
-			$search_aray	= ($row['se_terms'] != '') ? $this->split_array($search_aray, $row['se_terms']) : NULL;
+			$os->setUserAgent($row['agent']);
+			$browser_aray	= ($row['agent'] != '') ? $this->count_array($browser_aray, $os->getBrowser() . ' ' . $os->getVersion()) : null;
+			$os_aray		= ($row['agent'] != '') ? $this->count_array($os_aray, $os->getPlatform()) : null;
+
+			$country_aray	= ($row['domain'] != '') ? $this->count_array($country_aray, $row['domain']) : null;
+			$user_aray		= ($row['uname'] != '') ? $this->count_array($user_aray, $row['uname']) : null;
+			$screen_aray	= ($row['scr_res'] != '') ? $this->count_array($screen_aray, $row['scr_res']) : null;
+			$referer_aray	= ($row['referer'] != '') ? $this->count_array($referer_aray, $this->url_to_domain($row['referer'])) : null;
+			$search_aray	= ($row['se_terms'] != '') ? $this->split_array($search_aray, $row['se_terms']) : null;
 			$row_count++;
 			$start_day = (!$start_day) ? $row['time'] : $start_day;
 		}
@@ -95,20 +97,20 @@ class delete_statistics extends \phpbb\cron\task\base
 		$this->store($screen_aray, 6);
 		$this->store($referer_aray, 7);
 		$this->store($search_aray, 8);
-		
+
 		unset($module_aray, $browser_aray, $os_aray, $country_aray, $user_aray, $screen_aray, $referer_aray, $search_aray);
 		$sql = 'TRUNCATE TABLE ' . $this->online_table;
 		$this->db->sql_query($sql);
 		$sql = 'OPTIMIZE TABLE ' . $this->online_table;
 		$this->db->sql_query($sql);
-		
+
 		$sql_ary = array(
 			'year'		=> date('Y', $start_day),
 			'month'		=> date('n', $start_day),
 			'day'		=> date('j', $start_day),
 			'hits'		=> $row_count,
 		);
-		
+
 		$sql = 'INSERT INTO ' . $this->stats_table . ' ' . $this->db->sql_build_array('INSERT', $sql_ary) . ' ON DUPLICATE KEY UPDATE hits = hits + ' . $sql_ary['hits'];
 
 		$this->db->sql_query($sql);
@@ -124,13 +126,13 @@ class delete_statistics extends \phpbb\cron\task\base
 	public function store($aray, $cat)
 	{
 		global $phpbb_container;
-		
+
 		if (sizeof($aray))
 		{
 			$this->archive_table	= $phpbb_container->getParameter('tables.archive_table');
-	
+
 			$sconfig = $this->get_config();
-			
+
 			foreach ($aray as $key => $value)
 			{ 
 				$sql = 'SELECT COUNT(name) AS counter FROM ' . $this->archive_table . ' WHERE cat = ' . $cat . ' AND name = "' . $key . '"';
@@ -145,14 +147,14 @@ class delete_statistics extends \phpbb\cron\task\base
 						'first'		=> time(),
 						'last'		=> time(),
 					);
-	
+
 					$sql = 'INSERT INTO ' . $this->archive_table . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 				} else
 				{
 					$sql = 'UPDATE ' . $this->archive_table . ' SET hits = hits + ' . $value . ', last = ' . time() .' WHERE cat = ' . $cat . ' AND name = "' . $key . '"';
 				}
 				$this->db->sql_query($sql);
-			
+
 				$sql = 'SELECT hits, last FROM ' . $this->archive_table . ' WHERE cat = ' . $cat . ' ORDER BY hits DESC LIMIT '. $sconfig[$cat] .', 1';
 				$result = $this->db->sql_query($sql);
 				$prune = $this->db->sql_fetchrow($result);
@@ -184,11 +186,11 @@ class delete_statistics extends \phpbb\cron\task\base
 		}
 		return $sconfig;
 	}
-	
+
 	public function count_array($aray, $row1)
 	{
-		$found = 0; 
-		if (is_array($aray)) 
+		$found = 0;
+		if (is_array($aray))
 		{
 			foreach ($aray as $key => $value)
 			{
@@ -200,7 +202,10 @@ class delete_statistics extends \phpbb\cron\task\base
 				}
 			}
 		}
-		if (!$found) $aray[$row1] = 1;
+		if (!$found)
+		{
+			$aray[$row1] = 1;
+		}
 		return $aray;
 	}
 
@@ -217,9 +222,14 @@ class delete_statistics extends \phpbb\cron\task\base
 	public function url_to_domain($url)
 	{
 		$host = @parse_url($url, PHP_URL_HOST);
-		if (!$host) $host = $url;
-		if (substr($host, 0, 4) == 'www.') $host = substr($host, 4);
-
+		if (!$host)
+		{
+			$host = $url;
+		}
+		if (substr($host, 0, 4) == 'www.')
+		{
+			$host = substr($host, 4);
+		}
 		return $host;
 	}
 
@@ -241,9 +251,6 @@ class delete_statistics extends \phpbb\cron\task\base
 	*/
 	public function should_run()
 	{
-		return $this->config['delete_statistics_last_gc'] < time() - $this->config['delete_statistics_gc'] && 
-			(date('Y-m-d', time()) != date('Y-m-d', $this->config['delete_statistics_last_gc']));
+		return $this->config['delete_statistics_last_gc'] < (time() - $this->config['delete_statistics_gc']) && (date('Y-m-d', time()) != date('Y-m-d', $this->config['delete_statistics_last_gc']));
 	}
 }
-
-?>

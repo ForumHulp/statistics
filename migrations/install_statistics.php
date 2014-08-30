@@ -39,7 +39,7 @@ class install_statistics extends \phpbb\db\migration\migration
 						'max_se'			=> array('UINT:4', 20),
 						'max_crawl'			=> array('UINT:4', 20),
 						'max_online'		=> array('UINT:4', 20),
-						
+	
 						't_modules'			=> array('UINT:4', 100),
 						't_browsers'		=> array('UINT:4', 100),
 						't_os'				=> array('UINT:4', 100),
@@ -58,29 +58,29 @@ class install_statistics extends \phpbb\db\migration\migration
 				),
 				$this->table_prefix . 'statistics_domains'	=> array(
 					'COLUMNS'			=> array(
-						'id'			=> array('UINT', NULL, 'auto_increment'),
+						'id'			=> array('UINT', null, 'auto_increment'),
 						'domain'		=> array('VCHAR:20', ''),
 						'description'	=> array('VCHAR:50', ''),
 					),
 					'PRIMARY_KEY'		=> 'id',
-                    'KEYS'				=> array(
-                        'domain'		=> array('INDEX', 'domain'),
-                    )
+					'KEYS'				=> array(
+						'domain'		=> array('INDEX', 'domain'),
+					)
 				),
 				$this->table_prefix . 'statistics_se'	=> array(
 					'COLUMNS'			=> array(
-						'id'			=> array('UINT', NULL, 'auto_increment'),
+						'id'			=> array('UINT', null, 'auto_increment'),
 						'name'			=> array('VCHAR:25', ''),
 						'query'			=> array('VCHAR:255', ''),
 					),
 					'PRIMARY_KEY'		=> 'id',
-                    'KEYS'				=> array(
-                        'name'		=> array('INDEX', 'name'),
-                    )
+					'KEYS'				=> array(
+						'name'		=> array('INDEX', 'name'),
+					)
 				),
 				$this->table_prefix . 'statistics_online'	=> array(
 					'COLUMNS'			=> array(
-						'id'			=> array('UINT', NULL, 'auto_increment'),
+						'id'			=> array('UINT', null, 'auto_increment'),
 						'time'			=> array('TIMESTAMP', 0),
 						'uname' 		=> array('VCHAR:25', ''),
 						'agent' 		=> array('VCHAR:255', ''),
@@ -94,13 +94,13 @@ class install_statistics extends \phpbb\db\migration\migration
 						'se_terms' 		=> array('VCHAR:500', ''),
 					),
 					'PRIMARY_KEY'		=> 'id',
-                    'KEYS'          	=> array(
-                        'time'			=> array('INDEX', 'time'),
-                    )
+					'KEYS'          	=> array(
+						'time'			=> array('INDEX', 'time'),
+					)
 				),
 				$this->table_prefix . 'statistics_archive'	=> array(
 					'COLUMNS'			=> array(
-						'id'			=> array('UINT', NULL, 'auto_increment'),
+						'id'			=> array('UINT', null, 'auto_increment'),
 						'cat'			=> array('UINT:4', 0),
 						'name'			=> array('VCHAR:255', ''),
 						'hits'			=> array('UINT:8', 0),
@@ -108,11 +108,11 @@ class install_statistics extends \phpbb\db\migration\migration
 						'last'			=> array('UINT:11', 0),
 					),
 					'PRIMARY_KEY'		=> 'id',
-                    'KEYS'				=> array(
+					'KEYS'				=> array(
 						'cat'		=> array('INDEX', 'cat'),
-                        'name'		=> array('INDEX', 'name'),
+						'name'		=> array('INDEX', 'name'),
 						'last'		=> array('INDEX', 'last'),
-                    )
+					)
 				),
 				$this->table_prefix . 'statistics'	=> array(
 					'COLUMNS'			=> array(
@@ -121,12 +121,12 @@ class install_statistics extends \phpbb\db\migration\migration
 						'day'			=> array('UINT:4', 0),
 						'hits'			=> array('UINT:11', 0),
 					),
-                    'KEYS'			=> array(
+					'KEYS'			=> array(
 						'id'		=> array('UNIQUE', array('year', 'month', 'day')),
 						'year'		=> array('INDEX', 'year'),
-                        'month'		=> array('INDEX', 'month'),
+						'month'		=> array('INDEX', 'month'),
 						'day'		=> array('INDEX', 'day'),
-                    )
+					)
 				),
 			)
 		);
@@ -164,7 +164,7 @@ class install_statistics extends \phpbb\db\migration\migration
 			)),
 		);
 	}
-	
+
 	public function update_tables()
 	{
 		global $db;
@@ -174,7 +174,7 @@ class install_statistics extends \phpbb\db\migration\migration
 		$db->sql_query($sql);
 
 		$db->sql_query('TRUNCATE TABLE ' . $this->table_prefix . 'statistics_domains');
-		
+
 		$sql = 'INSERT INTO ' . $this->table_prefix . 'statistics_domains VALUES
 				(1, "ac", "Ascension Island"), (2, "ad", "Andorra"), (3, "ae", "United Arab Emirates"), (4, "af", "Afghanistan"), (5, "ag", "Antigua and Barbuda"), (6, "ai", "Anguilla"),
 				(7, "al", "Albania"), (8, "am", "Armenia"), (9, "an", "Netherlands Antilles"), (10, "ao", "Angola"), (11, "aq", "Antarctica"), (12, "ar", "Argentina"), 
@@ -219,7 +219,7 @@ class install_statistics extends \phpbb\db\migration\migration
 				(241, "vc", "Saint Vincent and the Grenadines"), (242, "ve", "Venezuela"), (243, "vg", "British Virgin Islands"), (244, "vi", "United States Virgin Islands"),
 				(245, "vn", "Vietnam"), (246, "vu", "Vanuatu"), (247, "wf", "Wallis and Futuna"), (248, "ws", "Samoa"), (249, "ye", "Yemen"), (250, "yt", "Mayotte"), 
 				(251, "yu", "SFR Yugoslavia"), (252, "za", "South Africa"), (253, "zm", "Zambia"), (254, "zw", "Zimbabwe"), (255, "com", "Commercial"),	(256, "org", "Organization"), 
-				(257, "net", "Network"), (258, "lo", "Localhost"), (259, "un", "Unknown")';		
+				(257, "net", "Network"), (258, "lo", "Localhost"), (259, "un", "Unknown")';
 		$db->sql_query($sql);
 
 		$db->sql_query('TRUNCATE TABLE ' . $this->table_prefix . 'statistics_se');
