@@ -43,7 +43,7 @@ class listener implements EventSubscriberInterface
 		$this->config_table = $config_table;
 		$this->se_table = $se_table;
 		$this->php_ext = $php_ext;
-    }
+	}
 
 	static public function getSubscribedEvents()
 	{
@@ -162,7 +162,7 @@ class listener implements EventSubscriberInterface
 				{
 					$template->assign_vars(array('ACOOKIE' => true, 'COOKIENAME' => $this->config['cookie_name']));
 					$data['screen_res'] = '1024x768x32';
-				} else 
+				} else
 				{
 					$data['screen_res'] = $request->variable($this->config['cookie_name'] . '_statistics_res', '1024x768x32', false, \phpbb\request\request_interface::COOKIE);
 				}

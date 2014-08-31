@@ -45,7 +45,7 @@ $lang = array_merge($lang, array(
 	'USER'		=> 'User',
 	'MODULE'	=> 'Module',
 	'COUNTRY'	=> 'Country',
-	'HOST'		=> 'Host',	
+	'HOST'		=> 'Host',
 	'IP'		=> 'IP address',
 
 	// Module

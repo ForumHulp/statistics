@@ -39,7 +39,7 @@ class install_statistics extends \phpbb\db\migration\migration
 						'max_se'			=> array('UINT:4', 20),
 						'max_crawl'			=> array('UINT:4', 20),
 						'max_online'		=> array('UINT:4', 20),
-	
+
 						't_modules'			=> array('UINT:4', 100),
 						't_browsers'		=> array('UINT:4', 100),
 						't_os'				=> array('UINT:4', 100),

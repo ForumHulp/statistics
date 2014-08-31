@@ -20,10 +20,10 @@ class find_os
 	private $_is_robot = false;
 	private $_is_facebook = false;
 	private $_aol_version = '';
-	
+
 	const BROWSER_UNKNOWN = 'unknown';
 	const VERSION_UNKNOWN = 'unknown';
-	
+
 	const BROWSER_OPERA = 'Opera'; // http://www.opera.com/
 	const BROWSER_OPERA_MINI = 'Opera Mini'; // http://www.opera.com/mini/
 	const BROWSER_WEBTV = 'WebTV'; // http://www.webtv.net/pc/
@@ -55,15 +55,15 @@ class find_os
 	const BROWSER_MSN = 'MSN Browser'; // http://explorer.msn.com/
 	const BROWSER_MSNBOT = 'MSN Bot'; // http://search.msn.com/msnbot.htm
 	const BROWSER_BINGBOT = 'Bing Bot'; // http://en.wikipedia.org/wiki/Bingbot
-	
+
 	const BROWSER_NETSCAPE_NAVIGATOR = 'Netscape Navigator'; // http://browser.netscape.com/ (DEPRECATED)
 	const BROWSER_GALEON = 'Galeon'; // http://galeon.sourceforge.net/ (DEPRECATED)
 	const BROWSER_NETPOSITIVE = 'NetPositive'; // http://en.wikipedia.org/wiki/NetPositive (DEPRECATED)
 	const BROWSER_PHOENIX = 'Phoenix'; // http://en.wikipedia.org/wiki/History_of_Mozilla_Firefox (DEPRECATED)
-	
+
 	const PLATFORM_UNKNOWN = 'unknown';
 	const OPERATING_SYSTEM_UNKNOWN = 'unknown';
-	
+
 	public function Browser($userAgent = "")
 	{
 		$this->reset();
@@ -73,7 +73,7 @@ class find_os
 			$this->determine();
 		}
 	}
-	
+
 	/**
 	 * Reset all properties
 	 */
@@ -91,7 +91,7 @@ class find_os
 		$this->_is_facebook = false;
 		$this->_aol_version = self::VERSION_UNKNOWN;
 	}
-	
+
 	/**
 	 * Check to see if the specific browser is valid
 	 * @param string $browserName
@@ -101,7 +101,7 @@ class find_os
 	{
 		return (0 == strcasecmp($this->_browser_name, trim($browserName)));
 	}
-	
+
 	/**
 	 * The name of the browser.  All return types are from the class contants
 	 * @return string Name of the browser
@@ -110,7 +110,7 @@ class find_os
 	{
 		return $this->_browser_name;
 	}
-	
+
 	/**
 	 * Set the name of the browser
 	 * @param $browser string The name of the Browser
@@ -119,7 +119,7 @@ class find_os
 	{
 		$this->_browser_name = $browser;
 	}
-	
+
 	/**
 	 * The name of the platform.  All return types are from the class contants
 	 * @return string Name of the browser
@@ -128,7 +128,7 @@ class find_os
 	{
 		return $this->_platform;
 	}
-	
+
 	/**
 	 * Set the name of the platform
 	 * @param string $platform The name of the Platform
@@ -137,7 +137,7 @@ class find_os
 	{
 		$this->_platform = $platform;
 	}
-	
+
 	/**
 	 * The version of the browser.
 	 * @return string Version of the browser (will only contain alpha-numeric characters and a period)
@@ -146,7 +146,7 @@ class find_os
 	{
 		return $this->_version;
 	}
-	
+
 	/**
 	 * Set the version of the browser
 	 * @param string $version The version of the Browser
@@ -155,7 +155,7 @@ class find_os
 	{
 		$this->_version = preg_replace('/[^0-9,.,a-z,A-Z-]/', '', $version);
 	}
-	
+
 	/**
 	 * The version of AOL.
 	 * @return string Version of AOL (will only contain alpha-numeric characters and a period)
@@ -164,7 +164,7 @@ class find_os
 	{
 		return $this->_aol_version;
 	}
-	
+
 	/**
 	 * Set the version of AOL
 	 * @param string $version The version of AOL
@@ -173,7 +173,7 @@ class find_os
 	{
 		$this->_aol_version = preg_replace('/[^0-9,.,a-z,A-Z]/', '', $version);
 	}
-	
+
 	/**
 	 * Is the browser from AOL?
 	 * @return boolean True if the browser is from AOL otherwise false
@@ -182,7 +182,7 @@ class find_os
 	{
 		return $this->_is_aol;
 	}
-	
+
 	/**
 	 * Is the browser from a mobile device?
 	 * @return boolean True if the browser is from a mobile device otherwise false
@@ -191,7 +191,7 @@ class find_os
 	{
 		return $this->_is_mobile;
 	}
-	
+
 	/**
 	 * Is the browser from a tablet device?
 	 * @return boolean True if the browser is from a tablet device otherwise false
@@ -200,7 +200,7 @@ class find_os
 	{
 		return $this->_is_tablet;
 	}
-	
+
 	/**
 	 * Is the browser from a robot (ex Slurp,GoogleBot)?
 	 * @return boolean True if the browser is from a robot otherwise false
@@ -209,7 +209,7 @@ class find_os
 	{
 		return $this->_is_robot;
 	}
-	
+
 	/**
 	* Is the browser from facebook?
 	* @return boolean True if the browser is from facebook otherwise false
@@ -218,7 +218,7 @@ class find_os
 	{
 		return $this->_is_facebook;
 	}
-	
+
 	/**
 	 * Set the browser to be from AOL
 	 * @param $isAol
@@ -227,7 +227,7 @@ class find_os
 	{
 		$this->_is_aol = $isAol;
 	}
-	
+
 	/**
 	 * Set the Browser to be mobile
 	 * @param boolean $value is the browser a mobile browser or not
@@ -236,7 +236,7 @@ class find_os
 	{
 		$this->_is_mobile = $value;
 	}
-	
+
 	/**
 	 * Set the Browser to be tablet
 	 * @param boolean $value is the browser a tablet browser or not
@@ -245,7 +245,7 @@ class find_os
 	{
 		$this->_is_tablet = $value;
 	}
-	
+
 	/**
 	 * Set the Browser to be a robot
 	 * @param boolean $value is the browser a robot or not
@@ -254,7 +254,7 @@ class find_os
 	{
 		$this->_is_robot = $value;
 	}
-	
+
 	/**
 	 * Set the Browser to be a Facebook request
 	 * @param boolean $value is the browser a robot or not
@@ -263,7 +263,7 @@ class find_os
 	{
 		$this->_is_facebook = $value;
 	}
-	
+
 	/**
 	 * Get the user agent value in use to determine the browser
 	 * @return string The user agent from the HTTP header
@@ -272,7 +272,7 @@ class find_os
 	{
 		return $this->_agent;
 	}
-	
+
 	/**
 	 * Set the user agent value (the construction will use the HTTP header value - this will overwrite it)
 	 * @param string $agent_string The value for the User Agent
@@ -283,7 +283,7 @@ class find_os
 		$this->_agent = $agent_string;
 		$this->determine();
 	}
-	
+
 	/**
 	 * Used to determine if the browser is actually "chromeframe"
 	 * @since 1.7
@@ -293,7 +293,7 @@ class find_os
 	{
 		return (strpos($this->_agent, "chromeframe") !== false);
 	}
-	
+
 	/**
 	 * Returns a formatted string with a summary of the details of the browser.
 	 * @return string formatted string with a summary of the browser
@@ -305,7 +305,7 @@ class find_os
 		"<strong>Browser User Agent String:</strong> {$this->getUserAgent()}<br/>\n" .
 		"<strong>Platform:</strong> {$this->getPlatform()}<br/>";
 	}
-	
+
 	/**
 	 * Protected routine to calculate and determine what the browser is in use (including platform)
 	 */
@@ -315,7 +315,7 @@ class find_os
 		$this->checkBrowsers();
 		$this->checkForAol();
 	}
-	
+
 	/**
 	 * Protected routine to determine the browser type
 	 * @return boolean True if the browser was detected otherwise false
@@ -379,7 +379,7 @@ class find_os
 			$this->checkBrowserMozilla() /* Mozilla is such an open standard that you must check it last */
 		);
 	}
-	
+
 	/**
 	 * Determine if the user is using a BlackBerry (last updated 1.7)
 	 * @return boolean True if the browser is the BlackBerry browser otherwise false
@@ -396,7 +396,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the user is using an AOL User Agent (last updated 1.7)
 	 * @return boolean True if the browser is from AOL otherwise false
@@ -414,7 +414,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is the GoogleBot or not (last updated 1.7)
 	 * @return boolean True if the browser is the GoogletBot otherwise false
@@ -431,7 +431,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is the MSNBot or not (last updated 1.9)
 	 * @return boolean True if the browser is the MSNBot otherwise false
@@ -465,7 +465,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is the W3C Validator or not (last updated 1.7)
 	 * @return boolean True if the browser is the W3C Validator otherwise false
@@ -493,7 +493,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is the Yahoo! Slurp Robot or not (last updated 1.7)
 	 * @return boolean True if the browser is the Yahoo! Slurp Robot otherwise false
@@ -511,7 +511,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is Internet Explorer or not (last updated 1.7)
 	 * @return boolean True if the browser is Internet Explorer otherwise false
@@ -573,7 +573,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is Opera or not (last updated 1.7)
 	 * @return boolean True if the browser is Opera otherwise false
@@ -625,7 +625,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is Chrome or not (last updated 1.7)
 	 * @return boolean True if the browser is Chrome otherwise false
@@ -649,8 +649,7 @@ class find_os
 		}
 		return false;
 	}
-	
-	
+
 	/**
 	 * Determine if the browser is WebTv or not (last updated 1.7)
 	 * @return boolean True if the browser is WebTv otherwise false
@@ -666,7 +665,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is NetPositive or not (last updated 1.7)
 	 * @return boolean True if the browser is NetPositive otherwise false
@@ -682,7 +681,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is Galeon or not (last updated 1.7)
 	 * @return boolean True if the browser is Galeon otherwise false
@@ -698,7 +697,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is Konqueror or not (last updated 1.7)
 	 * @return boolean True if the browser is Konqueror otherwise false
@@ -714,7 +713,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is iCab or not (last updated 1.7)
 	 * @return boolean True if the browser is iCab otherwise false
@@ -729,7 +728,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is OmniWeb or not (last updated 1.7)
 	 * @return boolean True if the browser is OmniWeb otherwise false
@@ -745,7 +744,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is Phoenix or not (last updated 1.7)
 	 * @return boolean True if the browser is Phoenix otherwise false
@@ -760,7 +759,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is Firebird or not (last updated 1.7)
 	 * @return boolean True if the browser is Firebird otherwise false
@@ -775,7 +774,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is Netscape Navigator 9+ or not (last updated 1.7)
 	 * NOTE: (http://browser.netscape.com/ - Official support ended on March 1st, 2008)
@@ -794,7 +793,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is Shiretoko or not (https://wiki.mozilla.org/Projects/shiretoko) (last updated 1.7)
 	 * @return boolean True if the browser is Shiretoko otherwise false
@@ -808,7 +807,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is Ice Cat or not (http://en.wikipedia.org/wiki/GNU_IceCat) (last updated 1.7)
 	 * @return boolean True if the browser is Ice Cat otherwise false
@@ -822,7 +821,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is Nokia or not (last updated 1.7)
 	 * @return boolean True if the browser is Nokia otherwise false
@@ -841,7 +840,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is Firefox or not (last updated 1.7)
 	 * @return boolean True if the browser is Firefox otherwise false
@@ -869,7 +868,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is Firefox or not (last updated 1.7)
 	 * @return boolean True if the browser is Firefox otherwise false
@@ -885,7 +884,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is Mozilla or not (last updated 1.7)
 	 * @return boolean True if the browser is Mozilla otherwise false
@@ -910,7 +909,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is Lynx or not (last updated 1.7)
 	 * @return boolean True if the browser is Lynx otherwise false
@@ -926,7 +925,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is Amaya or not (last updated 1.7)
 	 * @return boolean True if the browser is Amaya otherwise false
@@ -942,7 +941,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is Safari or not (last updated 1.7)
 	 * @return boolean True if the browser is Safari otherwise false
@@ -965,7 +964,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Detect if URL is loaded from FacebookExternalHit
 	 * @return boolean True if it detects FacebookExternalHit otherwise false
@@ -980,7 +979,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Detect if URL is being loaded from internal Facebook browser
 	 * @return boolean True if it detects internal Facebook browser otherwise false
@@ -994,7 +993,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Detect Version for the Safari browser on iOS devices
 	 * @return boolean True if it detects the version correctly otherwise false
@@ -1010,7 +1009,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Detect Version for the Chrome browser on iOS devices
 	 * @return boolean True if it detects the version correctly otherwise false
@@ -1027,7 +1026,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is iPhone or not (last updated 1.7)
 	 * @return boolean True if the browser is iPhone otherwise false
@@ -1045,7 +1044,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is iPad or not (last updated 1.7)
 	 * @return boolean True if the browser is iPad otherwise false
@@ -1063,7 +1062,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is iPod or not (last updated 1.7)
 	 * @return boolean True if the browser is iPod otherwise false
@@ -1081,7 +1080,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine if the browser is Android or not (last updated 1.7)
 	 * @return boolean True if the browser is Android otherwise false
@@ -1106,7 +1105,7 @@ class find_os
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determine the user's platform (last updated 1.7)
 	 */

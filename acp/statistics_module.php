@@ -19,23 +19,22 @@ class statistics_module
 	function main($id, $mode)
 	{
 		global $db, $config, $phpbb_root_path, $user, $template, $request, $phpbb_extension_manager, $phpbb_container, $phpbb_path_helper, $tables;
-;
 		$user->add_lang_ext('forumhulp/statistics', 'statistics');
-		
+
 		$tables['config']	= $phpbb_container->getParameter('tables.config_table');
 		$tables['online'] 	= $phpbb_container->getParameter('tables.online_table');
 		$tables['domain'] 	= $phpbb_container->getParameter('tables.domain_table');
 		$tables['se']	  	= $phpbb_container->getParameter('tables.se_table');
 		$tables['archive']	= $phpbb_container->getParameter('tables.archive_table');
 		$tables['stats']	= $phpbb_container->getParameter('tables.stats_table');
-		
+
 		stat_functions::get_config();
 
 		$action		= $request->variable('action', '');
 		$screen		= $request->variable('screen', $config['statistics_start_screen']);
 		$start		= $request->variable('start', 0);
 		$overall	= $request->variable('overall', $config['statistics_archive']);
-		
+
 		$this->tpl_name = 'acp_statistics';
 		$this->page_title = 'ACP_STATISTICS';
 		$template->assign_vars(array('EXT_PATH' => $phpbb_path_helper->update_web_root_path($phpbb_extension_manager->get_extension_path('forumhulp/statistics', true)),

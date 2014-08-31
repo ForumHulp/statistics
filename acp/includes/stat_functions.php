@@ -20,11 +20,11 @@ class stat_functions
 	public static function get_config()
 	{
 		global $db, $config, $tables, $phpbb_container;
-	
+
 		$sql = 'SELECT * FROM ' . $tables['config'];
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
-		
+
 		foreach ($row as $key => $value)
 		{
 			$config['statistics_' . $key] = $value;
@@ -46,7 +46,7 @@ class stat_functions
 	public static function count_array($aray, $row1)
 	{
 		$found = 0; 
-		if (is_array($aray)) 
+		if (is_array($aray))
 		{
 			foreach ($aray as $key => $value)
 			{
@@ -58,10 +58,13 @@ class stat_functions
 				}
 			}
 		}
-		if (!$found) $aray[$row1] = 1;
+		if (!$found)
+		{
+			$aray[$row1] = 1;
+		}
 		return $aray;
 	}
-	
+
 	public static function get_modules()
 	{
 		global $db, $config, $user;
@@ -77,19 +80,19 @@ class stat_functions
 		$result = $db->sql_query($sql);
 		while ($row = $db->sql_fetchrow($result))
 		{
-			(isset($user->lang[$row['module_langname']])) ? $modules[$row['module_langname']] = $user->lang[$row['module_langname']] : NULL;
+			(isset($user->lang[$row['module_langname']])) ? $modules[$row['module_langname']] = $user->lang[$row['module_langname']] : null;
 		}
-		
+
 		$module_pages = array('FORUM_INDEX' => $user->lang['FORUM_INDEX'], 'VIEWING_FAQ' => $user->lang['VIEWING_FAQ'], 'VIEWING_MCP' => $user->lang['VIEWING_MCP'], 
-							  'SEARCHING_FORUMS' => $user->lang['SEARCHING_FORUMS'], 'VIEWING_ONLINE' => $user->lang['VIEWING_ONLINE'], 'VIEWING_MEMBERS' => $user->lang['VIEWING_MEMBERS'], 
-							  'VIEWING_UCP' => $user->lang['VIEWING_UCP']);
+							'SEARCHING_FORUMS' => $user->lang['SEARCHING_FORUMS'], 'VIEWING_ONLINE' => $user->lang['VIEWING_ONLINE'], 'VIEWING_MEMBERS' => $user->lang['VIEWING_MEMBERS'],
+							'VIEWING_UCP' => $user->lang['VIEWING_UCP']);
 		
 		$m = unserialize($config['statistics_custom_pages']);
 		if (sizeof($m) > 0)
 		{
 			foreach($m as $value)
 			{
-				(isset($user->lang[$value])) ? $cp[$value] = $user->lang[$value] : NULL;
+				(isset($user->lang[$value])) ? $cp[$value] = $user->lang[$value] : null;
 			}
 		}
 		return array_replace($module_pages, $modules, $cp);
@@ -119,7 +122,7 @@ class stat_functions
 		$result = $db->sql_query($sql);
 		$total_entries = (int) $db->sql_fetchfield('total_entries');
 		$db->sql_freeresult($result);
-		
+
 		$pagination = $phpbb_container->get('pagination');
 		$base_url = $uaction . '&amp;screen=online&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir;
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_online'], $start);
@@ -127,7 +130,7 @@ class stat_functions
 		$sql = 'SELECT o.time, o.uname, o.agent, o.ip_addr, o.host, o.domain, d.description, o.module, o.page, o.referer FROM ' . $tables['online'] . ' o
 				LEFT JOIN ' . $tables['domain'] . ' d ON (d.domain = o.domain) 
 				ORDER BY o.' . $sql_sort;
-		
+
 		$result = $db->sql_query_limit($sql, $config['statistics_max_online'], $start);
 		$counter = 0;
 		while ($row = $db->sql_fetchrow($result))
@@ -174,18 +177,17 @@ class stat_functions
 		$row = $db->sql_fetchrow($result);
 		$total_entries = $row['total_entries'];
 		$db->sql_freeresult($result);
-		
+
 		$template->assign_vars(array('OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
 									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' . 
 									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
 									 'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
-									 
+
 		$sql = ($overall) ? 'SELECT o.name, o.hits AS total_per_domain, 
 				(SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 2) as total,
 				SUM(o.hits) / (SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 2) AS percent 
 				FROM ' . $tables['archive'] . ' o
-				WHERE cat = 2 GROUP BY o.name ORDER BY ' . $sql_sort :
-				
+				WHERE cat = 2 GROUP BY o.name ORDER BY ' . $sql_sort : 	
 				'SELECT DISTINCT agent FROM ' . $tables['online'];
 		$result = ($overall) ? $db->sql_query_limit($sql, $config['statistics_max_browsers'], $start) :  $db->sql_query($sql);
 		$counter = 0; $graphstr = '';
@@ -201,7 +203,7 @@ class stat_functions
 					'MODULETOTAL'	=> round((($row['total_per_domain'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_domain'] . ' of ' . $row['total'] . ')'
 					)
 				);
-				$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($row['name']) . '\', ' . $row['total_per_domain'] . ']';
+				$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($db->sql_escape($row['name'])) . '\', ' . $row['total_per_domain'] . ']';
 			}
 		} else
 		{
@@ -210,11 +212,11 @@ class stat_functions
 			while ($row = $db->sql_fetchrow($result))
 			{
 				$browser->setUserAgent($row['agent']);
-				$browser_aray = ($row['agent'] != '') ? self::count_array($browser_aray, $browser->getBrowser() . ' ' . $browser->getVersion()) : NULL;
+				$browser_aray = ($row['agent'] != '') ? self::count_array($browser_aray, $browser->getBrowser() . ' ' . $browser->getVersion()) : null;
 			}
-		
+
 			$total_entries = sizeof($browser_aray);
-	
+
 			if ($sort_key == 'd')
 			{
 				($sort_dir == 'd') ? krsort($browser_aray) : ksort($browser_aray);
@@ -223,7 +225,9 @@ class stat_functions
 				($sort_dir == 'd') ? arsort($browser_aray) : asort($browser_aray);
 			}
 
-			$counter = 0; $graphstr = ''; $row['total'] = array_sum($browser_aray);
+			$counter = 0;
+			$graphstr = '';
+			$row['total'] = array_sum($browser_aray);
 			foreach (array_slice($browser_aray, $start,$config['statistics_max_browsers'], true) as $row['Browser'] => $row['total_per_browser'])
 			{
 				$counter += 1;
@@ -234,7 +238,7 @@ class stat_functions
 					'MODULETOTAL'	=> round((($row['total_per_browser'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_browser'] . ' of ' . $row['total'] . ')'
 					)
 				);
-				$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($row['Browser']) . '\', ' . $row['total_per_browser'] . ']';
+				$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($db->sql_escape($row['Browser'])) . '\', ' . $row['total_per_browser'] . ']';
 			}
 		}
 
@@ -246,7 +250,7 @@ class stat_functions
 									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0',$base_url) : $base_url.'&amp;overall=1',
 									 'GRAPH' 		=> '[' . $graphstr . ']'));
 	}
-	
+
 	public static function os($start = 0, $uaction = '', $overall = 0)
 	{
 		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
@@ -299,7 +303,7 @@ class stat_functions
 					'MODULETOTAL'	=> round((($row['total_per_os'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_os'] . ' of ' . $row['total'] . ')'
 					)
 				);
-				$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($row['name']) . '\', ' . $row['total_per_os'] . ']';
+				$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($db->sql_escape($row['name'])) . '\', ' . $row['total_per_os'] . ']';
 			}
 		} else
 		{
@@ -308,11 +312,11 @@ class stat_functions
 			while ($row = $db->sql_fetchrow($result))
 			{
 				$os->setUserAgent($row['agent']);
-				$os_aray = ($row['agent'] != '') ? self::count_array($os_aray, $os->getPlatform()) : NULL;
+				$os_aray = ($row['agent'] != '') ? self::count_array($os_aray, $os->getPlatform()) : null;
 			}
-		
+
 			$total_entries = sizeof($os_aray);
-	
+
 			if ($sort_key == 'd')
 			{
 				($sort_dir == 'd') ? krsort($os_aray) : ksort($os_aray);
@@ -321,7 +325,9 @@ class stat_functions
 				($sort_dir == 'd') ? arsort($os_aray) : asort($os_aray);
 			}
 
-			$counter = 0; $graphstr = ''; $row['total'] = array_sum($os_aray);
+			$counter = 0;
+			$graphstr = '';
+			$row['total'] = array_sum($os_aray);
 			foreach (array_slice($os_aray, $start, $config['statistics_max_browsers'], true) as $row['Operating System'] => $row['total_per_os'])
 			{
 				$counter += 1;
@@ -332,7 +338,7 @@ class stat_functions
 					'MODULETOTAL'	=> round((($row['total_per_os'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_os'] . ' of ' . $row['total'] . ')'
 					)
 				);
-				$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($row['Operating System']) . '\', ' . $row['total_per_os'] . ']';
+				$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($db->sql_escape($row['Operating System'])) . '\', ' . $row['total_per_os'] . ']';
 			}
 		}
 
@@ -341,8 +347,8 @@ class stat_functions
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_browsers'], $start);
 
 		$template->assign_vars(array('ROWSPAN'		=> $total_entries,
-									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0',$base_url) : $base_url.'&amp;overall=1',
-									 'GRAPH' 		=> '[' . $graphstr . ']'));
+									'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0',$base_url) : $base_url.'&amp;overall=1',
+									'GRAPH' 		=> '[' . $graphstr . ']'));
 	}
 
 	public static function countries($start = 0, $uaction = '', $overall = 0)
@@ -364,7 +370,7 @@ class stat_functions
 		));
 
 		$sql = ($overall) ? 'SELECT COUNT(DISTINCT name) AS total_entries, MIN(first) AS firstdate, MAX(last) AS lastdate FROM ' . $tables['archive'] . ' WHERE cat = 4' : 
-							'SELECT COUNT(DISTINCT domain) AS total_entries FROM ' . $tables['online'];;
+							'SELECT COUNT(DISTINCT domain) AS total_entries FROM ' . $tables['online'];
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
 		$total_entries = $row['total_entries'];
@@ -392,7 +398,7 @@ class stat_functions
 				COUNT(o.domain) / (SELECT COUNT(domain) FROM ' . $tables['online'] . ') AS percent 
 				FROM ' . $tables['online'] . ' o
 				LEFT JOIN ' . $tables['domain'] . ' d ON (d.domain = o.domain) GROUP BY o.domain ORDER BY ' . $sql_sort;
-		
+
 		$result = $db->sql_query_limit($sql, $config['statistics_max_countries'], $start);
 		$counter = 0; $graphstr = '';
 		while ($row = $db->sql_fetchrow($result))
@@ -405,7 +411,7 @@ class stat_functions
 				'MODULETOTAL'	=> round((($row['total_per_domain'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_domain'] . ' of ' . $row['total'] . ')'
 				)
 			);
-			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($row['description']) . '\', ' . $row['total_per_domain'] . ']';
+			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($db->sql_escape($row['description'])) . '\', ' . $row['total_per_domain'] . ']';
 		}
 		$template->assign_vars(array('GRAPH' => '[' . $graphstr . ']'));
 	}
@@ -430,7 +436,7 @@ class stat_functions
 
 		$sql = ($overall) ? 'SELECT COUNT(name) AS total_entries, MIN(first) AS firstdate, MAX(last) AS lastdate FROM ' . $tables['archive'] . ' WHERE cat = 7' :
 				'SELECT COUNT(DISTINCT referer) AS total_entries FROM ' . $tables['online'] . ' WHERE referer <> "" AND referer not LIKE "%' . $config['server_name']. '%"';
-		
+
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
 		$total_entries = $row['total_entries'];
@@ -452,12 +458,12 @@ class stat_functions
 				SUM(hits) / (SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 7) AS percent 
 				FROM ' . $tables['archive'] . ' o WHERE cat = 7
 				GROUP BY name ORDER BY ' . $sql_sort :
-				
+
 				'SELECT DISTINCT referer AS domain, COUNT(referer) AS total_per_referer,
 				(SELECT COUNT(referer) AS total_entries FROM ' . $tables['online'] . ' WHERE referer <> "" AND referer not LIKE "%' . $config['server_name']. '%") AS total
 				 FROM ' . $tables['online'] . ' WHERE referer <> "" AND referer not LIKE "%'. $config['server_name'] . '%"
 				 GROUP BY referer ORDER BY ' . $sql_sort;
-				
+
 		$result = $db->sql_query_limit($sql, $config['statistics_max_referer'], $start);
 		$counter = 0; $graphstr = '';
 		while ($row = $db->sql_fetchrow($result))
@@ -470,7 +476,7 @@ class stat_functions
 				'MODULETOTAL'	=> round((($row['total_per_referer'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_referer'] . ' of ' . $row['total'] . ')'
 				)
 			);
-			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode(substr($row['domain'], 0, 20)) . '\', ' . $row['total_per_referer'] . ']';
+			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($db->sql_escape(substr($row['domain'], 0, 20))) . '\', ' . $row['total_per_referer'] . ']';
 		}
 		$template->assign_vars(array('GRAPH' => '[' . $graphstr . ']'));
 	}
@@ -510,13 +516,13 @@ class stat_functions
 									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' . 
 									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
 									 'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
-		
+
 		$sql = ($overall) ? 'SELECT name AS referer, hits AS total_per_referer, 
 				(SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 7) as total, 
 				SUM(hits) / (SELECT SUM(hits) FROM ' . $tables['archive'] . '
 				WHERE name REGEXP (SELECT GROUP_CONCAT(name ORDER BY name SEPARATOR "|") FROM '. $tables['se'] . ')) AS percent FROM ' . $tables['archive'] . ' 
 				WHERE name REGEXP (SELECT GROUP_CONCAT(name ORDER BY name SEPARATOR "|") FROM '. $tables['se'] . ') AND cat = 7 GROUP BY name ORDER BY ' . $sql_sort :
-				
+
 				'SELECT DISTINCT SUBSTR(referer, 1, IF(LOCATE("?", referer, 8), LOCATE("?", referer, 8) -1, LENGTH(referer))) AS referer, COUNT(referer) AS total_per_referer, 
 				(SELECT COUNT(referer) FROM ' . $tables['online'] . ' WHERE referer <> "") as total, 
 				COUNT(referer) / (SELECT COUNT(referer) FROM ' . $tables['online'] . ' 
@@ -536,7 +542,7 @@ class stat_functions
 				'MODULETOTAL'	=> round((($row['total_per_referer'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_referer'] . ' of ' . $row['total'] . ')'
 				)
 			);
-			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($row['referer']) . '\', ' . $row['total_per_referer'] . ']';
+			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($db->sql_escape($row['referer'])) . '\', ' . $row['total_per_referer'] . ']';
 		}
 		$template->assign_vars(array('GRAPH' => '[' . $graphstr . ']'));
 	}
@@ -564,9 +570,8 @@ class stat_functions
 			'SUB_DISPLAY'		=> 'ese',
 			'SUBTITLE'			=> $user->lang['SEARCHENG'],
 		));
-
 	}
-	
+
 	public static function se_terms($start = 0, $uaction = '', $overall = 0)
 	{
 		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
@@ -594,14 +599,14 @@ class stat_functions
 			$terms = explode(' ', $row['se_terms']);
 			foreach($terms as $key)
 			{
-				isset($se_terms[$key]) ? $se_terms[$key] = (isset($se_terms[$key]) ? $se_terms[$key] + (int) $row['rowtotal'] : (int) $row['rowtotal']) : NULL;
+				isset($se_terms[$key]) ? $se_terms[$key] = (isset($se_terms[$key]) ? $se_terms[$key] + (int) $row['rowtotal'] : (int) $row['rowtotal']) : null;
 			}
-			($overall) ? $firstdate = $row['firstdate'] : NULL;
-			($overall) ? $lastdate = $row['lastdate'] : NULL;
+			($overall) ? $firstdate = $row['firstdate'] : null;
+			($overall) ? $lastdate = $row['lastdate'] : null;
 		}
-		
+
 		$total_entries = sizeof($se_terms);
-		
+
 		if ($sort_key == 'd')
 		{
 			($sort_dir == 'd') ? ksort($se_terms) : krsort($se_terms);
@@ -633,11 +638,11 @@ class stat_functions
 				'MODULETOTAL'	=> round((($row['total_per_referer'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_referer'] . ' of ' . $row['total'] . ')'
 				)
 			);
-			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($row['referer']) . '\', ' . $row['total_per_referer'] . ']';
+			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($db->sql_escape($row['referer'])) . '\', ' . $row['total_per_referer'] . ']';
 		}
 		$template->assign_vars(array('GRAPH' => '[' . $graphstr . ']'));
 	}
-	
+
 	public static function crawl($start = 0, $uaction = '', $overall = 0)
 	{
 		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
@@ -665,7 +670,7 @@ class stat_functions
 				FROM    ' . $tables['archive'] . ' a
 						LEFT JOIN ' . BOTS_TABLE . ' b
 							ON a.name = b.bot_name 
-				WHERE a.cat = 5 AND b.bot_name IS not NULL' :
+				WHERE a.cat = 5 AND b.bot_name IS not null' :
 		
 		'SELECT  COUNT(DISTINCT a.uname) AS total_entries
 				FROM    ' . $tables['online'] . ' a
@@ -711,7 +716,7 @@ class stat_functions
 							ON a.uname = b.bot_name 
 						LEFT JOIN ' . USERS_TABLE . ' u ON u.username = a.uname
 				WHERE  b.bot_name IS not NULL GROUP BY a.uname ORDER BY ' . $sql_sort;
-		
+
 		$result = $db->sql_query_limit($sql, $config['statistics_max_crawl'], $start);
 		$counter = 0; $graphstr = '';
 		while ($row = $db->sql_fetchrow($result))
@@ -725,7 +730,7 @@ class stat_functions
 				'MODULETOTAL'	=> round((($row['total_per_users'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_users'] . ' of ' . $row['total'] . ')'
 				)
 			);
-			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($row['uname']) . '\', ' . $row['total_per_users'] . ']';
+			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($db->sql_escape($row['uname'])) . '\', ' . $row['total_per_users'] . ']';
 		}
 		$template->assign_vars(array('GRAPH' => '[' . $graphstr . ']'));
 	}
@@ -755,7 +760,6 @@ class stat_functions
 			'SUB_DISPLAY'		=> 'graph',
 			'SUBTITLE'			=> $user->lang['MODULES'],
 		));
-		
 
 		$sql = ($overall) ? 'SELECT COUNT(name) AS total_entries, MIN(first) AS firstdate, MAX(last) AS lastdate FROM ' . $tables['archive'] . ' WHERE cat = 1' : 
 				'SELECT COUNT(DISTINCT module) AS total_entries FROM ' . $tables['online'];;
@@ -775,17 +779,16 @@ class stat_functions
 									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
 									 'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
 
-		
 		$sql = ($overall) ? 'SELECT name AS module, hits AS total_per_module, 
 				(SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 1) as total,
 				SUM(hits) / (SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 1) AS percent 
 				FROM ' . $tables['archive'] . ' WHERE cat = 1 GROUP BY name ORDER BY ' . $sql_sort : 
-				
+
 				'SELECT module, COUNT(module) AS total_per_module, 
 				(SELECT COUNT(MODULE) FROM ' . $tables['online'] . ') as total,
 				COUNT( module) / (SELECT COUNT(module) FROM ' . $tables['online'] . ') AS percent 
 				FROM ' . $tables['online'] . ' GROUP BY module ORDER BY ' . $sql_sort;
-		
+
 		$result = $db->sql_query_limit($sql, $config['statistics_max_modules'], $start);
 		$counter = 0; $graphstr = '';
 		while ($row = $db->sql_fetchrow($result))
@@ -798,7 +801,7 @@ class stat_functions
 				'MODULETOTAL'	=> round((($row['total_per_module'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_module'] . ' of ' . $row['total'] . ')'
 				)
 			);
-			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode(isset($modules[$row['module']]) ? $modules[$row['module']] : 'Module not found') . '\', ' . $row['total_per_module'] . ']';
+			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode(isset($modules[$row['module']]) ? $db->sql_escape($modules[$row['module']]) : 'Module not found') . '\', ' . $row['total_per_module'] . ']';
 		}
 		$template->assign_vars(array('GRAPH' => '[' . $graphstr . ']'));
 	}
@@ -839,19 +842,18 @@ class stat_functions
 									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
 									 'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
 
-		
 		$sql = ($overall) ? 'SELECT name AS scr_res, hits AS total_per_screen, 
 				(SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 6) as total,
 				SUM(hits) / (SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 6) AS percent 
 				FROM ' . $tables['archive'] . ' 
 				WHERE cat = 6 GROUP BY name ORDER BY ' . $sql_sort :
-				
+
 				'SELECT o.scr_res, COUNT(o.scr_res) AS total_per_screen, 
 				(SELECT COUNT(scr_res) FROM ' . $tables['online'] . ') as total,
 				COUNT(o.scr_res) / (SELECT COUNT(scr_res) FROM ' . $tables['online'] . ') AS percent 
 				FROM ' . $tables['online'] . ' o
 				GROUP BY o.scr_res ORDER BY ' . $sql_sort;
-		
+
 		$result = $db->sql_query_limit($sql, $config['statistics_max_screens'], $start);
 		$counter = 0; $graphstr = '';
 		while ($row = $db->sql_fetchrow($result))
@@ -910,7 +912,7 @@ class stat_functions
 			'TITLE' => '\'' . (($sort_key == 'd') ? 'Daily overview ' . date("F",mktime(0,0,0,$month,1,2014)) . ' ' . $year : 
 						(($sort_key == 'm') ? 'Monthly overview ' . $year : 'Yearly overview')) . '\''));
 	}
-	
+
 	public static function ustats($start = 0, $uaction = '')
 	{
 		global $db, $config, $user, $tables, $request, $template;
@@ -1008,7 +1010,7 @@ class stat_functions
 							ON a.uname = b.bot_name 
 						LEFT JOIN ' . USERS_TABLE . ' u ON u.username = a.uname
 				WHERE  b.bot_name IS NULL GROUP BY a.uname ORDER BY ' . $sql_sort;
-		
+
 		$result = $db->sql_query_limit($sql, $config['statistics_max_users'], $start);
 		$counter = 0; $graphstr = '';
 		while ($row = $db->sql_fetchrow($result))
@@ -1022,7 +1024,7 @@ class stat_functions
 				'MODULETOTAL'	=> round((($row['total_per_users'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_users'] . ' of ' . $row['total'] . ')'
 				)
 			);
-			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($row['uname']) . '\', ' . $row['total_per_users'] . ']';
+			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($db->sql_escape($row['uname'])) . '\', ' . $row['total_per_users'] . ']';
 		}
 		$template->assign_vars(array('GRAPH' => '[' . $graphstr . ']'));
 	}
@@ -1056,7 +1058,7 @@ class stat_functions
 					   END AS hits FROM information_schema.TABLES 
 					   WHERE table_schema = "' . $db->get_db_name() . '" AND table_name = "' . $tables['archive'] . '"';
 		$sql_aray[] = '';
-		
+
 		$pagination = $phpbb_container->get('pagination');
 		$base_url = $uaction . '&amp;screen=top10';
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', 12, 6, $start);
@@ -1078,7 +1080,7 @@ class stat_functions
 					$template->assign_block_vars('blocks.block', array(
 						'COUNTER'  	=> $counter,
 						'NAME'		=> ($i == 7) ? ((isset($modules[$row['name']])) ? $modules[$row['name']] : 'Not found') : $row['name'],
-						'HITS'		=> ($i == 10 && isset($row['hits']) && $counter < 3) ? $user->format_date($row['hits'], 'd m \'y') : $row['hits']
+						'HITS'		=> ($i == 10 && isset($row['hits']) && $counter < 3) ? $user->format_date($row['hits'], 'd m \'y') : self::roundk($row['hits'])
 						)
 					);
 				}
@@ -1096,7 +1098,7 @@ class stat_functions
 							$aray[5] = array('name' => 'Average posts per topic', 'hits' => floor($config['num_posts'] / $config['num_topics']));
 							$aray[6] = array('name' => 'Average posts per user', 'hits' => floor($config['num_posts'] / $config['num_users']));
 						}
-						
+
 						$template->assign_block_vars('blocks.block', array(
 							'COUNTER'  	=> $counter + 1,
 							'NAME'		=> ($i == 11 && isset($aray[$counter])) ? $aray[$counter]['name'] : '',
@@ -1107,11 +1109,26 @@ class stat_functions
 				}
 			}
 		}
-		
+
 		$template->assign_vars(array(
 			'U_ACTION'			=> $uaction,
 			'SUB_DISPLAY'		=> 'top10'
 		));
+	}
+
+	public static function roundk($value)
+	{
+		if ($value > 999 && $value <= 999999)
+		{
+			$result = floor($value / 1000) . ' K';
+		} elseif ($value > 999999)
+		{
+			$result = floor($value / 1000000) . ' M';
+		} else
+		{
+			$result = $value;
+		}
+		return $result;
 	}
 
 	public static function config($start = 0, $uaction = '' )
@@ -1135,7 +1152,7 @@ class stat_functions
 				$db->sql_query($sql);
 			}
 		}
-		
+
 		if (sizeof($se_mark) && $request->variable('delmarked', ''))
 		{
 			foreach($se_mark as $key => $value)
@@ -1144,13 +1161,12 @@ class stat_functions
 				$db->sql_query($sql);
 			}
 		}
-		
+
 		if ($request->variable('delall', ''))
 		{
 			$sql = 'DELETE FROM ' . $tables['se'];
 			$db->sql_query($sql);
 		}
-
 
 		$sconfig = $request->variable('config', array('' => 0), true);
 		if (sizeof($sconfig))
@@ -1158,7 +1174,7 @@ class stat_functions
 			$sql = 'UPDATE ' . $tables['config'] . ' SET ' . $db->sql_build_array('UPDATE', $sconfig);
 			$db->sql_query($sql);
 		}
-		
+
 		if (($request->is_set('dell_custom_page') ||  $request->is_set('submit_custom_page')) && ($request->variable('custom_page', '') != '' && $request->variable('custom_value', '') != ''))
 		{
 			$sql = 'SELECT custom_pages FROM ' . $tables['config'];
@@ -1176,7 +1192,7 @@ class stat_functions
 			$sql = 'UPDATE ' . $tables['config'] . ' SET custom_pages = "' . $db->sql_escape(serialize($row)) . '"';
 			$db->sql_query($sql);
 		}
-		
+
 		if ($request->is_set('submit_start_screen'))
 		{
 			$sql = 'UPDATE ' . $tables['config'] . ' SET start_screen = "' . $request->variable('start_screen', 'default') . '", archive=' . $request->variable('archive', 0) . '';
@@ -1209,7 +1225,7 @@ class stat_functions
 				}
 			}
 		}
-		
+
 		$sql = 'SELECT * FROM ' . $tables['config'];
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
@@ -1226,7 +1242,7 @@ class stat_functions
 			));
 			next($row);
 		}
-		
+
 		$modules_ext = unserialize($row['custom_pages']);
 		$options = $optionssc = '';
 		if (sizeof($modules_ext) > 0)
@@ -1237,7 +1253,6 @@ class stat_functions
 			}
 		}
 
-
 		$module_aray = array('countries' => 'COUNTRIES', 'referrals' => 'REFERRALS', 'se' => 'SEARCHENG', 'se_terms' => 'SEARCHTERMS', 'browsers' => 'BROWSERS', 'crawl' => 'CRAWLERS',
 								'os' => 'SYSTEMS', 'modules' => 'MODULES', 
 							 'stats' => 'AVERAGES', 'screens' => 'RESOLUTIONS', 'top10' => 'OVERVIEW', 'users' => 'USERS', 'ustats' => 'USERSTATS', 'default' => 'LASTVISITS');
@@ -1246,7 +1261,7 @@ class stat_functions
 			$selected = ($key == $row['start_screen']) ? ' selected="selected"' : '';
 			$optionssc .= '<option value="' . $key . '"' . $selected . '>' . $user->lang[$value] . '</option>';
 		}
-		
+
 		$template->assign_vars(array(
 			'OPTIONLIST'		=> $options,
 			'OPTIONLISTSC'		=> $optionssc,
@@ -1265,5 +1280,4 @@ class stat_functions
 			'SUB_DISPLAY'		=> 'nyi'
 		));
 	}
-
 }

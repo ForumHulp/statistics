@@ -66,7 +66,7 @@ class delete_statistics extends \phpbb\cron\task\base
 
 		$os = new find_os();
 		$module_aray = $browser_aray = $os_aray = $country_aray = $user_aray = $screen_aray = $referer_aray = $search_aray = array();
-		
+
 		$sql = 'SELECT UNIX_TIMESTAMP(FROM_UNIXTIME(MIN(time), "%Y-%m-%d")) as start_time FROM ' . $this->online_table;
 		$result = $this->db->sql_query($sql);
 		$start_time = (int) $this->db->sql_fetchfield('start_time');
@@ -82,7 +82,7 @@ class delete_statistics extends \phpbb\cron\task\base
 			while (still_on_time() && $row = $this->db->sql_fetchrow($result))
 			{
 				$module_aray	= ($row['module'] != '') ? $this->count_array($module_aray, $row['module']) : null;
-	
+
 				$os->setUserAgent($row['agent']);
 				$browser_aray	= ($row['agent'] != '') ? $this->count_array($browser_aray, $os->getBrowser() . ' ' . $os->getVersion()) : null;
 				$os_aray		= ($row['agent'] != '') ? $this->count_array($os_aray, $os->getPlatform()) : null;
@@ -95,7 +95,7 @@ class delete_statistics extends \phpbb\cron\task\base
 				$row_count++;
 			}
 			$this->db->sql_freeresult($result);
-	
+
 			$this->store($module_aray, 1);
 			$this->store($browser_aray, 2);
 			$this->store($os_aray, 3);
@@ -104,7 +104,7 @@ class delete_statistics extends \phpbb\cron\task\base
 			$this->store($screen_aray, 6);
 			$this->store($referer_aray, 7);
 			$this->store($search_aray, 8);
-	
+
 			unset($module_aray, $browser_aray, $os_aray, $country_aray, $user_aray, $screen_aray, $referer_aray, $search_aray);
 			$sql = 'DELETE FROM ' . $this->online_table . ' WHERE time >= ' . $start_time . ' AND time < ' . ($start_time + 86400);
 			$this->db->sql_query($sql);
@@ -119,7 +119,7 @@ class delete_statistics extends \phpbb\cron\task\base
 			);
 	
 			$sql = 'INSERT INTO ' . $this->stats_table . ' ' . $this->db->sql_build_array('INSERT', $sql_ary) . ' ON DUPLICATE KEY UPDATE hits = hits + ' . $sql_ary['hits'];
-	
+
 			$this->db->sql_query($sql);
 			$mtime = explode(' ', microtime());
 			$totaltime = $mtime[0] + $mtime[1] - $starttime;
@@ -145,7 +145,7 @@ class delete_statistics extends \phpbb\cron\task\base
 			$sconfig = $this->get_config();
 
 			foreach ($aray as $key => $value)
-			{ 
+			{
 				$sql = 'SELECT COUNT(name) AS counter FROM ' . $this->archive_table . ' WHERE cat = ' . $cat . ' AND name = "' . $key . '"';
 				$result = $this->db->sql_query($sql);
 				$counter = (int) $this->db->sql_fetchfield('counter');

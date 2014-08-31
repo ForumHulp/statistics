@@ -9,12 +9,12 @@
 
 if (!defined('IN_PHPBB'))
 {
-        exit;
+	exit;
 }
 
 if (empty($lang) || !is_array($lang))
 {
-        $lang = array();
+	$lang = array();
 }
 
 $lang = array_merge($lang, array(
@@ -40,19 +40,19 @@ $lang = array_merge($lang, array(
 	'LASTVISITS'	=> 'Página de últimas visitas',
 
 	// Online
-    'TIME'		=> 'Fecha',
-    'USER'		=> 'Usuario',
-    'MODULE'	=> 'Módulo',
-    'COUNTRY'	=> 'País',
+	'TIME'		=> 'Fecha',
+	'USER'		=> 'Usuario',
+	'MODULE'	=> 'Módulo',
+	'COUNTRY'	=> 'País',
 	'HOST'		=> 'Host',	
-    'IP'		=> 'Dirección IP',
-	
+	'IP'		=> 'Dirección IP',
+
 	// Module
 	'MODULE_FORUM'	=> 'Módulos / Foros',
 	'VIEWS'			=> 'Vistas',
 	'PERC'			=> 'Porcentaje',
 	'GRAPH'			=> 'Gráfico',
-	
+
 	//Config
 	'MAX_COUNTRIES'		=> 'Países',
 	'MAX_REFERER'		=> 'Referidos',
@@ -83,13 +83,13 @@ $lang = array_merge($lang, array(
 
 	'CUSTOM_PAGES'				=> 'Custom Pages',
 	'CUSTOM_PAGES_EXPLAIN'		=> 'Fill in your custom page name and language variable to show your extension in Board Statistics. Select your extension for deleting or change it.',
-	
+
 	'START_SCREEN'				=> 'Start screen',
 	'START_SCREEN_EXPLAIN'		=> 'Choose your startscreen for Board Statistics and if you want to display archive or online.',
 
 	'DEL_STAT'					=> 'Empty archive tables',
 	'DEL_STAT_EXPLAIN'			=> 'Empty archive tables and reset Board Statistics.',
-	
+
 	'STAT_DELETE_CONFIRM'		=> 'Empty archive tables?',
 
 ));
