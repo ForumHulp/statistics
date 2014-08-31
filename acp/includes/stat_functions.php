@@ -6,6 +6,7 @@
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
 *
 */
+
 if (!class_exists('find_os'))
 {
 	include('find_os.' . $this->php_ext);
@@ -13,7 +14,6 @@ if (!class_exists('find_os'))
 
 class stat_functions
 {
-
 	/**
 	* get_config data
 	*/
@@ -833,7 +833,7 @@ class stat_functions
 		));
 
 		$sql = ($overall) ? 'SELECT COUNT(name) AS total_entries, MIN(first) AS firstdate, MAX(last) AS lastdate FROM ' . $tables['archive'] . ' WHERE cat = 6' :
-				'SELECT COUNT(DISTINCT scr_res) AS total_entries FROM ' . $tables['online'];;
+							'SELECT COUNT(DISTINCT scr_res) AS total_entries FROM ' . $tables['online'];
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
 		$total_entries = $row['total_entries'];
