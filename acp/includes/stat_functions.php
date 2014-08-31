@@ -179,7 +179,7 @@ class stat_functions
 		$db->sql_freeresult($result);
 
 		$template->assign_vars(array('OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
-									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' .
+									'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' .
 														$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
 									'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
 
@@ -276,10 +276,10 @@ class stat_functions
 		$row = $db->sql_fetchrow($result);
 		$total_entries = $row['total_entries'];
 		$db->sql_freeresult($result);
-		
+
 		$template->assign_vars(array('OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
 									'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' .
-									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
+														$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
 									'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
 
 		$sql = ($overall) ? 'SELECT o.name, o.hits AS total_per_os,
@@ -677,7 +677,7 @@ class stat_functions
 						LEFT JOIN ' . BOTS_TABLE . ' b
 							ON a.name = b.bot_name
 				WHERE a.cat = 5 AND b.bot_name IS not null' :
-		
+
 		'SELECT  COUNT(DISTINCT a.uname) AS total_entries
 				FROM    ' . $tables['online'] . ' a
 						LEFT JOIN ' . BOTS_TABLE . ' b
@@ -780,11 +780,11 @@ class stat_functions
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_modules'], $start);
 
 		$template->assign_vars(array('ROWSPAN'		=> $total_entries,
-									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0', $base_url) : $base_url . '&amp;overall=1',
-									 'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
-									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' . 
-									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
-									 'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
+									'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0', $base_url) : $base_url . '&amp;overall=1',
+									'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
+									'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' .
+														$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
+									'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
 
 		$sql = ($overall) ? 'SELECT name AS module, hits AS total_per_module,
 				(SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 1) as total,
@@ -832,7 +832,7 @@ class stat_functions
 			'SUBTITLE'			=> $user->lang['RESOLUTIONS'],
 		));
 
-		$sql = ($overall) ? 'SELECT COUNT(name) AS total_entries, MIN(first) AS firstdate, MAX(last) AS lastdate FROM ' . $tables['archive'] . ' WHERE cat = 6' : 
+		$sql = ($overall) ? 'SELECT COUNT(name) AS total_entries, MIN(first) AS firstdate, MAX(last) AS lastdate FROM ' . $tables['archive'] . ' WHERE cat = 6' :
 				'SELECT COUNT(DISTINCT scr_res) AS total_entries FROM ' . $tables['online'];;
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
@@ -917,8 +917,8 @@ class stat_functions
 						(($sort_key == 'd') ? $row['day'] . ' ' . $row['month'] : (($sort_key == 'm') ? $row['month'] . '<br>' . $row['year'] : $row['year']))) . '\'';
 		}
 		$template->assign_vars(array(
-			'STATS' => '[' . $graphstr . ']', 'DATES' => '[' . $datestr . ']', 
-			'TITLE' => '\'' . (($sort_key == 'd') ? 'Daily overview ' . date("F",mktime(0,0,0,$month,1,2014)) . ' ' . $year : 
+			'STATS' => '[' . $graphstr . ']', 'DATES' => '[' . $datestr . ']',
+			'TITLE' => '\'' . (($sort_key == 'd') ? 'Daily overview ' . date("F",mktime(0,0,0,$month,1,2014)) . ' ' . $year :
 						(($sort_key == 'm') ? 'Monthly overview ' . $year : 'Yearly overview')) . '\''));
 	}
 
@@ -942,7 +942,7 @@ class stat_functions
 			$datestr .= (($datestr == '') ? '' : ', ') . '\'' . html_entity_decode($row['hour']) . '\'';
 		}
 		$template->assign_vars(array(
-			'STATS' => '[' . $graphstr . ']', 'DATES' => '[' . $datestr . ']', 
+			'STATS' => '[' . $graphstr . ']', 'DATES' => '[' . $datestr . ']',
 			'TITLE' => '\'Hourly overview\''));
 	}
 
@@ -1042,8 +1042,8 @@ class stat_functions
 	public static function top10($start = 0, $uaction = '')
 	{
 		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
-		$module_aray = array(0 => 'COUNTRIES', 1 => 'REFERRALS', 2 => 'SEARCHENG', 3 => 'SEARCHTERMS', 4 => 'BROWSERS', 5 => 'CRAWLERS', 6 => 'SYSTEMS', 7 => 'MODULES', 
-							 8 => 'RESOLUTIONS', 9 => 'USERS', 10 => 'FL_DATE', 11 => 'POSTS');
+		$module_aray = array(0 => 'COUNTRIES', 1 => 'REFERRALS', 2 => 'SEARCHENG', 3 => 'SEARCHTERMS', 4 => 'BROWSERS', 5 => 'CRAWLERS', 6 => 'SYSTEMS', 7 => 'MODULES',
+							8 => 'RESOLUTIONS', 9 => 'USERS', 10 => 'FL_DATE', 11 => 'POSTS');
 		$modules = self::get_modules();
 		$sql_aray[] = 'SELECT d.description AS name, o.hits FROM ' . $tables['archive'] . ' o LEFT JOIN ' . $tables['domain'] . ' d ON (d.domain = o.name) 
 						WHERE cat = 4 GROUP BY o.name ORDER BY hits DESC';
@@ -1131,7 +1131,7 @@ class stat_functions
 		if ($value > 999 && $value <= 999999)
 		{
 			$result = floor($value / 1000) . ' K';
-		} elseif ($value > 999999)
+		} else if ($value > 999999)
 		{
 			$result = floor($value / 1000000) . ' M';
 		} else
@@ -1157,7 +1157,7 @@ class stat_functions
 					$sql = 'UPDATE ' . $tables['se'] . ' SET name = "' . $value . '", query = "' . $se_query[$key] . '" WHERE id  = '. $key;
 				} else if ($value != '' && $se_query[$key] != '')
 				{
-					$sql = 'INSERT INTO ' . $tables['se'] . ' VALUES(NULL, "' . $value . '", "' . $se_query[$key] . '")';	
+					$sql = 'INSERT INTO ' . $tables['se'] . ' VALUES(NULL, "' . $value . '", "' . $se_query[$key] . '")';
 				}
 				$db->sql_query($sql);
 			}
@@ -1247,7 +1247,7 @@ class stat_functions
 				'TITLE'			=> $user->lang[strtoupper(key($row))],
 				'S_EXPLAIN'		=> (isset($user->lang[strtoupper(key($row)) . '_EXPLAIN'])) ? true : false,
 				'TITLE_EXPLAIN'	=> (isset($user->lang[strtoupper(key($row)) . '_EXPLAIN'])) ? $user->lang[strtoupper(key($row)) . '_EXPLAIN'] : '',
-				'CONTENT'		=> '<input type="number" name="config[' . key($row) . ']" id="config_' . key($row) . '" size="3" value="' . $row[key($row)] . '" /> <input name="config[' . str_replace('max_', 't_', key($row)) . ']" size="3" value="' . $row[str_replace('max_', 't_', key($row))] . '" />' 
+				'CONTENT'		=> '<input type="number" name="config[' . key($row) . ']" id="config_' . key($row) . '" size="3" value="' . $row[key($row)] . '" /> <input name="config[' . str_replace('max_', 't_', key($row)) . ']" size="3" value="' . $row[str_replace('max_', 't_', key($row))] . '" />'
 			));
 			next($row);
 		}
@@ -1263,7 +1263,7 @@ class stat_functions
 		}
 
 		$module_aray = array('countries' => 'COUNTRIES', 'referrals' => 'REFERRALS', 'se' => 'SEARCHENG', 'se_terms' => 'SEARCHTERMS', 'browsers' => 'BROWSERS', 'crawl' => 'CRAWLERS',
-							'os' => 'SYSTEMS', 'modules' => 'MODULES', 'stats' => 'AVERAGES', 'screens' => 'RESOLUTIONS', 'top10' => 'OVERVIEW', 'users' => 'USERS', 
+							'os' => 'SYSTEMS', 'modules' => 'MODULES', 'stats' => 'AVERAGES', 'screens' => 'RESOLUTIONS', 'top10' => 'OVERVIEW', 'users' => 'USERS',
 							'ustats' => 'USERSTATS', 'default' => 'LASTVISITS');
 		foreach($module_aray as $key => $value)
 		{
@@ -1280,7 +1280,7 @@ class stat_functions
 		));
 	}
 
-	public static function nyi($start = 0, $uaction = '' )
+	public static function nyi($start = 0, $uaction = '')
 	{
 		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
 
