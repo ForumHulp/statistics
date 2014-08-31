@@ -66,60 +66,71 @@ class delete_statistics extends \phpbb\cron\task\base
 
 		$os = new find_os();
 		$module_aray = $browser_aray = $os_aray = $country_aray = $user_aray = $screen_aray = $referer_aray = $search_aray = array();
-		$sql = 'SELECT time, uname, agent, ip_addr, module, host, domain, scr_res, page, referer, se_terms FROM ' . $this->online_table . ' ORDER BY id ASC';
+		
+		$sql = 'SELECT UNIX_TIMESTAMP(FROM_UNIXTIME(MIN(time), "%Y-%m-%d")) as start_time FROM ' . $this->online_table;
 		$result = $this->db->sql_query($sql);
-		$starttime = explode(' ', microtime());
-		$starttime = $starttime[1] + $starttime[0];
-		$row_count = $start_day = 0;
-		while (still_on_time() && $row = $this->db->sql_fetchrow($result))
+		$start_time = (int) $this->db->sql_fetchfield('start_time');
+
+		if ($start_time <= mktime(0,0,0) - 86400)
 		{
-			$module_aray	= ($row['module'] != '') ? $this->count_array($module_aray, $row['module']) : null;
-
-			$os->setUserAgent($row['agent']);
-			$browser_aray	= ($row['agent'] != '') ? $this->count_array($browser_aray, $os->getBrowser() . ' ' . $os->getVersion()) : null;
-			$os_aray		= ($row['agent'] != '') ? $this->count_array($os_aray, $os->getPlatform()) : null;
-
-			$country_aray	= ($row['domain'] != '') ? $this->count_array($country_aray, $row['domain']) : null;
-			$user_aray		= ($row['uname'] != '') ? $this->count_array($user_aray, $row['uname']) : null;
-			$screen_aray	= ($row['scr_res'] != '') ? $this->count_array($screen_aray, $row['scr_res']) : null;
-			$referer_aray	= ($row['referer'] != '') ? $this->count_array($referer_aray, $this->url_to_domain($row['referer'])) : null;
-			$search_aray	= ($row['se_terms'] != '') ? $this->split_array($search_aray, $row['se_terms']) : null;
-			$row_count++;
-			$start_day = (!$start_day) ? $row['time'] : $start_day;
+			$sql = 'SELECT time, uname, agent, ip_addr, module, host, domain, scr_res, page, referer, se_terms FROM ' . $this->online_table . ' 
+					WHERE time >= ' . $start_time . ' AND time < ' . ($start_time + 86400) . ' ORDER BY id ASC';
+			$result = $this->db->sql_query($sql);
+			$starttime = explode(' ', microtime());
+			$starttime = $starttime[1] + $starttime[0];
+			$row_count = 0;
+			while (still_on_time() && $row = $this->db->sql_fetchrow($result))
+			{
+				$module_aray	= ($row['module'] != '') ? $this->count_array($module_aray, $row['module']) : null;
+	
+				$os->setUserAgent($row['agent']);
+				$browser_aray	= ($row['agent'] != '') ? $this->count_array($browser_aray, $os->getBrowser() . ' ' . $os->getVersion()) : null;
+				$os_aray		= ($row['agent'] != '') ? $this->count_array($os_aray, $os->getPlatform()) : null;
+	
+				$country_aray	= ($row['domain'] != '') ? $this->count_array($country_aray, $row['domain']) : null;
+				$user_aray		= ($row['uname'] != '') ? $this->count_array($user_aray, $row['uname']) : null;
+				$screen_aray	= ($row['scr_res'] != '') ? $this->count_array($screen_aray, $row['scr_res']) : null;
+				$referer_aray	= ($row['referer'] != '') ? $this->count_array($referer_aray, $this->url_to_domain($row['referer'])) : null;
+				$search_aray	= ($row['se_terms'] != '') ? $this->split_array($search_aray, $row['se_terms']) : null;
+				$row_count++;
+			}
+			$this->db->sql_freeresult($result);
+	
+			$this->store($module_aray, 1);
+			$this->store($browser_aray, 2);
+			$this->store($os_aray, 3);
+			$this->store($country_aray, 4);
+			$this->store($user_aray, 5);
+			$this->store($screen_aray, 6);
+			$this->store($referer_aray, 7);
+			$this->store($search_aray, 8);
+	
+			unset($module_aray, $browser_aray, $os_aray, $country_aray, $user_aray, $screen_aray, $referer_aray, $search_aray);
+			$sql = 'DELETE FROM ' . $this->online_table . ' WHERE time >= ' . $start_time . ' AND time < ' . ($start_time + 86400);
+			$this->db->sql_query($sql);
+			$sql = 'OPTIMIZE TABLE ' . $this->online_table;
+			$this->db->sql_query($sql);
+	
+			$sql_ary = array(
+				'year'		=> date('Y', $start_time),
+				'month'		=> date('n', $start_time),
+				'day'		=> date('j', $start_time),
+				'hits'		=> $row_count,
+			);
+	
+			$sql = 'INSERT INTO ' . $this->stats_table . ' ' . $this->db->sql_build_array('INSERT', $sql_ary) . ' ON DUPLICATE KEY UPDATE hits = hits + ' . $sql_ary['hits'];
+	
+			$this->db->sql_query($sql);
+			$mtime = explode(' ', microtime());
+			$totaltime = $mtime[0] + $mtime[1] - $starttime;
+			$rows_per_second = $row_count / $totaltime;
+	
+			add_log('admin', 'LOG_STATISTICS_PRUNED', $totaltime, $rows_per_second);
+			$this->config->set('delete_statistics_last_gc',  mktime(0, 10, 0));
+		} else
+		{
+			add_log('admin', 'LOG_STATISTICS_NO_PRUNE');
 		}
-		$this->db->sql_freeresult($result);
-
-		$this->store($module_aray, 1);
-		$this->store($browser_aray, 2);
-		$this->store($os_aray, 3);
-		$this->store($country_aray, 4);
-		$this->store($user_aray, 5);
-		$this->store($screen_aray, 6);
-		$this->store($referer_aray, 7);
-		$this->store($search_aray, 8);
-
-		unset($module_aray, $browser_aray, $os_aray, $country_aray, $user_aray, $screen_aray, $referer_aray, $search_aray);
-		$sql = 'TRUNCATE TABLE ' . $this->online_table;
-		$this->db->sql_query($sql);
-		$sql = 'OPTIMIZE TABLE ' . $this->online_table;
-		$this->db->sql_query($sql);
-
-		$sql_ary = array(
-			'year'		=> date('Y', $start_day),
-			'month'		=> date('n', $start_day),
-			'day'		=> date('j', $start_day),
-			'hits'		=> $row_count,
-		);
-
-		$sql = 'INSERT INTO ' . $this->stats_table . ' ' . $this->db->sql_build_array('INSERT', $sql_ary) . ' ON DUPLICATE KEY UPDATE hits = hits + ' . $sql_ary['hits'];
-
-		$this->db->sql_query($sql);
-		$mtime = explode(' ', microtime());
-		$totaltime = $mtime[0] + $mtime[1] - $starttime;
-		$rows_per_second = $row_count / $totaltime;
-
-		add_log('admin', 'LOG_STATISTICS_PRUNED', $totaltime, $rows_per_second);
-		$this->config->set('delete_statistics_last_gc', strtotime('midnight', time()));
 	}
 
 	// Store Archive
