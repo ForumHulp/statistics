@@ -38,8 +38,8 @@ class statistics_module
 		$this->tpl_name = 'acp_statistics';
 		$this->page_title = 'ACP_STATISTICS';
 		$template->assign_vars(array('EXT_PATH' => $phpbb_path_helper->update_web_root_path($phpbb_extension_manager->get_extension_path('forumhulp/statistics', true)),
-									 'U_ACTION'	=> $this->u_action,
-									 'ACT'		=> $screen));
+									'U_ACTION'	=> $this->u_action,
+									'ACT'		=> $screen));
 		switch ($screen)
 		{
 			case 'info':

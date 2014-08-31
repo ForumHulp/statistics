@@ -45,7 +45,7 @@ class stat_functions
 
 	public static function count_array($aray, $row1)
 	{
-		$found = 0; 
+		$found = 0;
 		if (is_array($aray))
 		{
 			foreach ($aray as $key => $value)
@@ -83,10 +83,10 @@ class stat_functions
 			(isset($user->lang[$row['module_langname']])) ? $modules[$row['module_langname']] = $user->lang[$row['module_langname']] : null;
 		}
 
-		$module_pages = array('FORUM_INDEX' => $user->lang['FORUM_INDEX'], 'VIEWING_FAQ' => $user->lang['VIEWING_FAQ'], 'VIEWING_MCP' => $user->lang['VIEWING_MCP'], 
+		$module_pages = array('FORUM_INDEX' => $user->lang['FORUM_INDEX'], 'VIEWING_FAQ' => $user->lang['VIEWING_FAQ'], 'VIEWING_MCP' => $user->lang['VIEWING_MCP'],
 							'SEARCHING_FORUMS' => $user->lang['SEARCHING_FORUMS'], 'VIEWING_ONLINE' => $user->lang['VIEWING_ONLINE'], 'VIEWING_MEMBERS' => $user->lang['VIEWING_MEMBERS'],
 							'VIEWING_UCP' => $user->lang['VIEWING_UCP']);
-		
+
 		$m = unserialize($config['statistics_custom_pages']);
 		if (sizeof($m) > 0)
 		{
@@ -171,7 +171,7 @@ class stat_functions
 			'SUBTITLE'			=> $user->lang['BROWSERS'],
 		));
 
-		$sql = ($overall) ? 'SELECT COUNT(DISTINCT name) AS total_entries, MIN(first) AS firstdate, MAX(last) AS lastdate FROM ' . $tables['archive'] . ' WHERE cat = 2' : 
+		$sql = ($overall) ? 'SELECT COUNT(DISTINCT name) AS total_entries, MIN(first) AS firstdate, MAX(last) AS lastdate FROM ' . $tables['archive'] . ' WHERE cat = 2' :
 							'SELECT COUNT(DISTINCT agent) AS total_entries FROM ' . $tables['online'];
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
@@ -179,18 +179,19 @@ class stat_functions
 		$db->sql_freeresult($result);
 
 		$template->assign_vars(array('OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
-									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' . 
-									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
-									 'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
+									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' .
+														$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
+									'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
 
 		$sql = ($overall) ? 'SELECT o.name, o.hits AS total_per_domain, 
 				(SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 2) as total,
 				SUM(o.hits) / (SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 2) AS percent 
 				FROM ' . $tables['archive'] . ' o
-				WHERE cat = 2 GROUP BY o.name ORDER BY ' . $sql_sort : 	
+				WHERE cat = 2 GROUP BY o.name ORDER BY ' . $sql_sort :
 				'SELECT DISTINCT agent FROM ' . $tables['online'];
 		$result = ($overall) ? $db->sql_query_limit($sql, $config['statistics_max_browsers'], $start) :  $db->sql_query($sql);
-		$counter = 0; $graphstr = '';
+		$counter = 0;
+		$graphstr = '';
 		if ($overall)
 		{
 			while ($row = $db->sql_fetchrow($result))
@@ -247,8 +248,8 @@ class stat_functions
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_browsers'], $start);
 
 		$template->assign_vars(array('ROWSPAN'		=> $total_entries,
-									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0',$base_url) : $base_url.'&amp;overall=1',
-									 'GRAPH' 		=> '[' . $graphstr . ']'));
+									'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0',$base_url) : $base_url.'&amp;overall=1',
+									'GRAPH' 		=> '[' . $graphstr . ']'));
 	}
 
 	public static function os($start = 0, $uaction = '', $overall = 0)
@@ -269,7 +270,7 @@ class stat_functions
 			'SUBTITLE'			=> $user->lang['SYSTEMS'],
 		));
 
-		$sql = ($overall) ? 'SELECT COUNT(DISTINCT name) AS total_entries, MIN(first) AS firstdate, MAX(last) AS lastdate FROM ' . $tables['archive'] . ' WHERE cat = 3' : 
+		$sql = ($overall) ? 'SELECT COUNT(DISTINCT name) AS total_entries, MIN(first) AS firstdate, MAX(last) AS lastdate FROM ' . $tables['archive'] . ' WHERE cat = 3' :
 							'SELECT COUNT(DISTINCT agent) AS total_entries FROM ' . $tables['online'];
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
@@ -277,20 +278,21 @@ class stat_functions
 		$db->sql_freeresult($result);
 		
 		$template->assign_vars(array('OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
-									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' . 
+									'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' .
 									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
-									 'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
-									 
-		$sql = ($overall) ? 'SELECT o.name, o.hits AS total_per_os, 
+									'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
+
+		$sql = ($overall) ? 'SELECT o.name, o.hits AS total_per_os,
 				(SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 3) as total,
-				SUM(o.hits) / (SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 3) AS percent 
+				SUM(o.hits) / (SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 3) AS percent
 				FROM ' . $tables['archive'] . ' o
 				WHERE cat = 3 GROUP BY o.name ORDER BY ' . $sql_sort :
-				
+
 				'SELECT agent FROM ' . $tables['online'];
 
 		$result = ($overall) ? $db->sql_query_limit($sql, $config['statistics_max_os'], $start) : $db->sql_query($sql);
-		$counter = 0; $graphstr = '';
+		$counter = 0;
+		$graphstr = '';
 		if ($overall)
 		{
 			while ($row = $db->sql_fetchrow($result))
@@ -369,7 +371,7 @@ class stat_functions
 			'SUBTITLE'			=> $user->lang['COUNTRIES'],
 		));
 
-		$sql = ($overall) ? 'SELECT COUNT(DISTINCT name) AS total_entries, MIN(first) AS firstdate, MAX(last) AS lastdate FROM ' . $tables['archive'] . ' WHERE cat = 4' : 
+		$sql = ($overall) ? 'SELECT COUNT(DISTINCT name) AS total_entries, MIN(first) AS firstdate, MAX(last) AS lastdate FROM ' . $tables['archive'] . ' WHERE cat = 4' :
 							'SELECT COUNT(DISTINCT domain) AS total_entries FROM ' . $tables['online'];
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
@@ -381,26 +383,27 @@ class stat_functions
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_countries'], $start);
 
 		$template->assign_vars(array('ROWSPAN'		=> $total_entries,
-									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0',$base_url) : $base_url.'&amp;overall=1',
-									 'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
-									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' . 
-									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
-									 'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
-		
-		$sql = ($overall) ? 'SELECT d.description, o.hits AS total_per_domain, 
+									'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0',$base_url) : $base_url.'&amp;overall=1',
+									'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
+									'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' .
+														$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
+									'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
+
+		$sql = ($overall) ? 'SELECT d.description, o.hits AS total_per_domain,
 				(SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 4) as total,
-				SUM(o.hits) / (SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 4) AS percent 
+				SUM(o.hits) / (SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 4) AS percent
 				FROM ' . $tables['archive'] . ' o
 				LEFT JOIN ' . $tables['domain'] . ' d ON (d.domain = o.name) WHERE cat = 4 GROUP BY o.name ORDER BY ' . $sql_sort :
-				
-				'SELECT d.description, COUNT(o.domain) AS total_per_domain, 
+
+				'SELECT d.description, COUNT(o.domain) AS total_per_domain,
 				(SELECT COUNT(domain) FROM ' . $tables['online'] . ') as total,
-				COUNT(o.domain) / (SELECT COUNT(domain) FROM ' . $tables['online'] . ') AS percent 
+				COUNT(o.domain) / (SELECT COUNT(domain) FROM ' . $tables['online'] . ') AS percent
 				FROM ' . $tables['online'] . ' o
 				LEFT JOIN ' . $tables['domain'] . ' d ON (d.domain = o.domain) GROUP BY o.domain ORDER BY ' . $sql_sort;
 
 		$result = $db->sql_query_limit($sql, $config['statistics_max_countries'], $start);
-		$counter = 0; $graphstr = '';
+		$counter = 0;
+		$graphstr = '';
 		while ($row = $db->sql_fetchrow($result))
 		{
 			$counter += 1;
@@ -416,7 +419,7 @@ class stat_functions
 		$template->assign_vars(array('GRAPH' => '[' . $graphstr . ']'));
 	}
 
-	public static function referrals($start = 0, $uaction = '', $overall = 0 )
+	public static function referrals($start = 0, $uaction = '', $overall = 0)
 	{
 		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
 
@@ -447,15 +450,15 @@ class stat_functions
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_referer'], $start);
 
 		$template->assign_vars(array('ROWSPAN' 		=> $total_entries,
-									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0',$base_url) : $base_url.'&amp;overall=1',
-									 'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
-									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' . 
-									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
-									 'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
+									'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0',$base_url) : $base_url.'&amp;overall=1',
+									'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
+									'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' .
+														$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
+									'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
 
-		$sql = ($overall) ? 'SELECT name AS domain, hits AS total_per_referer, 
+		$sql = ($overall) ? 'SELECT name AS domain, hits AS total_per_referer,
 				(SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 7 <> "") as total,
-				SUM(hits) / (SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 7) AS percent 
+				SUM(hits) / (SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 7) AS percent
 				FROM ' . $tables['archive'] . ' o WHERE cat = 7
 				GROUP BY name ORDER BY ' . $sql_sort :
 
@@ -465,7 +468,8 @@ class stat_functions
 				 GROUP BY referer ORDER BY ' . $sql_sort;
 
 		$result = $db->sql_query_limit($sql, $config['statistics_max_referer'], $start);
-		$counter = 0; $graphstr = '';
+		$counter = 0;
+		$graphstr = '';
 		while ($row = $db->sql_fetchrow($result))
 		{
 			$counter += 1;
@@ -511,11 +515,11 @@ class stat_functions
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_se'], $start);
 
 		$template->assign_vars(array('ROWSPAN' 		=> $total_entries,
-									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0',$base_url) : $base_url.'&amp;overall=1',
-									 'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
-									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' . 
-									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
-									 'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
+									'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0',$base_url) : $base_url.'&amp;overall=1',
+									'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
+									'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' .
+														$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
+									'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
 
 		$sql = ($overall) ? 'SELECT name AS referer, hits AS total_per_referer, 
 				(SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 7) as total, 
@@ -531,7 +535,8 @@ class stat_functions
 				GROUP BY referer ORDER BY ' . $sql_sort;
 
 		$result = $db->sql_query_limit($sql, $config['statistics_max_se'], $start);
-		$counter = 0; $graphstr = '';
+		$counter = 0;
+		$graphstr = '';
 		while ($row = $db->sql_fetchrow($result))
 		{
 			$counter += 1;
@@ -620,14 +625,15 @@ class stat_functions
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_se_terms'], $start);
 
 		$template->assign_vars(array('ROWSPAN' 		=> $total_entries,
-									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0', $base_url) : $base_url . '&amp;overall=1',
-									 'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
-									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($firstdate, 'd m \'y') . ' - ' . 
-									 					$user->format_date($lastdate, 'd m \'y') . ')': '',
-									 'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
+									'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0', $base_url) : $base_url . '&amp;overall=1',
+									'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
+									'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($firstdate, 'd m \'y') . ' - ' .
+														$user->format_date($lastdate, 'd m \'y') . ')': '',
+									'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
 
-
-		$counter = 0; $graphstr = ''; $row['total'] = array_sum($se_terms);
+		$counter = 0;
+		$graphstr = '';
+		$row['total'] = array_sum($se_terms);
 		foreach ($se_terms as $row['referer'] => $row['total_per_referer'])
 		{
 			$counter += 1;
@@ -669,13 +675,13 @@ class stat_functions
 		$sql = ($overall) ? 'SELECT  COUNT(DISTINCT a.name) AS total_entries, MIN(first) AS firstdate, MAX(last) AS lastdate
 				FROM    ' . $tables['archive'] . ' a
 						LEFT JOIN ' . BOTS_TABLE . ' b
-							ON a.name = b.bot_name 
+							ON a.name = b.bot_name
 				WHERE a.cat = 5 AND b.bot_name IS not null' :
 		
 		'SELECT  COUNT(DISTINCT a.uname) AS total_entries
 				FROM    ' . $tables['online'] . ' a
 						LEFT JOIN ' . BOTS_TABLE . ' b
-							ON a.uname = b.bot_name 
+							ON a.uname = b.bot_name
 				WHERE  b.bot_name IS not NULL';
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
@@ -687,38 +693,39 @@ class stat_functions
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_crawl'], $start);
 
 		$template->assign_vars(array('ROWSPAN' 		=> $total_entries,
-									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0', $base_url) : $base_url . '&amp;overall=1',
-									 'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
-									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' . 
-									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
-									 'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
+									'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0', $base_url) : $base_url . '&amp;overall=1',
+									'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
+									'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' .
+														$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
+									'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
 
 		$sql = ($overall) ? 'SELECT  a.name AS uname, a.hits AS total_per_users, u.user_id,
 				(SELECT  sum(a.hits)
 				FROM    ' . $tables['archive'] . ' a
 						LEFT JOIN ' . BOTS_TABLE . ' b
-							ON a.name = b.bot_name 
+							ON a.name = b.bot_name
 				WHERE  a.cat = 5 AND b.bot_name IS NULL) AS total
 				FROM    ' . $tables['archive'] . ' a
 						LEFT JOIN ' . BOTS_TABLE . ' b
-							ON a.name = b.bot_name 
+							ON a.name = b.bot_name
 						LEFT JOIN ' . USERS_TABLE . ' u ON u.username = a.name
 				WHERE  a.cat = 5 AND b.bot_name IS not NULL ORDER BY ' . $sql_sort :
-				
+
 				'SELECT  a.uname, COUNT(a.uname) AS total_per_users, u.user_id,
 				(SELECT  COUNT(a.uname)
 				FROM    ' . $tables['online'] . ' a
 						LEFT JOIN ' . BOTS_TABLE . ' b
-							ON a.uname = b.bot_name 
+							ON a.uname = b.bot_name
 				WHERE  b.bot_name IS NULL) as total
 				FROM    ' . $tables['online'] . ' a
 						LEFT JOIN ' . BOTS_TABLE . ' b
-							ON a.uname = b.bot_name 
+							ON a.uname = b.bot_name
 						LEFT JOIN ' . USERS_TABLE . ' u ON u.username = a.uname
 				WHERE  b.bot_name IS not NULL GROUP BY a.uname ORDER BY ' . $sql_sort;
 
 		$result = $db->sql_query_limit($sql, $config['statistics_max_crawl'], $start);
-		$counter = 0; $graphstr = '';
+		$counter = 0;
+		$graphstr = '';
 		while ($row = $db->sql_fetchrow($result))
 		{
 			$counter += 1;
@@ -761,8 +768,8 @@ class stat_functions
 			'SUBTITLE'			=> $user->lang['MODULES'],
 		));
 
-		$sql = ($overall) ? 'SELECT COUNT(name) AS total_entries, MIN(first) AS firstdate, MAX(last) AS lastdate FROM ' . $tables['archive'] . ' WHERE cat = 1' : 
-				'SELECT COUNT(DISTINCT module) AS total_entries FROM ' . $tables['online'];;
+		$sql = ($overall) ? 'SELECT COUNT(name) AS total_entries, MIN(first) AS firstdate, MAX(last) AS lastdate FROM ' . $tables['archive'] . ' WHERE cat = 1' :
+				'SELECT COUNT(DISTINCT module) AS total_entries FROM ' . $tables['online'];
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
 		$total_entries = $row['total_entries'];
@@ -779,18 +786,19 @@ class stat_functions
 									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
 									 'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
 
-		$sql = ($overall) ? 'SELECT name AS module, hits AS total_per_module, 
+		$sql = ($overall) ? 'SELECT name AS module, hits AS total_per_module,
 				(SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 1) as total,
-				SUM(hits) / (SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 1) AS percent 
-				FROM ' . $tables['archive'] . ' WHERE cat = 1 GROUP BY name ORDER BY ' . $sql_sort : 
+				SUM(hits) / (SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 1) AS percent
+				FROM ' . $tables['archive'] . ' WHERE cat = 1 GROUP BY name ORDER BY ' . $sql_sort :
 
-				'SELECT module, COUNT(module) AS total_per_module, 
+				'SELECT module, COUNT(module) AS total_per_module,
 				(SELECT COUNT(MODULE) FROM ' . $tables['online'] . ') as total,
-				COUNT( module) / (SELECT COUNT(module) FROM ' . $tables['online'] . ') AS percent 
+				COUNT( module) / (SELECT COUNT(module) FROM ' . $tables['online'] . ') AS percent
 				FROM ' . $tables['online'] . ' GROUP BY module ORDER BY ' . $sql_sort;
 
 		$result = $db->sql_query_limit($sql, $config['statistics_max_modules'], $start);
-		$counter = 0; $graphstr = '';
+		$counter = 0;
+		$graphstr = '';
 		while ($row = $db->sql_fetchrow($result))
 		{
 			$counter += 1;
@@ -836,26 +844,27 @@ class stat_functions
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_screens'], $start);
 
 		$template->assign_vars(array('ROWSPAN' 		=> $total_entries,
-									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0', $base_url) : $base_url . '&amp;overall=1',
-									 'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
-									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' . 
-									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
-									 'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
+									'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0', $base_url) : $base_url . '&amp;overall=1',
+									'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
+									'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' .
+														$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
+									'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
 
 		$sql = ($overall) ? 'SELECT name AS scr_res, hits AS total_per_screen, 
 				(SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 6) as total,
-				SUM(hits) / (SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 6) AS percent 
-				FROM ' . $tables['archive'] . ' 
+				SUM(hits) / (SELECT SUM(hits) FROM ' . $tables['archive'] . ' WHERE cat = 6) AS percent
+				FROM ' . $tables['archive'] . '
 				WHERE cat = 6 GROUP BY name ORDER BY ' . $sql_sort :
 
-				'SELECT o.scr_res, COUNT(o.scr_res) AS total_per_screen, 
+				'SELECT o.scr_res, COUNT(o.scr_res) AS total_per_screen,
 				(SELECT COUNT(scr_res) FROM ' . $tables['online'] . ') as total,
-				COUNT(o.scr_res) / (SELECT COUNT(scr_res) FROM ' . $tables['online'] . ') AS percent 
+				COUNT(o.scr_res) / (SELECT COUNT(scr_res) FROM ' . $tables['online'] . ') AS percent
 				FROM ' . $tables['online'] . ' o
 				GROUP BY o.scr_res ORDER BY ' . $sql_sort;
 
 		$result = $db->sql_query_limit($sql, $config['statistics_max_screens'], $start);
-		$counter = 0; $graphstr = '';
+		$counter = 0;
+		$graphstr = '';
 		while ($row = $db->sql_fetchrow($result))
 		{
 			$counter += 1;
@@ -923,7 +932,7 @@ class stat_functions
 			'SUBTITLE'			=> $user->lang['USERSTATS'],
 		));
 
-		$sql =  'SELECT  MAX(DATE(FROM_UNIXTIME(time))) AS date, HOUR(FROM_UNIXTIME(time)) as hour, COUNT(id) as hits 
+		$sql =  'SELECT  MAX(DATE(FROM_UNIXTIME(time))) AS date, HOUR(FROM_UNIXTIME(time)) as hour, COUNT(id) as hits
 				FROM ' . $tables['online'] . ' GROUP BY hour order by date, hour ASC';
 		$result = $db->sql_query($sql);
 		$graphstr = $datestr ='';
@@ -963,13 +972,13 @@ class stat_functions
 		$sql = ($overall) ? 'SELECT  COUNT(DISTINCT a.name) AS total_entries, MIN(first) AS firstdate, MAX(last) AS lastdate
 				FROM    ' . $tables['archive'] . ' a
 						LEFT JOIN ' . BOTS_TABLE . ' b
-							ON a.name = b.bot_name 
+							ON a.name = b.bot_name
 				WHERE a.cat = 5 AND b.bot_name IS NULL' :
-		
+
 		'SELECT  COUNT(DISTINCT a.uname) AS total_entries
 				FROM    ' . $tables['online'] . ' a
 						LEFT JOIN ' . BOTS_TABLE . ' b
-							ON a.uname = b.bot_name 
+							ON a.uname = b.bot_name
 				WHERE  b.bot_name IS NULL';
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
@@ -981,38 +990,39 @@ class stat_functions
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_users'], $start);
 
 		$template->assign_vars(array('ROWSPAN' 		=> $total_entries,
-									 'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0', $base_url) : $base_url . '&amp;overall=1',
-									 'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
-									 'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' . 
-									 					$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
-									 'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
+									'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0', $base_url) : $base_url . '&amp;overall=1',
+									'OVERALLTXT'	=> ($overall) ? 'Today' : 'Overall',
+									'MINMAXDATE'	=> ($overall && $total_entries) ? '(' .$user->format_date($row['firstdate'], 'd m \'y') . ' - ' .
+														$user->format_date($row['lastdate'], 'd m \'y') . ')': '',
+									'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
 
 		$sql = ($overall) ? 'SELECT  a.name AS uname, a.hits AS total_per_users, u.user_id,
 				(SELECT  sum(a.hits)
 				FROM    ' . $tables['archive'] . ' a
 						LEFT JOIN ' . BOTS_TABLE . ' b
-							ON a.name = b.bot_name 
+							ON a.name = b.bot_name
 				WHERE  a.cat = 5 AND b.bot_name IS NULL) AS total
 				FROM    ' . $tables['archive'] . ' a
 						LEFT JOIN ' . BOTS_TABLE . ' b
-							ON a.name = b.bot_name 
+							ON a.name = b.bot_name
 						LEFT JOIN ' . USERS_TABLE . ' u ON u.username = a.name
 				WHERE  a.cat = 5 AND b.bot_name IS NULL ORDER BY ' . $sql_sort :
-				
+
 				'SELECT  a.uname, COUNT(a.uname) AS total_per_users, u.user_id,
 				(SELECT  COUNT(a.uname)
 				FROM    ' . $tables['online'] . ' a
 						LEFT JOIN ' . BOTS_TABLE . ' b
-							ON a.uname = b.bot_name 
+							ON a.uname = b.bot_name
 				WHERE  b.bot_name IS NULL) as total
 				FROM    ' . $tables['online'] . ' a
 						LEFT JOIN ' . BOTS_TABLE . ' b
-							ON a.uname = b.bot_name 
+							ON a.uname = b.bot_name
 						LEFT JOIN ' . USERS_TABLE . ' u ON u.username = a.uname
 				WHERE  b.bot_name IS NULL GROUP BY a.uname ORDER BY ' . $sql_sort;
 
 		$result = $db->sql_query_limit($sql, $config['statistics_max_users'], $start);
-		$counter = 0; $graphstr = '';
+		$counter = 0;
+		$graphstr = '';
 		while ($row = $db->sql_fetchrow($result))
 		{
 			$counter += 1;
@@ -1029,7 +1039,7 @@ class stat_functions
 		$template->assign_vars(array('GRAPH' => '[' . $graphstr . ']'));
 	}
 
-	public static function top10($start = 0, $uaction = '' )
+	public static function top10($start = 0, $uaction = '')
 	{
 		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
 		$module_aray = array(0 => 'COUNTRIES', 1 => 'REFERRALS', 2 => 'SEARCHENG', 3 => 'SEARCHTERMS', 4 => 'BROWSERS', 5 => 'CRAWLERS', 6 => 'SYSTEMS', 7 => 'MODULES', 
@@ -1048,7 +1058,7 @@ class stat_functions
 		$sql_aray[] = 'SELECT name, hits FROM ' . $tables['archive'] . ' WHERE cat = 6 ORDER BY hits DESC';
 		$sql_aray[] = 'SELECT a.name, a.hits FROM ' . $tables['archive'] . ' a LEFT JOIN ' . USERS_TABLE . ' b ON a.name = b.username 
 					   WHERE  a.cat = 5 AND b.username IS NOT NULL ORDER BY hits DESC';
-		
+
 		$sql_aray[] = 'SELECT "Fisrt startdate" AS name, MIN(first) AS hits FROM ' . $tables['archive'] . ' UNION 
 					   SELECT "Last startdate" AS name, MAX(last) AS hits FROM ' . $tables['archive'] . ' 
 					   UNION SELECT "Rows" AS name, ROUND(COUNT(id), 0) AS hits FROM ' . $tables['archive'] . ' 
@@ -1131,7 +1141,7 @@ class stat_functions
 		return $result;
 	}
 
-	public static function config($start = 0, $uaction = '' )
+	public static function config($start = 0, $uaction = '')
 	{
 		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
 
@@ -1230,15 +1240,14 @@ class stat_functions
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
 
-		for ($i = 0; $i < floor(sizeof($row) / 2) -2; $i++)
+		for ($i = 0; $i < floor(sizeof($row) / 2) - 2; $i++)
 		{
 			$template->assign_block_vars('options', array(
 				'KEY'			=> strtoupper(key($row)),
 				'TITLE'			=> $user->lang[strtoupper(key($row))],
 				'S_EXPLAIN'		=> (isset($user->lang[strtoupper(key($row)) . '_EXPLAIN'])) ? true : false,
 				'TITLE_EXPLAIN'	=> (isset($user->lang[strtoupper(key($row)) . '_EXPLAIN'])) ? $user->lang[strtoupper(key($row)) . '_EXPLAIN'] : '',
-				'CONTENT'		=> '<input type="number" name="config[' . key($row) . ']" id="config_' . key($row) . '" size="3" value="' . $row[key($row)] . '" /> 
-									<input name="config[' . str_replace('max_', 't_', key($row)) . ']" size="3" value="' . $row[str_replace('max_', 't_', key($row))] . '" />' 
+				'CONTENT'		=> '<input type="number" name="config[' . key($row) . ']" id="config_' . key($row) . '" size="3" value="' . $row[key($row)] . '" /> <input name="config[' . str_replace('max_', 't_', key($row)) . ']" size="3" value="' . $row[str_replace('max_', 't_', key($row))] . '" />' 
 			));
 			next($row);
 		}
@@ -1254,8 +1263,8 @@ class stat_functions
 		}
 
 		$module_aray = array('countries' => 'COUNTRIES', 'referrals' => 'REFERRALS', 'se' => 'SEARCHENG', 'se_terms' => 'SEARCHTERMS', 'browsers' => 'BROWSERS', 'crawl' => 'CRAWLERS',
-								'os' => 'SYSTEMS', 'modules' => 'MODULES', 
-							 'stats' => 'AVERAGES', 'screens' => 'RESOLUTIONS', 'top10' => 'OVERVIEW', 'users' => 'USERS', 'ustats' => 'USERSTATS', 'default' => 'LASTVISITS');
+							'os' => 'SYSTEMS', 'modules' => 'MODULES', 'stats' => 'AVERAGES', 'screens' => 'RESOLUTIONS', 'top10' => 'OVERVIEW', 'users' => 'USERS', 
+							'ustats' => 'USERSTATS', 'default' => 'LASTVISITS');
 		foreach($module_aray as $key => $value)
 		{
 			$selected = ($key == $row['start_screen']) ? ' selected="selected"' : '';

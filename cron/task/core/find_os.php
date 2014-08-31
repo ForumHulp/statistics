@@ -343,7 +343,7 @@ class find_os
 			$this->checkBrowserFirefox() ||
 			$this->checkBrowserChrome() ||
 			$this->checkBrowserOmniWeb() ||
-	
+
 			// common mobile
 			$this->checkBrowserAndroid() ||
 			$this->checkBrowseriPad() ||
@@ -351,19 +351,19 @@ class find_os
 			$this->checkBrowseriPhone() ||
 			$this->checkBrowserBlackBerry() ||
 			$this->checkBrowserNokia() ||
-	
+
 			// common bots
 			$this->checkBrowserGoogleBot() ||
 			$this->checkBrowserMSNBot() ||
 			$this->checkBrowserBingBot() ||
 			$this->checkBrowserSlurp() ||
-	
+
 			// check for facebook external hit when loading URL
 			$this->checkFacebookExternalHit() ||
-	
+
 			// WebKit base check (post mobile and others)
 			$this->checkBrowserSafari() ||
-	
+
 			// everyone else
 			$this->checkBrowserNetPositive() ||
 			$this->checkBrowserFirebird() ||
@@ -405,7 +405,7 @@ class find_os
 	{
 		$this->setAol(false);
 		$this->setAolVersion(self::VERSION_UNKNOWN);
-	
+
 		if (stripos($this->_agent, 'aol') !== false) {
 			$aversion = explode(' ', stristr($this->_agent, 'AOL'));
 			$this->setAol(true);
@@ -562,7 +562,7 @@ class find_os
 			$this->setPlatform(self::PLATFORM_WINDOWS_CE);
 			$this->setBrowser(self::BROWSER_POCKET_IE);
 			$this->setMobile(true);
-	
+
 			if (stripos($this->_agent, 'mspie') !== false) {
 				$this->setVersion($aresult[1]);
 			} else {
@@ -951,7 +951,7 @@ class find_os
 		if (stripos($this->_agent, 'Safari') !== false
 			&& stripos($this->_agent, 'iPhone') === false
 			&& stripos($this->_agent, 'iPod') === false) {
-	
+
 			$aresult = explode('/', stristr($this->_agent, 'Version'));
 			if (isset($aresult[1])) {
 				$aversion = explode(' ', $aresult[1]);
@@ -998,7 +998,7 @@ class find_os
 	 * Detect Version for the Safari browser on iOS devices
 	 * @return boolean True if it detects the version correctly otherwise false
 	 */
-	protected function getSafariVersionOnIos() 
+	protected function getSafariVersionOnIos()
 	{
 		$aresult = explode('/',stristr($this->_agent,'Version'));
 		if( isset($aresult[1]) )
@@ -1136,7 +1136,7 @@ class find_os
 							'/webos/i'              =>  'Mobile'
 						);
 
-		foreach ($os_array as $regex => $value) { 
+		foreach ($os_array as $regex => $value) {
 		if (preg_match($regex, $this->_agent)) {
 				$this->_platform = $value;
 				break;

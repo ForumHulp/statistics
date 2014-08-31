@@ -86,7 +86,7 @@ class delete_statistics extends \phpbb\cron\task\base
 				$os->setUserAgent($row['agent']);
 				$browser_aray	= ($row['agent'] != '') ? $this->count_array($browser_aray, $os->getBrowser() . ' ' . $os->getVersion()) : null;
 				$os_aray		= ($row['agent'] != '') ? $this->count_array($os_aray, $os->getPlatform()) : null;
-	
+
 				$country_aray	= ($row['domain'] != '') ? $this->count_array($country_aray, $row['domain']) : null;
 				$user_aray		= ($row['uname'] != '') ? $this->count_array($user_aray, $row['uname']) : null;
 				$screen_aray	= ($row['scr_res'] != '') ? $this->count_array($screen_aray, $row['scr_res']) : null;
@@ -110,21 +110,21 @@ class delete_statistics extends \phpbb\cron\task\base
 			$this->db->sql_query($sql);
 			$sql = 'OPTIMIZE TABLE ' . $this->online_table;
 			$this->db->sql_query($sql);
-	
+
 			$sql_ary = array(
 				'year'		=> date('Y', $start_time),
 				'month'		=> date('n', $start_time),
 				'day'		=> date('j', $start_time),
 				'hits'		=> $row_count,
 			);
-	
+
 			$sql = 'INSERT INTO ' . $this->stats_table . ' ' . $this->db->sql_build_array('INSERT', $sql_ary) . ' ON DUPLICATE KEY UPDATE hits = hits + ' . $sql_ary['hits'];
 
 			$this->db->sql_query($sql);
 			$mtime = explode(' ', microtime());
 			$totaltime = $mtime[0] + $mtime[1] - $starttime;
 			$rows_per_second = $row_count / $totaltime;
-	
+
 			add_log('admin', 'LOG_STATISTICS_PRUNED', $totaltime, $rows_per_second);
 			$this->config->set('delete_statistics_last_gc',  mktime(0, 10, 0));
 		} else
