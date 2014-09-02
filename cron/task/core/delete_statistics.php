@@ -29,7 +29,6 @@ class delete_statistics extends \phpbb\cron\task\base
 	protected $php_ext;
 	protected $config;
 	protected $db;
-
 	protected $online_table;
 	protected $config_table;
 	protected $archive_table;
@@ -62,19 +61,21 @@ class delete_statistics extends \phpbb\cron\task\base
 	*/
 	public function run()
 	{
-		global $phpbb_container, $info;
+		global $phpbb_container, $user;
 
 		$os = new find_os();
 		$module_aray = $browser_aray = $os_aray = $country_aray = $user_aray = $screen_aray = $referer_aray = $search_aray = array();
 
-		$sql = 'SELECT UNIX_TIMESTAMP(FROM_UNIXTIME(MIN(time), "%Y-%m-%d")) as start_time FROM ' . $this->online_table;
+		$sql = 'SELECT UNIX_TIMESTAMP(FROM_UNIXTIME(MIN(time), "%Y-%m-%d")) AS start_time, TIMESTAMPDIFF(SECOND, utc_timestamp(), now()) AS off_set FROM ' . $this->online_table;
 		$result = $this->db->sql_query($sql);
-		$start_time = (int) $this->db->sql_fetchfield('start_time');
+		$row = $this->db->sql_fetchrow($result);
+		$start_time = (int) $row['start_time'] + $row['off_set'];
+		$off_set = $row['off_set'];
 
-		if ($start_time <= mktime(0,0,0) - 86400)
+		if (($start_time) <= (mktime(0,0,0) - 1))
 		{
 			$sql = 'SELECT time, uname, agent, ip_addr, module, host, domain, scr_res, page, referer, se_terms FROM ' . $this->online_table . ' 
-					WHERE time >= ' . $start_time . ' AND time < ' . ($start_time + 86400) . ' ORDER BY id ASC';
+					WHERE time BETWEEN ' . $start_time . ' AND ' . ($start_time + 86400) . ' ORDER BY id ASC';
 			$result = $this->db->sql_query($sql);
 			$starttime = explode(' ', microtime());
 			$starttime = $starttime[1] + $starttime[0];
@@ -106,7 +107,7 @@ class delete_statistics extends \phpbb\cron\task\base
 			$this->store($search_aray, 8);
 
 			unset($module_aray, $browser_aray, $os_aray, $country_aray, $user_aray, $screen_aray, $referer_aray, $search_aray);
-			$sql = 'DELETE FROM ' . $this->online_table . ' WHERE time >= ' . $start_time . ' AND time < ' . ($start_time + 86400);
+			$sql = 'DELETE FROM ' . $this->online_table . ' WHERE time BETWEEN ' . $start_time . ' AND ' . ($start_time + 86400);
 			$this->db->sql_query($sql);
 			$sql = 'OPTIMIZE TABLE ' . $this->online_table;
 			$this->db->sql_query($sql);
@@ -126,11 +127,12 @@ class delete_statistics extends \phpbb\cron\task\base
 			$rows_per_second = $row_count / $totaltime;
 
 			add_log('admin', 'LOG_STATISTICS_PRUNED', $totaltime, $rows_per_second);
-			$this->config->set('delete_statistics_last_gc',  mktime(0, 10, 0));
 		} else
 		{
 			add_log('admin', 'LOG_STATISTICS_NO_PRUNE');
 		}
+		date_default_timezone_set('UTC');
+		$this->config->set('delete_statistics_last_gc', mktime(0, 10, 0));
 	}
 
 	// Store Archive

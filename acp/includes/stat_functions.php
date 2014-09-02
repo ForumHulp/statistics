@@ -19,7 +19,7 @@ class stat_functions
 	*/
 	public static function get_config()
 	{
-		global $db, $config, $tables, $phpbb_container;
+		global $db, $sconfig, $tables, $phpbb_container;
 
 		$sql = 'SELECT * FROM ' . $tables['config'];
 		$result = $db->sql_query($sql);
@@ -27,7 +27,7 @@ class stat_functions
 
 		foreach ($row as $key => $value)
 		{
-			$config['statistics_' . $key] = $value;
+			$sconfig['statistics_' . $key] = $value;
 		}
 	}
 
@@ -67,7 +67,7 @@ class stat_functions
 
 	public static function get_modules()
 	{
-		global $db, $config, $user;
+		global $db, $config, $sconfig, $user;
 		$user->add_lang(array('ucp', 'mcp', 'common'));
 		$modules = $cp = array();
 		$sql = 'SELECT forum_id, forum_name FROM ' . FORUMS_TABLE;
@@ -87,7 +87,7 @@ class stat_functions
 							'SEARCHING_FORUMS' => $user->lang['SEARCHING_FORUMS'], 'VIEWING_ONLINE' => $user->lang['VIEWING_ONLINE'], 'VIEWING_MEMBERS' => $user->lang['VIEWING_MEMBERS'],
 							'VIEWING_UCP' => $user->lang['VIEWING_UCP']);
 
-		$m = unserialize($config['statistics_custom_pages']);
+		$m = unserialize($sconfig['statistics_custom_pages']);
 		if (sizeof($m) > 0)
 		{
 			foreach($m as $value)
@@ -100,7 +100,7 @@ class stat_functions
 
 	public static function online($start = 0, $uaction = '')
 	{
-		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
+		global $db, $config, $sconfig, $user, $tables, $request, $template, $phpbb_container;
 
 		$modules = self::get_modules();
 
@@ -125,13 +125,13 @@ class stat_functions
 
 		$pagination = $phpbb_container->get('pagination');
 		$base_url = $uaction . '&amp;screen=online&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir;
-		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_online'], $start);
+		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $sconfig['statistics_max_online'], $start);
 
 		$sql = 'SELECT o.time, o.uname, o.agent, o.ip_addr, o.host, o.domain, d.description, o.module, o.page, o.referer FROM ' . $tables['online'] . ' o
 				LEFT JOIN ' . $tables['domain'] . ' d ON (d.domain = o.domain) 
 				ORDER BY o.' . $sql_sort;
 
-		$result = $db->sql_query_limit($sql, $config['statistics_max_online'], $start);
+		$result = $db->sql_query_limit($sql, $sconfig['statistics_max_online'], $start);
 		$counter = 0;
 		while ($row = $db->sql_fetchrow($result))
 		{
@@ -139,6 +139,7 @@ class stat_functions
 			$template->assign_block_vars('onlinerow', array(
 				'COUNTER'   => $start + $counter,
 				'TIJD'		=> $user->format_date($row['time'], 'H:i'),
+				'DATE'		=> $user->format_date($row['time'], 'D M d, Y'),
 				'FLAG'		=> ($row['uname'] != 'Anonymous') ? 'online-user.gif' : 'offline-user.gif',
 				'UNAME'		=> $row['uname'],
 				'AGENT'		=> $row['agent'],
@@ -155,7 +156,7 @@ class stat_functions
 
 	public static function browsers($start = 0, $uaction = '', $overall = 0)
 	{
-		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
+		global $db, $config, $sconfig, $user, $tables, $request, $template, $phpbb_container;
 
 		// sort keys, direction en sql
 		$sort_key	= $request->variable('sk', 'd');
@@ -189,7 +190,7 @@ class stat_functions
 				FROM ' . $tables['archive'] . ' o
 				WHERE cat = 2 GROUP BY o.name ORDER BY ' . $sql_sort :
 				'SELECT DISTINCT agent FROM ' . $tables['online'];
-		$result = ($overall) ? $db->sql_query_limit($sql, $config['statistics_max_browsers'], $start) :  $db->sql_query($sql);
+		$result = ($overall) ? $db->sql_query_limit($sql, $sconfig['statistics_max_browsers'], $start) :  $db->sql_query($sql);
 		$counter = 0;
 		$graphstr = '';
 		if ($overall)
@@ -200,8 +201,10 @@ class stat_functions
 				$template->assign_block_vars('onlinerow', array(
 					'COUNTER'   	=> $start + $counter,
 					'NAME'			=> $row['name'],
-					'MODULECOUNT'	=> $row['total_per_domain'],
-					'MODULETOTAL'	=> round((($row['total_per_domain'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_domain'] . ' of ' . $row['total'] . ')'
+					'MODULECOUNT'	=> self::roundk($row['total_per_domain']),
+					'TMODULECOUNT'	=> $row['total_per_domain'],
+					'MODULETOTAL'	=> round((($row['total_per_domain'] / $row['total']) * 100), 1) . ' % (' . self::roundk($row['total_per_domain']) . ' of ' . self::roundk($row['total']) . ')',
+					'TMODULETOTAL'	=> round((($row['total_per_domain'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_domain'] . ' of ' . $row['total'] . ')'
 					)
 				);
 				$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($db->sql_escape($row['name'])) . '\', ' . $row['total_per_domain'] . ']';
@@ -229,7 +232,7 @@ class stat_functions
 			$counter = 0;
 			$graphstr = '';
 			$row['total'] = array_sum($browser_aray);
-			foreach (array_slice($browser_aray, $start,$config['statistics_max_browsers'], true) as $row['Browser'] => $row['total_per_browser'])
+			foreach (array_slice($browser_aray, $start, $sconfig['statistics_max_browsers'], true) as $row['Browser'] => $row['total_per_browser'])
 			{
 				$counter += 1;
 				$template->assign_block_vars('onlinerow', array(
@@ -245,7 +248,7 @@ class stat_functions
 
 		$pagination = $phpbb_container->get('pagination');
 		$base_url = $uaction . '&amp;screen=browsers&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '&amp;overall=0');
-		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_browsers'], $start);
+		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $sconfig['statistics_max_browsers'], $start);
 
 		$template->assign_vars(array('ROWSPAN'		=> $total_entries,
 									'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0',$base_url) : $base_url.'&amp;overall=1',
@@ -254,7 +257,7 @@ class stat_functions
 
 	public static function os($start = 0, $uaction = '', $overall = 0)
 	{
-		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
+		global $db, $config, $sconfig, $user, $tables, $request, $template, $phpbb_container;
 
 		// sort keys, direction en sql
 		$sort_key	= $request->variable('sk', 'd');
@@ -290,7 +293,7 @@ class stat_functions
 
 				'SELECT agent FROM ' . $tables['online'];
 
-		$result = ($overall) ? $db->sql_query_limit($sql, $config['statistics_max_os'], $start) : $db->sql_query($sql);
+		$result = ($overall) ? $db->sql_query_limit($sql, $sconfig['statistics_max_os'], $start) : $db->sql_query($sql);
 		$counter = 0;
 		$graphstr = '';
 		if ($overall)
@@ -301,8 +304,10 @@ class stat_functions
 				$template->assign_block_vars('onlinerow', array(
 					'COUNTER'   	=> $start + $counter,
 					'NAME'			=> $row['name'],
-					'MODULECOUNT'	=> $row['total_per_os'],
-					'MODULETOTAL'	=> round((($row['total_per_os'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_os'] . ' of ' . $row['total'] . ')'
+					'MODULECOUNT'	=> self::roundk($row['total_per_os']),
+					'TMODULECOUNT'	=> $row['total_per_os'],
+					'MODULETOTAL'	=> round((($row['total_per_os'] / $row['total']) * 100), 1) . ' % (' . self::roundk($row['total_per_os']) . ' of ' . self::roundk($row['total']) . ')',
+					'TMODULETOTAL'	=> round((($row['total_per_os'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_os'] . ' of ' . $row['total'] . ')'
 					)
 				);
 				$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($db->sql_escape($row['name'])) . '\', ' . $row['total_per_os'] . ']';
@@ -330,7 +335,7 @@ class stat_functions
 			$counter = 0;
 			$graphstr = '';
 			$row['total'] = array_sum($os_aray);
-			foreach (array_slice($os_aray, $start, $config['statistics_max_browsers'], true) as $row['Operating System'] => $row['total_per_os'])
+			foreach (array_slice($os_aray, $start, $sconfig['statistics_max_browsers'], true) as $row['Operating System'] => $row['total_per_os'])
 			{
 				$counter += 1;
 				$template->assign_block_vars('onlinerow', array(
@@ -346,7 +351,7 @@ class stat_functions
 
 		$pagination = $phpbb_container->get('pagination');
 		$base_url = $uaction . '&amp;screen=os&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '&amp;overall=0');
-		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_browsers'], $start);
+		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $sconfig['statistics_max_browsers'], $start);
 
 		$template->assign_vars(array('ROWSPAN'		=> $total_entries,
 									'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0',$base_url) : $base_url.'&amp;overall=1',
@@ -355,7 +360,7 @@ class stat_functions
 
 	public static function countries($start = 0, $uaction = '', $overall = 0)
 	{
-		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
+		global $db, $config, $sconfig, $user, $tables, $request, $template, $phpbb_container;
 
 		// sort keys, direction en sql
 		$sort_key	= $request->variable('sk', 'd');
@@ -380,7 +385,7 @@ class stat_functions
 
 		$pagination = $phpbb_container->get('pagination');
 		$base_url = $uaction . '&amp;screen=countries&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '&amp;overall=0');
-		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_countries'], $start);
+		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $sconfig['statistics_max_countries'], $start);
 
 		$template->assign_vars(array('ROWSPAN'		=> $total_entries,
 									'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0',$base_url) : $base_url.'&amp;overall=1',
@@ -401,7 +406,7 @@ class stat_functions
 				FROM ' . $tables['online'] . ' o
 				LEFT JOIN ' . $tables['domain'] . ' d ON (d.domain = o.domain) GROUP BY o.domain ORDER BY ' . $sql_sort;
 
-		$result = $db->sql_query_limit($sql, $config['statistics_max_countries'], $start);
+		$result = $db->sql_query_limit($sql, $sconfig['statistics_max_countries'], $start);
 		$counter = 0;
 		$graphstr = '';
 		while ($row = $db->sql_fetchrow($result))
@@ -410,8 +415,10 @@ class stat_functions
 			$template->assign_block_vars('onlinerow', array(
 				'COUNTER'   	=> $start + $counter,
 				'NAME'			=> $row['description'],
-				'MODULECOUNT'	=> $row['total_per_domain'],
-				'MODULETOTAL'	=> round((($row['total_per_domain'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_domain'] . ' of ' . $row['total'] . ')'
+				'MODULECOUNT'	=> self::roundk($row['total_per_domain']),
+				'TMODULECOUNT'	=> $row['total_per_domain'],
+				'MODULETOTAL'	=> round((($row['total_per_domain'] / $row['total']) * 100), 1) . ' % (' . self::roundk($row['total_per_domain']) . ' of ' . self::roundk($row['total']) . ')',
+				'TMODULETOTAL'	=> round((($row['total_per_domain'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_domain'] . ' of ' . $row['total'] . ')'
 				)
 			);
 			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($db->sql_escape($row['description'])) . '\', ' . $row['total_per_domain'] . ']';
@@ -421,7 +428,7 @@ class stat_functions
 
 	public static function referrals($start = 0, $uaction = '', $overall = 0)
 	{
-		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
+		global $db, $config, $sconfig, $user, $tables, $request, $template, $phpbb_container;
 
 		// sort keys, direction en sql
 		$sort_key	= $request->variable('sk', 'd');
@@ -447,7 +454,7 @@ class stat_functions
 
 		$pagination = $phpbb_container->get('pagination');
 		$base_url = $uaction . '&amp;screen=referrals&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '&amp;overall=0');
-		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_referer'], $start);
+		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $sconfig['statistics_max_referer'], $start);
 
 		$template->assign_vars(array('ROWSPAN' 		=> $total_entries,
 									'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0',$base_url) : $base_url.'&amp;overall=1',
@@ -467,7 +474,7 @@ class stat_functions
 				 FROM ' . $tables['online'] . ' WHERE referer <> "" AND referer not LIKE "%'. $config['server_name'] . '%"
 				 GROUP BY referer ORDER BY ' . $sql_sort;
 
-		$result = $db->sql_query_limit($sql, $config['statistics_max_referer'], $start);
+		$result = $db->sql_query_limit($sql, $sconfig['statistics_max_referer'], $start);
 		$counter = 0;
 		$graphstr = '';
 		while ($row = $db->sql_fetchrow($result))
@@ -476,8 +483,10 @@ class stat_functions
 			$template->assign_block_vars('onlinerow', array(
 				'COUNTER'   	=> $start + $counter,
 				'NAME'			=> $row['domain'],
-				'MODULECOUNT'	=> $row['total_per_referer'],
-				'MODULETOTAL'	=> round((($row['total_per_referer'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_referer'] . ' of ' . $row['total'] . ')'
+				'MODULECOUNT'	=> self::roundk($row['total_per_referer']),
+				'TMODULECOUNT'	=> $row['total_per_referer'],
+				'MODULETOTAL'	=> round((($row['total_per_referer'] / $row['total']) * 100), 1) . ' % (' . self::roundk($row['total_per_referer']) . ' of ' . self::roundk($row['total']) . ')',
+				'TMODULETOTAL'	=> round((($row['total_per_referer'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_referer'] . ' of ' . $row['total'] . ')'
 				)
 			);
 			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($db->sql_escape(substr($row['domain'], 0, 20))) . '\', ' . $row['total_per_referer'] . ']';
@@ -487,7 +496,7 @@ class stat_functions
 
 	public static function se($start = 0, $uaction = '', $overall = 0)
 	{
-		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
+		global $db, $config, $sconfig, $user, $tables, $request, $template, $phpbb_container;
 
 		// sort keys, direction en sql
 		$sort_key	= $request->variable('sk', 'd');
@@ -512,7 +521,7 @@ class stat_functions
 
 		$pagination = $phpbb_container->get('pagination');
 		$base_url = $uaction . '&amp;screen=se&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '&amp;overall=0');
-		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_se'], $start);
+		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $sconfig['statistics_max_se'], $start);
 
 		$template->assign_vars(array('ROWSPAN' 		=> $total_entries,
 									'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0',$base_url) : $base_url.'&amp;overall=1',
@@ -534,7 +543,7 @@ class stat_functions
 				WHERE referer REGEXP (SELECT GROUP_CONCAT(name ORDER BY name SEPARATOR "|") FROM '. $tables['se'] . ') 
 				GROUP BY referer ORDER BY ' . $sql_sort;
 
-		$result = $db->sql_query_limit($sql, $config['statistics_max_se'], $start);
+		$result = $db->sql_query_limit($sql, $sconfig['statistics_max_se'], $start);
 		$counter = 0;
 		$graphstr = '';
 		while ($row = $db->sql_fetchrow($result))
@@ -543,8 +552,10 @@ class stat_functions
 			$template->assign_block_vars('onlinerow', array(
 				'COUNTER'   	=> $start + $counter,
 				'NAME'			=> $row['referer'],
-				'MODULECOUNT'	=> $row['total_per_referer'],
-				'MODULETOTAL'	=> round((($row['total_per_referer'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_referer'] . ' of ' . $row['total'] . ')'
+				'MODULECOUNT'	=> self::roundk($row['total_per_referer']),
+				'TMODULECOUNT'	=> $row['total_per_referer'],
+				'MODULETOTAL'	=> round((($row['total_per_referer'] / $row['total']) * 100), 1) . ' % (' . self::roundk($row['total_per_referer']) . ' of ' . self::roundk($row['total']) . ')',
+				'TMODULETOTAL'	=> round((($row['total_per_referer'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_referer'] . ' of ' . $row['total'] . ')'
 				)
 			);
 			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($db->sql_escape($row['referer'])) . '\', ' . $row['total_per_referer'] . ']';
@@ -579,7 +590,7 @@ class stat_functions
 
 	public static function se_terms($start = 0, $uaction = '', $overall = 0)
 	{
-		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
+		global $db, $config, $sconfig, $user, $tables, $request, $template, $phpbb_container;
 
 		// sort keys, direction en sql
 		$sort_key	= $request->variable('sk', 'd');
@@ -622,7 +633,7 @@ class stat_functions
 
 		$pagination = $phpbb_container->get('pagination');
 		$base_url = $uaction . '&amp;screen=se_terms&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '&amp;overall=0');
-		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_se_terms'], $start);
+		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $sconfig['statistics_max_se_terms'], $start);
 
 		$template->assign_vars(array('ROWSPAN' 		=> $total_entries,
 									'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0', $base_url) : $base_url . '&amp;overall=1',
@@ -640,8 +651,10 @@ class stat_functions
 			$template->assign_block_vars('onlinerow', array(
 				'COUNTER'   	=> $start + $counter,
 				'NAME'			=> $row['referer'],
-				'MODULECOUNT'	=> $row['total_per_referer'],
-				'MODULETOTAL'	=> round((($row['total_per_referer'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_referer'] . ' of ' . $row['total'] . ')'
+				'MODULECOUNT'	=> self::roundk($row['total_per_referer']),
+				'TMODULECOUNT'	=> $row['total_per_referer'],
+				'MODULETOTAL'	=> round((($row['total_per_referer'] / $row['total']) * 100), 1) . ' % (' . self::roundk($row['total_per_referer']) . ' of ' . self::roundk($row['total']) . ')',
+				'TMODULETOTAL'	=> round((($row['total_per_referer'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_referer'] . ' of ' . $row['total'] . ')'
 				)
 			);
 			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($db->sql_escape($row['referer'])) . '\', ' . $row['total_per_referer'] . ']';
@@ -651,7 +664,7 @@ class stat_functions
 
 	public static function crawl($start = 0, $uaction = '', $overall = 0)
 	{
-		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
+		global $db, $config, $sconfig, $user, $tables, $request, $template, $phpbb_container;
 
 		// sort keys, direction en sql
 		$sort_key	= $request->variable('sk', 'd');
@@ -690,7 +703,7 @@ class stat_functions
 
 		$pagination = $phpbb_container->get('pagination');
 		$base_url = $uaction . '&amp;screen=crawl&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '&amp;overall=0');
-		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_crawl'], $start);
+		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $sconfig['statistics_max_crawl'], $start);
 
 		$template->assign_vars(array('ROWSPAN' 		=> $total_entries,
 									'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0', $base_url) : $base_url . '&amp;overall=1',
@@ -723,7 +736,7 @@ class stat_functions
 						LEFT JOIN ' . USERS_TABLE . ' u ON u.username = a.uname
 				WHERE  b.bot_name IS not NULL GROUP BY a.uname ORDER BY ' . $sql_sort;
 
-		$result = $db->sql_query_limit($sql, $config['statistics_max_crawl'], $start);
+		$result = $db->sql_query_limit($sql, $sconfig['statistics_max_crawl'], $start);
 		$counter = 0;
 		$graphstr = '';
 		while ($row = $db->sql_fetchrow($result))
@@ -733,8 +746,10 @@ class stat_functions
 				'COUNTER'   	=> $start + $counter,
 				'NAME'			=> $row['uname'],
 				'USER_ID'		=> $row['user_id'],
-				'MODULECOUNT'	=> $row['total_per_users'],
-				'MODULETOTAL'	=> round((($row['total_per_users'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_users'] . ' of ' . $row['total'] . ')'
+				'MODULECOUNT'	=> self::roundk($row['total_per_users']),
+				'TMODULECOUNT'	=> $row['total_per_users'],
+				'MODULETOTAL'	=> round((($row['total_per_users'] / $row['total']) * 100), 1) . ' % (' . self::roundk($row['total_per_users']) . ' of ' . self::roundk($row['total']) . ')',
+				'TMODULETOTAL'	=> round((($row['total_per_users'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_users'] . ' of ' . $row['total'] . ')'
 				)
 			);
 			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($db->sql_escape($row['uname'])) . '\', ' . $row['total_per_users'] . ']';
@@ -744,7 +759,7 @@ class stat_functions
 
 	public static function modules($start = 0, $uaction = '', $overall = 0)
 	{
-		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
+		global $db, $config, $sconfig, $user, $tables, $request, $template, $phpbb_container;
 
 		$modules = self::get_modules();
 		// sort keys, direction en sql
@@ -777,7 +792,7 @@ class stat_functions
 
 		$pagination = $phpbb_container->get('pagination');
 		$base_url = $uaction . '&amp;screen=modules&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '&amp;overall=0');
-		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_modules'], $start);
+		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $sconfig['statistics_max_modules'], $start);
 
 		$template->assign_vars(array('ROWSPAN'		=> $total_entries,
 									'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0', $base_url) : $base_url . '&amp;overall=1',
@@ -796,7 +811,7 @@ class stat_functions
 				COUNT( module) / (SELECT COUNT(module) FROM ' . $tables['online'] . ') AS percent
 				FROM ' . $tables['online'] . ' GROUP BY module ORDER BY ' . $sql_sort;
 
-		$result = $db->sql_query_limit($sql, $config['statistics_max_modules'], $start);
+		$result = $db->sql_query_limit($sql, $sconfig['statistics_max_modules'], $start);
 		$counter = 0;
 		$graphstr = '';
 		while ($row = $db->sql_fetchrow($result))
@@ -805,8 +820,10 @@ class stat_functions
 			$template->assign_block_vars('onlinerow', array(
 				'COUNTER'   	=> $start + $counter,
 				'NAME'			=> isset($modules[$row['module']]) ? $modules[$row['module']] : 'Module not found',
-				'MODULECOUNT'	=> $row['total_per_module'],
-				'MODULETOTAL'	=> round((($row['total_per_module'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_module'] . ' of ' . $row['total'] . ')'
+				'MODULECOUNT'	=> self::roundk($row['total_per_module']),
+				'TMODULECOUNT'	=> $row['total_per_module'],
+				'MODULETOTAL'	=> round((($row['total_per_module'] / $row['total']) * 100), 1) . ' % (' . self::roundk($row['total_per_module']) . ' of ' . self::roundk($row['total']) . ')',
+				'TMODULETOTAL'	=> round((($row['total_per_module'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_module'] . ' of ' . $row['total'] . ')'
 				)
 			);
 			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode(isset($modules[$row['module']]) ? $db->sql_escape($modules[$row['module']]) : 'Module not found') . '\', ' . $row['total_per_module'] . ']';
@@ -816,7 +833,7 @@ class stat_functions
 
 	public static function screens($start = 0, $uaction = '', $overall = 0)
 	{
-		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
+		global $db, $config, $sconfig, $user, $tables, $request, $template, $phpbb_container;
 
 		// sort keys, direction en sql
 		$sort_key	= $request->variable('sk', 'd');
@@ -841,7 +858,7 @@ class stat_functions
 
 		$pagination = $phpbb_container->get('pagination');
 		$base_url = $uaction . '&amp;screen=screens&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '&amp;overall=0');
-		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_screens'], $start);
+		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $sconfig['statistics_max_screens'], $start);
 
 		$template->assign_vars(array('ROWSPAN' 		=> $total_entries,
 									'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0', $base_url) : $base_url . '&amp;overall=1',
@@ -862,7 +879,7 @@ class stat_functions
 				FROM ' . $tables['online'] . ' o
 				GROUP BY o.scr_res ORDER BY ' . $sql_sort;
 
-		$result = $db->sql_query_limit($sql, $config['statistics_max_screens'], $start);
+		$result = $db->sql_query_limit($sql, $sconfig['statistics_max_screens'], $start);
 		$counter = 0;
 		$graphstr = '';
 		while ($row = $db->sql_fetchrow($result))
@@ -871,8 +888,10 @@ class stat_functions
 			$template->assign_block_vars('onlinerow', array(
 				'COUNTER'   	=> $start + $counter,
 				'NAME'			=> $row['scr_res'],
-				'MODULECOUNT'	=> $row['total_per_screen'],
-				'MODULETOTAL'	=> round((($row['total_per_screen'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_screen'] . ' of ' . $row['total'] . ')'
+				'MODULECOUNT'	=> self::roundk($row['total_per_screen']),
+				'TMODULECOUNT'	=> $row['total_per_screen'],
+				'MODULETOTAL'	=> round((($row['total_per_screen'] / $row['total']) * 100), 1) . ' % (' . self::roundk($row['total_per_screen']) . ' of ' . self::roundk($row['total']) . ')',
+				'TMODULETOTAL'	=> round((($row['total_per_screen'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_screen'] . ' of ' . $row['total'] . ')'
 				)
 			);
 			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($row['scr_res']) . '\', ' . $row['total_per_screen'] . ']';
@@ -948,7 +967,7 @@ class stat_functions
 
 	public static function users($start = 0, $uaction = '', $overall = 0)
 	{
-		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
+		global $db, $config, $sconfig, $user, $tables, $request, $template, $phpbb_container;
 
 		// sort keys, direction en sql
 		$sort_key	= $request->variable('sk', 'd');
@@ -987,7 +1006,7 @@ class stat_functions
 
 		$pagination = $phpbb_container->get('pagination');
 		$base_url = $uaction . '&amp;screen=users&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir . (($overall)? '&amp;overall=1' : '&amp;overall=0');
-		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $config['statistics_max_users'], $start);
+		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $sconfig['statistics_max_users'], $start);
 
 		$template->assign_vars(array('ROWSPAN' 		=> $total_entries,
 									'OVERALL'		=> ($overall) ? str_replace('&amp;overall=1', '&amp;overall=0', $base_url) : $base_url . '&amp;overall=1',
@@ -1020,7 +1039,7 @@ class stat_functions
 						LEFT JOIN ' . USERS_TABLE . ' u ON u.username = a.uname
 				WHERE  b.bot_name IS NULL GROUP BY a.uname ORDER BY ' . $sql_sort;
 
-		$result = $db->sql_query_limit($sql, $config['statistics_max_users'], $start);
+		$result = $db->sql_query_limit($sql, $sconfig['statistics_max_users'], $start);
 		$counter = 0;
 		$graphstr = '';
 		while ($row = $db->sql_fetchrow($result))
@@ -1030,8 +1049,10 @@ class stat_functions
 				'COUNTER'   	=> $start + $counter,
 				'NAME'			=> $row['uname'],
 				'USER_ID'		=> $row['user_id'],
-				'MODULECOUNT'	=> $row['total_per_users'],
-				'MODULETOTAL'	=> round((($row['total_per_users'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_users'] . ' of ' . $row['total'] . ')'
+				'MODULECOUNT'	=> self::roundk($row['total_per_users']),
+				'TMODULECOUNT'	=> $row['total_per_users'],
+				'MODULETOTAL'	=> round((($row['total_per_users'] / $row['total']) * 100), 1) . ' % (' . self::roundk($row['total_per_users']) . ' of ' . self::roundk($row['total']) . ')',
+				'TMODULETOTAL'	=> round((($row['total_per_users'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_users'] . ' of ' . $row['total'] . ')'
 				)
 			);
 			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($db->sql_escape($row['uname'])) . '\', ' . $row['total_per_users'] . ']';
@@ -1041,7 +1062,7 @@ class stat_functions
 
 	public static function top10($start = 0, $uaction = '')
 	{
-		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
+		global $db, $config, $sconfig, $user, $tables, $request, $template, $phpbb_container;
 		$module_aray = array(0 => 'COUNTRIES', 1 => 'REFERRALS', 2 => 'SEARCHENG', 3 => 'SEARCHTERMS', 4 => 'BROWSERS', 5 => 'CRAWLERS', 6 => 'SYSTEMS', 7 => 'MODULES',
 							8 => 'RESOLUTIONS', 9 => 'USERS', 10 => 'FL_DATE', 11 => 'POSTS');
 		$modules = self::get_modules();
@@ -1090,7 +1111,8 @@ class stat_functions
 					$template->assign_block_vars('blocks.block', array(
 						'COUNTER'  	=> $counter,
 						'NAME'		=> ($i == 7) ? ((isset($modules[$row['name']])) ? $modules[$row['name']] : 'Not found') : $row['name'],
-						'HITS'		=> ($i == 10 && isset($row['hits']) && $counter < 3) ? $user->format_date($row['hits'], 'd m \'y') : self::roundk($row['hits'])
+						'HITS'		=> ($i == 10 && isset($row['hits']) && $counter < 3) ? $user->format_date($row['hits'], 'd m \'y') : self::roundk($row['hits']),
+						'THITS'		=> ($i == 10 && isset($row['hits']) && $counter < 3) ? $user->format_date($row['hits']) : $row['hits']
 						)
 					);
 				}
@@ -1143,7 +1165,7 @@ class stat_functions
 
 	public static function config($start = 0, $uaction = '')
 	{
-		global $db, $config, $user, $tables, $request, $template, $phpbb_container;
+		global $db, $config, $sconfig, $user, $tables, $request, $template, $phpbb_container;
 
 		$se_name = $request->variable('se_name', array('' => ''), true);
 		$se_query = $request->variable('se_query', array('' => ''), true);

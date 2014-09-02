@@ -29,7 +29,7 @@
     <!-- BEGIN onlinerow -->
     <tr class=<!-- IF onlinerow.S_ROW_COUNT is even -->"row1"<!-- ELSE -->"row2"<!-- ENDIF -->>
         <td>{onlinerow.COUNTER}</td>
-        <td>{onlinerow.TIJD}</td>
+        <td title="{onlinerow.DATE}">{onlinerow.TIJD}</td>
         <td title="{onlinerow.AGENT}"><img src="{EXT_PATH}/adm/style/images/{onlinerow.FLAG}" alt="{onlinerow.UNAME}" height="10" border="0" />{onlinerow.UNAME}</td>
         <td><a href="{onlinerow.MODULEURL}">{onlinerow.MODULE}</a></td>
         <td><img src="{EXT_PATH}/adm/style/images/flags/{onlinerow.DFLAG}" alt="{onlinerow.DDESC}" border="0" width="16" height="10" />{onlinerow.DDESC}</td>

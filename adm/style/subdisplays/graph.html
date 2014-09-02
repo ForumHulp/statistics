@@ -22,8 +22,8 @@
     <tr class=<!-- IF onlinerow.S_ROW_COUNT is even -->"row1"<!-- ELSE -->"row2"<!-- ENDIF -->>
         <td>{onlinerow.COUNTER}</td>
         <td>{onlinerow.NAME}</td>
-        <td>{onlinerow.MODULECOUNT}</td>
-        <td >{onlinerow.MODULETOTAL}</td>
+        <td title="{onlinerow.TMODULECOUNT}">{onlinerow.MODULECOUNT}</td>
+        <td title="{onlinerow.TMODULETOTAL}">{onlinerow.MODULETOTAL}</td>
         <!-- IF onlinerow.S_FIRST_ROW --><td rowspan="{ROWSPAN}" style="vertical-align:top;">
         <div id="chart" style="width: 330px; height: 230px; margin: auto;"></div>
 		<script>

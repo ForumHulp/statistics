@@ -152,6 +152,7 @@ class install_statistics extends \phpbb\db\migration\migration
 			array('config.add', array('statistics_version', '3.1.0')),
 			array('config.add', array('delete_statistics_gc', 86400)),
 			array('config.add', array('delete_statistics_last_gc', 0, 1)),
+			array('config.add', array('statistics_archive', 0, 1)),
 			array('module.add', array(
 				'acp', 'ACP_QUICK_ACCESS', array(
 					'module_basename'	=> '\forumhulp\statistics\acp\statistics_module',
