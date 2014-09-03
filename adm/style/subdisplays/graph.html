@@ -1,0 +1,53 @@
+<table class="graph_table">
+<thead>
+    <tr>
+        <th class="row-1 row-counter">#</th>
+        <th class="row-2 row-module">{SUBTITLE} <span style="font-size:0.65em;" title="Timespan: {MINMAXDATE}">{MINMAXDATE}</span>
+          	<a href="{U_ACTION}&amp;screen={ACT}&amp;sk=d&amp;sd=a{OVERALLSORT}" title="{L_ASCENDING}"><i class="fa fa-arrow-up"<!-- IF S_SORT_KEY == 'd' and S_SORT_DIR == 'a' --> id="act-arrow"<!-- ENDIF -->></i></a> 
+            <a href="{U_ACTION}&amp;screen={ACT}&amp;sk=d&amp;sd=d{OVERALLSORT}" title="{L_DESCENDING}"><i class="fa fa-arrow-down"<!-- IF S_SORT_KEY == 'd' and S_SORT_DIR == 'd' --> id="act-arrow"<!-- ENDIF -->></i></a>
+		</th>
+        <th class="row-3 row-views">{L_VIEWS}
+        	<a href="{U_ACTION}&amp;screen={ACT}&amp;sk=t&amp;sd=a{OVERALLSORT}" title="{L_ASCENDING}"><i class="fa fa-arrow-up"<!-- IF S_SORT_KEY == 't' and S_SORT_DIR == 'a' --> id="act-arrow"<!-- ENDIF -->></i></a> 
+            <a href="{U_ACTION}&amp;screen={ACT}&amp;sk=t&amp;sd=d{OVERALLSORT}" title="{L_DESCENDING}"><i class="fa fa-arrow-down"<!-- IF S_SORT_KEY == 't' and S_SORT_DIR == 'd' --> id="act-arrow"<!-- ENDIF -->></i></a>
+       	</th>
+        <th class="row-4 row-total">{L_PERC}
+           	<a href="{U_ACTION}&amp;screen={ACT}&amp;sk=p&amp;sd=a{OVERALLSORT}" title="{L_ASCENDING}"><i class="fa fa-arrow-up"<!-- IF S_SORT_KEY == 'p' and S_SORT_DIR == 'a' --> id="act-arrow"<!-- ENDIF -->></i></a> 
+            <a href="{U_ACTION}&amp;screen={ACT}&amp;sk=p&amp;sd=d{OVERALLSORT}" title="{L_DESCENDING}"><i class="fa fa-arrow-down"<!-- IF S_SORT_KEY == 'p' and S_SORT_DIR == 'd' --> id="act-arrow"<!-- ENDIF -->></i></a>
+		</th>
+        <th class="row-5 row-graph">{L_GRAPH}<span style="float:right;"><a href="{OVERALL}" title="Switch to {OVERALLTXT}">{OVERALLTXT}</a></span></th>
+    </tr>
+</thead>
+<tbody>
+    <!-- BEGIN onlinerow -->
+    <tr class=<!-- IF onlinerow.S_ROW_COUNT is even -->"row1"<!-- ELSE -->"row2"<!-- ENDIF -->>
+        <td>{onlinerow.COUNTER}</td>
+        <td>{onlinerow.NAME}</td>
+        <td title="{onlinerow.TMODULECOUNT}">{onlinerow.MODULECOUNT}</td>
+        <td title="{onlinerow.TMODULETOTAL}">{onlinerow.MODULETOTAL}</td>
+        <!-- IF onlinerow.S_FIRST_ROW --><td rowspan="{ROWSPAN}" style="vertical-align:top;">
+        <div id="chart" style="width: 330px; height: 230px; margin: auto;"></div>
+		<script>
+        var graph = {GRAPH};
+        </script>
+        </td><!-- ENDIF -->
+    </tr>
+    <!-- BEGINELSE -->
+    <tr>
+        <td colspan="5">{L_ACP_NO_ITEMS}</td>
+    </tr>
+    <!-- END onlinerow -->
+    </tbody>
+    </table>
+    <!-- IF .pagination -->
+	<table class="statistics_table">
+    <tbody>
+    <tr class="row3">
+        <td>
+            <div class="pagination">
+                <!-- INCLUDE pagination.html -->
+            </div>
+        </td>
+    </tr>
+    </tbody>
+    </table>
+    <!-- ENDIF -->
