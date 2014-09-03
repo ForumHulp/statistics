@@ -74,7 +74,7 @@ class delete_statistics extends \phpbb\cron\task\base
 			{
 				$module_aray	= ($row['module'] != '') ? $this->count_array($module_aray, $row['module']) : null;
 				$os = new \find_os();
-				
+
 				$os->setUserAgent($row['agent']);
 				$browser_aray	= ($row['agent'] != '') ? $this->count_array($browser_aray, $os->getBrowser() . ' ' . $os->getVersion()) : null;
 				$os_aray		= ($row['agent'] != '') ? $this->count_array($os_aray, $os->getPlatform()) : null;
