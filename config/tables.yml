@@ -1,7 +1,0 @@
-parameters:
-    tables.config_table: %core.table_prefix%statistics_config
-    tables.online_table: %core.table_prefix%statistics_online
-    tables.domain_table: %core.table_prefix%statistics_domains
-    tables.se_table: %core.table_prefix%statistics_se
-    tables.archive_table: %core.table_prefix%statistics_archive
-    tables.stats_table: %core.table_prefix%statistics
