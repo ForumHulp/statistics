@@ -1085,7 +1085,7 @@ class stat_functions
 					   WHEN data_length + index_length BETWEEN 1024 AND 1048576 THEN CONCAT(ROUND(((data_length + index_length) / 1024), 1), " Kb")
 					   WHEN data_length + index_length > 1048576 THEN CONCAT(ROUND(((data_length + index_length) / 1024 / 1024), 1), " Mb")
 					   END AS hits FROM information_schema.TABLES 
-					   WHERE table_schema = "' . $db->dbname . '" AND table_name = "' . $tables['archive'] . '"';
+					   WHERE table_schema = "' . $db->get_db_name() . '" AND table_name = "' . $tables['archive'] . '"';
 		$sql_aray[] = '';
 
 		$pagination = $phpbb_container->get('pagination');
