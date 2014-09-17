@@ -122,8 +122,13 @@ class delete_statistics extends \phpbb\cron\task\base
 		{
 			add_log('admin', 'LOG_STATISTICS_NO_PRUNE');
 		}
+		$sql = 'SELECT UNIX_TIMESTAMP(FROM_UNIXTIME(MIN(time), "%Y-%m-%d")) AS start_time, TIMESTAMPDIFF(SECOND, utc_timestamp(), now()) AS off_set FROM ' . $this->online_table;
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+		$start_time = (int) $row['start_time'] + $row['off_set'];
 		date_default_timezone_set('UTC');
-		$this->config->set('delete_statistics_last_gc', mktime(0, 10, 0));
+		$newtime = ((mktime(0, 0, 0) - $start_time) >= 86400) ? $start_time : mktime(0, 10, 0);
+		$this->config->set('delete_statistics_last_gc', $newtime);
 	}
 
 	// Store Archive

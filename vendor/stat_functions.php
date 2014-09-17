@@ -1078,7 +1078,7 @@ class stat_functions
 		$sql_aray[] = 'SELECT a.name, a.hits FROM ' . $tables['archive'] . ' a LEFT JOIN ' . USERS_TABLE . ' b ON a.name = b.username 
 					   WHERE  a.cat = 5 AND b.username IS NOT NULL ORDER BY hits DESC';
 
-		$sql_aray[] = 'SELECT "Fisrt startdate" AS name, MIN(first) AS hits FROM ' . $tables['archive'] . ' UNION 
+		$sql_aray[] = 'SELECT "First startdate" AS name, MIN(first) AS hits FROM ' . $tables['archive'] . ' UNION 
 					   SELECT "Last startdate" AS name, MAX(last) AS hits FROM ' . $tables['archive'] . ' 
 					   UNION SELECT "Rows" AS name, ROUND(COUNT(id), 0) AS hits FROM ' . $tables['archive'] . ' 
 					   UNION SELECT "Table size" AS name, CASE WHEN data_length + index_length < 1024 THEN CONCAT(ROUND(((data_length + index_length)), 1), " B")

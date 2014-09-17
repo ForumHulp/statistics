@@ -7,13 +7,13 @@
 *
 */
 
-namespace forumhulp\statistics\migrations;
+namespace forumhulp\statistics\migration;
 
 class install_statistics extends \phpbb\db\migration\migration
 {
 	public function effectively_installed()
 	{
-		return isset($this->config['statistics_version']) && version_compare($this->config['statistics_version'], '3.1.0', '>=');
+		return isset($this->config['statistics_version']) && version_compare($this->config['statistics_version'], '3.1.0.RC4', '>=');
 	}
 
 	static public function depends_on()
@@ -149,7 +149,7 @@ class install_statistics extends \phpbb\db\migration\migration
 	public function update_data()
 	{
 		return array(
-			array('config.add', array('statistics_version', '3.1.0')),
+			array('config.add', array('statistics_version', '3.1.0.RC4')),
 			array('config.add', array('delete_statistics_gc', 86400)),
 			array('config.add', array('delete_statistics_last_gc', 0, 1)),
 			array('config.add', array('statistics_archive', 0, 1)),
