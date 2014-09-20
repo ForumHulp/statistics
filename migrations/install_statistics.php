@@ -7,7 +7,7 @@
 *
 */
 
-namespace forumhulp\statistics\migration;
+namespace forumhulp\statistics\migrations;
 
 class install_statistics extends \phpbb\db\migration\migration
 {
@@ -54,6 +54,7 @@ class install_statistics extends \phpbb\db\migration\migration
 						'custom_pages'		=> array('MTEXT_UNI', ''),
 						'start_screen'		=> array('VCHAR:25', 'default'),
 						'archive'			=> array('UINT:4', 0),
+						'botsinc'			=> array('UINT:4', 0),
 					),
 				),
 				$this->table_prefix . 'statistics_domains'	=> array(

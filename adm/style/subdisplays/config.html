@@ -56,6 +56,20 @@
 			<dd><a href="{U_ACTION}&amp;mode=stat&amp;screen=ese" class="button1 simpledialog">Edit Searchengine</a></dd>
 		</dl>
 	</div>
+	<form class="acp_statistics_cfg" method="post" action="{U_ACTION}" style="float:right; width:50%;">
+    <br /><hr />
+    	<dl>
+        	<dt><label for="botsinc">{L_BOTS_INC}{L_COLON}</label><br /><span>{L_BOTS_INC_EXPLAIN}</span></dt>
+            <dd><label><input type="radio" class="radio" id="botsinc" name="botsinc" value="1"<!-- IF BOTS_INC_ENABLED --> checked="checked"<!-- ENDIF --> /> {L_ENABLED}</label>
+				<label><input type="radio" class="radio" name="botsinc" value="0"<!-- IF not BOTS_INC_ENABLED --> checked="checked"<!-- ENDIF --> /> {L_DISABLED}</label></dd>
+		</dl>
+
+	<p class="submit-buttons">
+        <input class="button1" type="submit" id="botsincbtn" name="botsincbtn" value="{L_SUBMIT}" />&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+	</p>
+	{S_FORM_TOKEN}
+	</form>
 	<form class="acp_statistics_cfg" id="del_stat" method="post" action="{U_ACTION}" style="float:right; width:50%;" data-ajax="true">
     <br /><hr />
     	<dl>

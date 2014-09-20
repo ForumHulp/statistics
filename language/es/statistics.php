@@ -88,6 +88,9 @@ $lang = array_merge($lang, array(
 	'START_SCREEN'				=> 'Start screen',
 	'START_SCREEN_EXPLAIN'		=> 'Choose your startscreen for Board Statistics and if you want to display archive or online.',
 
+	'BOTS_INC'					=> 'Include bots',
+	'BOTS_INC_EXPLAIN'			=> 'Include bots in online display.',
+
 	'DEL_STAT'					=> 'Empty archive tables',
 	'DEL_STAT_EXPLAIN'			=> 'Empty archive tables and reset Board Statistics.',
 

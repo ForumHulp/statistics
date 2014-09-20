@@ -134,8 +134,14 @@ class listener implements EventSubscriberInterface
 						$module_pages[$key] = $value;
 					}
 				}
-				$data['module'] = (isset($module_pages[$this->user->page['page_name']])) ? $module_pages[$this->user->page['page_name']] : null;
-
+				if (strpos($this->user->page['page_name'], 'app.php') === false)
+				{
+					$data['module'] = (isset($module_pages[$this->user->page['page_name']])) ? $module_pages[$this->user->page['page_name']] : null;
+				} else
+				{
+					$pagename = substr($this->user->page['page_name'], 0, strrpos ($this->user->page['page_name'], '/'));
+					$data['module'] = (isset($module_pages[$pagename])) ? $module_pages[$pagename] : null;
+				}
 			} else
 			{
 				if (is_numeric($request->variable('i', '')))

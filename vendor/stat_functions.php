@@ -113,7 +113,15 @@ class stat_functions
 			'SUB_DISPLAY'		=> 'online'
 		));
 
-		$sql = 'SELECT COUNT(id) AS total_entries FROM ' . $tables['online'];
+		if (!$sconfig['statistics_botsinc'])
+		{
+			$sql = 'SELECT GROUP_CONCAT(CONCAT("""", bot_name, """")) AS bots FROM ' . BOTS_TABLE;
+			$result = $db->sql_query($sql);
+			$botswhere = ' WHERE uname NOT IN (' . $db->sql_fetchfield('bots') . ')';
+			$db->sql_freeresult($result);
+		}
+
+		$sql = 'SELECT COUNT(id) AS total_entries FROM ' . $tables['online'] . ((!$sconfig['statistics_botsinc']) ? $botswhere : '');
 		$result = $db->sql_query($sql);
 		$total_entries = (int) $db->sql_fetchfield('total_entries');
 		$db->sql_freeresult($result);
@@ -123,8 +131,8 @@ class stat_functions
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $sconfig['statistics_max_online'], $start);
 
 		$sql = 'SELECT o.time, o.uname, o.agent, o.ip_addr, o.host, o.domain, d.description, o.module, o.page, o.referer FROM ' . $tables['online'] . ' o
-				LEFT JOIN ' . $tables['domain'] . ' d ON (d.domain = o.domain) 
-				ORDER BY o.' . $sql_sort;
+				LEFT JOIN ' . $tables['domain'] . ' d ON (d.domain = o.domain)' 
+				. ((!$sconfig['statistics_botsinc']) ? $botswhere : '') . ' ORDER BY o.' . $sql_sort;
 
 		$result = $db->sql_query_limit($sql, $sconfig['statistics_max_online'], $start);
 		$counter = 0;
@@ -1229,6 +1237,12 @@ class stat_functions
 			$db->sql_query($sql);
 		}
 
+		if ($request->is_set('botsincbtn'))
+		{
+			$sql = 'UPDATE ' . $tables['config'] . ' SET botsinc = "' . $request->variable('botsinc', 0) . '"';
+			$db->sql_query($sql);
+		}
+
 		if ($request->is_set('submit_del_stat'))
 		{
 			if (!confirm_box(true))
@@ -1295,6 +1309,7 @@ class stat_functions
 			'OPTIONLIST'		=> $options,
 			'OPTIONLISTSC'		=> $optionssc,
 			'ARCHIVE'			=> ($row['archive']) ? ' checked= "checked"' : '',
+			'BOTS_INC_ENABLED'	=> ($row['botsinc']) ? true : false,
 			'U_ACTION'			=> $uaction . '&amp;screen=config',
 			'SUB_DISPLAY'		=> 'config'
 		));
