@@ -1068,10 +1068,14 @@ class stat_functions
 
 	public static function top10($start = 0, $uaction = '')
 	{
-		global $db, $config, $sconfig, $user, $tables, $request, $template, $phpbb_container;
+		global $db, $config, $sconfig, $user, $table_prefix, $tables, $request, $template, $phpbb_container;
 		$module_aray = array(0 => 'COUNTRIES', 1 => 'REFERRALS', 2 => 'SEARCHENG', 3 => 'SEARCHTERMS', 4 => 'BROWSERS', 5 => 'CRAWLERS', 6 => 'SYSTEMS', 7 => 'MODULES',
 							8 => 'RESOLUTIONS', 9 => 'USERS', 10 => 'FL_DATE', 11 => 'POSTS');
 		$modules = self::get_modules();
+		
+		$db_tools = new \phpbb\db\tools($db);
+		$searchresulttabel = $db_tools->sql_table_exists($table_prefix . 'searchresults');
+
 		$sql_aray[] = 'SELECT d.description AS name, o.hits FROM ' . $tables['archive'] . ' o LEFT JOIN ' . $tables['domain'] . ' d ON (d.domain = o.name) 
 						WHERE cat = 4 GROUP BY o.name ORDER BY hits DESC';
 		$sql_aray[] = 'SELECT name, hits FROM ' . $tables['archive'] . ' WHERE cat = 7 ORDER BY hits DESC';
@@ -1093,7 +1097,8 @@ class stat_functions
 					   WHEN data_length + index_length BETWEEN 1024 AND 1048576 THEN CONCAT(ROUND(((data_length + index_length) / 1024), 1), " Kb")
 					   WHEN data_length + index_length > 1048576 THEN CONCAT(ROUND(((data_length + index_length) / 1024 / 1024), 1), " Mb")
 					   END AS hits FROM information_schema.TABLES 
-					   WHERE table_schema = "' . $db->get_db_name() . '" AND table_name = "' . $tables['archive'] . '"';
+					   WHERE table_schema = "' . $db->get_db_name() . '" AND table_name = "' . $tables['archive'] . '"' . 
+					   (($searchresulttabel) ? ' UNION SELECT "Searchwords" AS name, COUNT(search_key) AS hits FROM ' . $table_prefix . 'searchresults' : '');
 		$sql_aray[] = '';
 
 		$pagination = $phpbb_container->get('pagination');
