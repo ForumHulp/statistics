@@ -51,7 +51,7 @@ class listener implements EventSubscriberInterface
 			'core.page_footer'	=> 'get_ref',
 		);
 	}
-	
+
 	/**
 	 * @param object $event The event object
 	 * @return null
@@ -163,11 +163,11 @@ class listener implements EventSubscriberInterface
 				{
 					if (!isset($this->ip_cache[$this->user->data['session_ip']]))
 					{
-						if ($this->user->data['session_ip'] != '127.0.0.1' && fsockopen('www.ip-api.com', 80)) 
+						if ($this->user->data['session_ip'] != '127.0.0.1' && fsockopen('www.ip-api.com', 80))
 						{
-							$ip_query = file_get_contents('http://ip-api.com/json/' . $this->user->data['session_ip'] . '?fields=status,countryCode,reverse'); 
-							$ip_aray = json_decode($ip_query, true); 
-				
+							$ip_query = file_get_contents('http://ip-api.com/json/' . $this->user->data['session_ip'] . '?fields=status,countryCode,reverse');
+							$ip_aray = json_decode($ip_query, true);
+
 							$this->ip_cache[$this->user->data['session_ip']]['countryCode'] = strtolower($ip_aray['countryCode']);
 							$this->ip_cache[$this->user->data['session_ip']]['reverse'] = strtolower($ip_aray['reverse']);
 							$this->ip_cache = array_slice($this->ip_cache, -50, 50, true);
@@ -183,12 +183,12 @@ class listener implements EventSubscriberInterface
 				{
 					if ($this->user->data['session_ip'] != '127.0.0.1' && fsockopen('www.ip-api.com', 80))
 					{
-						$ip_query = file_get_contents('http://ip-api.com/json/' . $this->user->data['session_ip'] . '?fields=status,countryCode,reverse'); 
-						$ip_aray = json_decode($ip_query, true); 
-			
+						$ip_query = file_get_contents('http://ip-api.com/json/' . $this->user->data['session_ip'] . '?fields=status,countryCode,reverse');
+						$ip_aray = json_decode($ip_query, true);
+
 						$this->ip_cache[$this->user->data['session_ip']]['countryCode'] = strtolower($ip_aray['countryCode']);
 						$this->ip_cache[$this->user->data['session_ip']]['reverse'] = strtolower($ip_aray['reverse']);
-			
+
 						$cache->put('_ip_cache', $this->ip_cache);
 					} else
 					{
