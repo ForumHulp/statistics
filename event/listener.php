@@ -51,7 +51,7 @@ class listener implements EventSubscriberInterface
 			'core.page_footer'	=> 'get_ref',
 		);
 	}
-
+	
 	/**
 	 * @param object $event The event object
 	 * @return null
@@ -80,7 +80,7 @@ class listener implements EventSubscriberInterface
 
 	function get_ref($event)
 	{
-		global $request, $template;
+		global $request, $template, $cache;
 
 		if ($this->user->page['script_path'] != '/adm/')
 		{
@@ -159,18 +159,57 @@ class listener implements EventSubscriberInterface
 
 			if (isset($data['module']) && $data['module'] !== '')
 			{
-				$data['host'] = @gethostbyaddr(($this->user->data['session_ip']));
-				$aray = explode('.', $data['host']);
-				$data['domain'] = ($this->user->data['session_ip'] == '127.0.0.1') ? 'lo' : strtolower($aray[sizeof($aray) -1]);
+				if (($this->ip_cache = $cache->get('_ip_cache')) !== false)
+				{
+					if (!isset($this->ip_cache[$this->user->data['session_ip']]))
+					{
+						if ($this->user->data['session_ip'] != '127.0.0.1' && fsockopen('www.ip-api.com', 80)) 
+						{
+							$ip_query = file_get_contents('http://ip-api.com/json/' . $this->user->data['session_ip'] . '?fields=status,countryCode,reverse'); 
+							$ip_aray = json_decode($ip_query, true); 
+				
+							$this->ip_cache[$this->user->data['session_ip']]['countryCode'] = strtolower($ip_aray['countryCode']);
+							$this->ip_cache[$this->user->data['session_ip']]['reverse'] = strtolower($ip_aray['reverse']);
+							$this->ip_cache = array_slice($this->ip_cache, -50, 50, true);
+							$cache->put('_ip_cache', $this->ip_cache);
+						} else
+						{
+							$this->ip_cache[$this->user->data['session_ip']]['reverse'] = @gethostbyaddr(($this->user->data['session_ip']));
+							$aray = explode('.', $this->ip_cache[$this->user->data['session_ip']]['reverse']);
+							$this->ip_cache[$this->user->data['session_ip']]['countryCode'] = ($this->user->data['session_ip'] == '127.0.0.1') ? 'lo' : strtolower($aray[sizeof($aray) -1]);
+						}
+					}
+				} else
+				{
+					if ($this->user->data['session_ip'] != '127.0.0.1' && fsockopen('www.ip-api.com', 80))
+					{
+						$ip_query = file_get_contents('http://ip-api.com/json/' . $this->user->data['session_ip'] . '?fields=status,countryCode,reverse'); 
+						$ip_aray = json_decode($ip_query, true); 
+			
+						$this->ip_cache[$this->user->data['session_ip']]['countryCode'] = strtolower($ip_aray['countryCode']);
+						$this->ip_cache[$this->user->data['session_ip']]['reverse'] = strtolower($ip_aray['reverse']);
+			
+						$cache->put('_ip_cache', $this->ip_cache);
+					} else
+					{
+						$this->ip_cache[$this->user->data['session_ip']]['reverse'] = @gethostbyaddr(($this->user->data['session_ip']));
+						$aray = explode('.', $this->ip_cache[$this->user->data['session_ip']]['reverse']);
+						$this->ip_cache[$this->user->data['session_ip']]['countryCode'] = ($this->user->data['session_ip'] == '127.0.0.1') ? 'lo' : strtolower($aray[sizeof($aray) -1]);
+					}
+				}
+
+				$data['host'] = $this->ip_cache[$this->user->data['session_ip']]['reverse'];
+				$data['domain'] = strtolower($this->ip_cache[$this->user->data['session_ip']]['countryCode']);
+
 				$data['domain'] = (!file_exists('./ext/forumhulp/statistics//adm/style/images/flags/' . $data['domain'] . '.png')) ? 'un' : $data['domain'];
 
 				if (!$request->is_set($this->config['cookie_name'] . '_statistics_res', \phpbb\request\request_interface::COOKIE))
 				{
 					$template->assign_vars(array('ACOOKIE' => true, 'COOKIENAME' => $this->config['cookie_name']));
-					$data['screen_res'] = '1024x768x32';
+					$data['screen_res'] = '1920x1080x24';
 				} else
 				{
-					$data['screen_res'] = $request->variable($this->config['cookie_name'] . '_statistics_res', '1024x768x32', false, \phpbb\request\request_interface::COOKIE);
+					$data['screen_res'] = $request->variable($this->config['cookie_name'] . '_statistics_res', '1920x1080x24', false, \phpbb\request\request_interface::COOKIE);
 				}
 
 				$fields = array(

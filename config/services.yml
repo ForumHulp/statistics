@@ -31,3 +31,10 @@ services:
             - [set_name, [cron.task.core.statistics]]
         tags:
             - { name: cron.task }
+    forumhulp.statistics.acp.statistics_module:
+        class: forumhulp\statistics\acp\statistics_module
+        arguments:
+            - @user
+            - @controller.provider
+            - @ext.manager
+            - %core.root_path%

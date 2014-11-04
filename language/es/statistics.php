@@ -66,8 +66,8 @@ $lang = array_merge($lang, array(
 	'MAX_USERS'			=> 'Usuarios',
 	'MAX_AVERAGES'		=> 'Promedios',
 	'MAX_SCREENS'		=> 'Resoluciones de pantalla',
-	'MAX_ONLINE'		=> 'Conectado',
-	'DELL'				=> 'Borrar',
+	'MAX_ONLINE'		=> 'Online',
+	'DELL'				=> 'Delete',
 
 	'MAX_COUNTRIES_EXPLAIN'		=> 'Número máximo de registros en la vista de pantalla antes de la paginación está en orden, en la tabla de registros máximos para purgar',
 	'MAX_REFERER_EXPLAIN'		=> 'Número máximo de registros en la vista de pantalla antes de la paginación está en orden, en la tabla de registros máximos para purgar',
@@ -82,18 +82,18 @@ $lang = array_merge($lang, array(
 	'MAX_SCREENS_EXPLAIN'		=> 'Número máximo de registros en la vista de pantalla antes de la paginación está en orden, en la tabla de registros máximos para purgar',
 	'MAX_ONLINE_EXPLAIN'		=> 'Número máximo de registros en la vista de pantalla antes de la paginación está en orden, en la tabla de registros máximos para purgar',
 
-	'CUSTOM_PAGES'				=> 'Páginas personalizadas',
-	'CUSTOM_PAGES_EXPLAIN'		=> 'Complete el nombre de su página personalizada y variable de lenguaje para mostrar su extensión en Estadísticas del foro. Seleccione su extensión para borrar o cambiarlo.',
+	'CUSTOM_PAGES'				=> 'Custom Pages',
+	'CUSTOM_PAGES_EXPLAIN'		=> 'Fill in your custom page name and language variable to show your extension in Board Statistics. Select your extension for deleting or change it.',
 
-	'START_SCREEN'				=> 'Pantalla de inicio',
-	'START_SCREEN_EXPLAIN'		=> 'Elija su pantalla de inicio de Estadísticas del foro y si desea mostrar el archivo o en línea.',
+	'START_SCREEN'				=> 'Start screen',
+	'START_SCREEN_EXPLAIN'		=> 'Choose your startscreen for Board Statistics and if you want to display archive or online.',
 
-	'BOTS_INC'					=> 'Incluir los robots',
-	'BOTS_INC_EXPLAIN'			=> 'Incluir los robots en la pantalla de conectados.',
+	'BOTS_INC'					=> 'Include bots',
+	'BOTS_INC_EXPLAIN'			=> 'Include bots in online display.',
 
-	'DEL_STAT'					=> 'Vaciar tablas de archivo',
-	'DEL_STAT_EXPLAIN'			=> 'Vaciar tablas de archivo y resetear Estadísticas del foro.',
+	'DEL_STAT'					=> 'Empty archive tables',
+	'DEL_STAT_EXPLAIN'			=> 'Empty archive tables and reset Board Statistics.',
 
-	'STAT_DELETE_CONFIRM'		=> '¿Vaciar tablas de archivo?',
+	'STAT_DELETE_CONFIRM'		=> 'Empty archive tables?',
 
 ));

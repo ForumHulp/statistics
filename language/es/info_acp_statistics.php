@@ -19,9 +19,9 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'ACP_STATISTICS'	=> 'Estadísticas del foro',
-	'LOG_STATISTICS_PRUNED'		=> '<strong>Estadísticas del foro limpiadas</strong><br />» %1$.1f segundos usados, %2$.1f filas por segundo',
-	'LOG_STATISTICS_NO_PRUNE'	=> '<strong>Estadísticas del foro</strong><br />» No hay registros limpiados',
+	'LOG_STATISTICS_PRUNED'		=> '<strong>Board Statistics pruned</strong><br />» %1$.1f seconds used, %2$.1f  rows per second',
+	'LOG_STATISTICS_NO_PRUNE'	=> '<strong>Board Statistics</strong><br />» No records pruned',
 
-	'STAT_DELETE_SUCCESS'		=> 'Tablas del archivo vaciadas',
-	'STAT_DELETE_ERROR'			=> 'Truncate error en el vaciado de tablas del archivo.'
+	'STAT_DELETE_SUCCESS'		=> 'Archive tables emptyed',
+	'STAT_DELETE_ERROR'			=> 'Truncate error emptying archive tables.'
 ));

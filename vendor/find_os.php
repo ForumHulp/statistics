@@ -295,7 +295,6 @@ class find_os
 			$aversion = explode(" ", $aresult[1]);
 			$this->setVersion(str_replace(";", "", $aversion[0]));
 			$this->_browser_name = self::BROWSER_MSNBOT;
-			$this->setRobot(true);
 			return true;
 		}
 		return false;

@@ -9,15 +9,28 @@
 
 namespace forumhulp\statistics\acp;
 
+
 class statistics_module
 {
 	public $u_action;
+
+
+
 
 	function main($id, $mode)
 	{
 		global $db, $config, $sconfig, $phpbb_root_path, $user, $template, $request, $phpbb_extension_manager, $phpbb_container, $phpbb_path_helper, $tables;
 		$user->add_lang_ext('forumhulp/statistics', 'statistics');
 
+	function __construct(\phpbb\user $user, \phpbb\controller\provider $controller_provider, \phpbb\extension\manager $extension_manager, $phpbb_root_path)
+	{
+		$this->controller_provider	= $controller_provider;
+		$this->extension_manager	= $extension_manager;
+		$this->phpbb_root_path		= $phpbb_root_path;
+
+
+//		parent::__construct($user);
+	}
 		include($phpbb_root_path . 'ext/forumhulp/statistics/vendor/stat_functions.php');
 		$tables['config']	= $phpbb_container->getParameter('tables.config_table');
 		$tables['online'] 	= $phpbb_container->getParameter('tables.online_table');
