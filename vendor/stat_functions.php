@@ -115,9 +115,11 @@ class stat_functions
 
 		if (!$sconfig['statistics_botsinc'])
 		{
+			$sql = 'SET SESSION group_concat_max_len = 15000';
+			$db->sql_query($sql);
 			$sql = 'SELECT GROUP_CONCAT(CONCAT("""", bot_name, """")) AS bots FROM ' . BOTS_TABLE;
 			$result = $db->sql_query($sql);
-			$botswhere = ' WHERE uname NOT IN (' . $db->sql_fetchfield('bots') . ')';
+			$botswhere = ' WHERE uname NOT IN (' . $db->sql_fetchfield('bots') . ')';			
 			$db->sql_freeresult($result);
 		}
 
