@@ -91,7 +91,7 @@ class install_statistics extends \phpbb\db\migration\migration
 						'module'		=> array('VCHAR:50', ''),
 						'scr_res'		=> array('VCHAR:25', ''),
 						'page'			=> array('VCHAR:255', ''),
-						'referer'		=> array('VCHAR:500', ''),
+						'referer'		=> array('TEXT', ''),
 						'se_terms' 		=> array('VCHAR:500', ''),
 					),
 					'PRIMARY_KEY'		=> 'id',
@@ -103,7 +103,7 @@ class install_statistics extends \phpbb\db\migration\migration
 					'COLUMNS'			=> array(
 						'id'			=> array('UINT', null, 'auto_increment'),
 						'cat'			=> array('UINT:4', 0),
-						'name'			=> array('VCHAR:255', ''),
+						'name'			=> array('TEXT', ''),
 						'hits'			=> array('UINT:8', 0),
 						'first'			=> array('UINT:11', 0),
 						'last'			=> array('UINT:11', 0),
@@ -111,7 +111,7 @@ class install_statistics extends \phpbb\db\migration\migration
 					'PRIMARY_KEY'		=> 'id',
 					'KEYS'				=> array(
 						'cat'		=> array('INDEX', 'cat'),
-						'name'		=> array('INDEX', 'name'),
+						'name'		=> array('INDEX', 'name(255)'),
 						'last'		=> array('INDEX', 'last'),
 					)
 				),
