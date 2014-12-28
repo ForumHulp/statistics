@@ -69,7 +69,7 @@ class delete_statistics extends \phpbb\cron\task\base
 			$starttime = explode(' ', microtime());
 			$starttime = $starttime[1] + $starttime[0];
 			$row_count = 0;
-			include($phpbb_root_path . 'ext\forumhulp\statistics\vendor\find_os.' . $this->php_ext);
+			include($phpbb_root_path . 'ext/forumhulp/statistics/vendor/find_os.' . $this->php_ext);
 			while (still_on_time() && $row = $this->db->sql_fetchrow($result))
 			{
 				$module_aray	= ($row['module'] != '') ? $this->count_array($module_aray, $row['module']) : null;
