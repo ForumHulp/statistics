@@ -1072,7 +1072,7 @@ class stat_functions
 	{
 		global $db, $config, $sconfig, $user, $table_prefix, $tables, $request, $template, $phpbb_container;
 		$module_aray = array(0 => 'COUNTRIES', 1 => 'REFERRALS', 2 => 'SEARCHENG', 3 => 'SEARCHTERMS', 4 => 'BROWSERS', 5 => 'CRAWLERS', 6 => 'SYSTEMS', 7 => 'MODULES',
-							8 => 'RESOLUTIONS', 9 => 'USERS', 10 => 'FL_DATE', 11 => 'POSTS');
+							8 => 'RESOLUTIONS', 9 => 'USERS', 10 => 'FL_DATE', 11 => 'POSTS', 12 => 'UNIQUE');
 		$modules = self::get_modules();
 		
 		$db_tools = new \phpbb\db\tools($db);
@@ -1102,12 +1102,15 @@ class stat_functions
 					   WHERE table_schema = "' . $db->get_db_name() . '" AND table_name = "' . $tables['archive'] . '"' . 
 					   (($searchresulttabel) ? ' UNION SELECT "Searchwords" AS name, COUNT(search_key) AS hits FROM ' . $table_prefix . 'searchresults' : '');
 		$sql_aray[] = '';
+		$sql_aray[] = 'SELECT name, hits FROM ' . $tables['archive'] . ' WHERE cat = 9 ORDER BY hits DESC';
+
+
 
 		$pagination = $phpbb_container->get('pagination');
 		$base_url = $uaction . '&amp;screen=top10';
-		$pagination->generate_template_pagination($base_url, 'pagination', 'start', 12, 6, $start);
+		$pagination->generate_template_pagination($base_url, 'pagination', 'start', 13, 6, $start);
 
-		for($i = $start; $i < $start + 6; $i++)
+		for($i = $start; $i < min($start + 6, sizeof($module_aray)); $i++)
 		{
 			$template->assign_block_vars('blocks', array(
 				'KEY'			=> $i,
@@ -1151,6 +1154,21 @@ class stat_functions
 							)
 						);
 					}
+				}
+			} else
+			{
+				$result = $db->sql_query_limit($sql_aray[$i], 10, 0);
+				$counter = 0;
+				while ($row = $db->sql_fetchrow($result))
+				{
+					$counter += 1;
+					$template->assign_block_vars('blocks.block', array(
+						'COUNTER'  	=> $counter,
+						'NAME'		=> $user->format_date($row['name'], 'd F \'y'),
+						'HITS'		=> self::roundk($row['hits']),
+						'THITS'		=> $row['hits']
+						)
+					);
 				}
 			}
 		}

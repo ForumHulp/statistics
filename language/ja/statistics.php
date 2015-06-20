@@ -39,6 +39,7 @@ $lang = array_merge($lang, array(
 	'USERSTATS'		=> 'ユーザー統計グラフ',
 	'LASTVISITS'	=> '最新の訪問ページ',
 	'FL_DATE'		=> 'アーカイブテーブル情報',
+	'UNIQUE'		=> 'Unique visitors',
 
 	// Online
 	'TIME'		=> '時間',

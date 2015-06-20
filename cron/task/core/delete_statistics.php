@@ -53,15 +53,16 @@ class delete_statistics extends \phpbb\cron\task\base
 	{
 		global $phpbb_root_path, $phpbb_container, $user;
 
-		$module_aray = $browser_aray = $os_aray = $country_aray = $user_aray = $screen_aray = $referer_aray = $search_aray = array();
+		$unique_aray = $module_aray = $browser_aray = $os_aray = $country_aray = $user_aray = $screen_aray = $referer_aray = $search_aray = array();
 
-		$sql = 'SELECT UNIX_TIMESTAMP(FROM_UNIXTIME(MIN(time), "%Y-%m-%d")) AS start_time, TIMESTAMPDIFF(SECOND, utc_timestamp(), now()) AS off_set FROM ' . $this->online_table;
+		$sql = 'SELECT UNIX_TIMESTAMP(FROM_UNIXTIME(MIN(time), "%Y-%m-%d")) AS start_time, TIMESTAMPDIFF(SECOND, utc_timestamp(), now()) AS off_set 
+				FROM ' . $this->online_table . ' ORDER BY time ASC LIMIT 1';
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
-		$start_time = (int) $row['start_time'] + $row['off_set'];
+		$start_time = ($row['start_time']) ?  $row['start_time'] + $row['off_set'] : 0;
 		$off_set = $row['off_set'];
 
-		if (($start_time) <= (mktime(0,0,0) - 1))
+		if ($start_time)
 		{
 			$sql = 'SELECT time, uname, agent, ip_addr, module, host, domain, scr_res, page, referer, se_terms FROM ' . $this->online_table . ' 
 					WHERE time BETWEEN ' . $start_time . ' AND ' . ($start_time + 86400) . ' ORDER BY id ASC';
@@ -84,9 +85,12 @@ class delete_statistics extends \phpbb\cron\task\base
 				$screen_aray	= ($row['scr_res'] != '') ? $this->count_array($screen_aray, $row['scr_res']) : null;
 				$referer_aray	= ($row['referer'] != '') ? $this->count_array($referer_aray, $this->url_to_domain($row['referer'])) : null;
 				$search_aray	= ($row['se_terms'] != '') ? $this->split_array($search_aray, $row['se_terms']) : null;
+				$unique_aray	= ($row['ip_addr'] != '') ? $this->count_array($unique_aray, $row['ip_addr']) : null;
 				$row_count++;
 			}
 			$this->db->sql_freeresult($result);
+
+			$unique_visiors = array($start_time => count($unique_aray));
 
 			$this->store($module_aray, 1);
 			$this->store($browser_aray, 2);
@@ -96,8 +100,9 @@ class delete_statistics extends \phpbb\cron\task\base
 			$this->store($screen_aray, 6);
 			$this->store($referer_aray, 7);
 			$this->store($search_aray, 8);
+			$this->store_unique_visitors($unique_visiors, 9);
 
-			unset($module_aray, $browser_aray, $os_aray, $country_aray, $user_aray, $screen_aray, $referer_aray, $search_aray);
+			unset($module_aray, $browser_aray, $os_aray, $country_aray, $user_aray, $screen_aray, $referer_aray, $search_aray, $unique_visiors, $unique_aray);
 			$sql = 'DELETE FROM ' . $this->online_table . ' WHERE time BETWEEN ' . $start_time . ' AND ' . ($start_time + 86400);
 			$this->db->sql_query($sql);
 			$sql = 'OPTIMIZE TABLE ' . $this->online_table;
@@ -122,12 +127,13 @@ class delete_statistics extends \phpbb\cron\task\base
 		{
 			add_log('admin', 'LOG_STATISTICS_NO_PRUNE');
 		}
-		$sql = 'SELECT UNIX_TIMESTAMP(FROM_UNIXTIME(MIN(time), "%Y-%m-%d")) AS start_time, TIMESTAMPDIFF(SECOND, utc_timestamp(), now()) AS off_set FROM ' . $this->online_table;
+		$sql = 'SELECT UNIX_TIMESTAMP(FROM_UNIXTIME(MIN(time), "%Y-%m-%d")) AS start_time, TIMESTAMPDIFF(SECOND, utc_timestamp(), now()) AS off_set 
+				FROM ' . $this->online_table . ' ORDER BY time ASC LIMIT 1';
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
-		$start_time = (int) $row['start_time'] + $row['off_set'];
+		$start_time = ($row['start_time']) ?  $row['start_time'] + $row['off_set'] : 0;
 		date_default_timezone_set('UTC');
-		$newtime = ((mktime(0, 0, 0) - $start_time) >= 86400) ? $start_time : mktime(0, 10, 0);
+		$newtime = ((mktime(0, 0, 0) - $start_time) >= 86400) ? $start_time + 3600 : mktime(0, 10, 0);
 		$this->config->set('delete_statistics_last_gc', $newtime);
 	}
 
@@ -176,6 +182,28 @@ class delete_statistics extends \phpbb\cron\task\base
 			$sql = 'OPTIMIZE TABLE ' . $this->archive_table;
 			$this->db->sql_query($sql);
 		}
+	}
+
+	public function store_unique_visitors($array, $cat)
+	{
+		$sql = 'SELECT id FROM ' . $this->archive_table . ' WHERE cat = ' . $cat . ' AND hits = ' . current($array);
+		$result = $this->db->sql_query($sql);
+		$id = $this->db->sql_fetchfield('id');
+		
+		if ($id)
+		{
+			$sql = 'UPDATE ' . $this->archive_table . ' SET hits = ' . current($array) . ', name = ' . key($array) . ', last = ' . key($array)  . '  WHERE id = ' . $id;
+			$this->db->sql_query($sql);
+		} else
+		{
+			$sql = 'INSERT INTO ' . $this->archive_table . ' (cat, name, hits, first, last) 
+					VALUES(' . $cat . ', ' . key($array)  . ', ' . current($array) . ', ' . key($array) . ', ' . key($array) . ')';
+			$this->db->sql_query($sql);
+		}		
+		
+		$sql = 'DELETE FROM ' . $this->archive_table . ' WHERE cat = ' . $cat . ' AND id IN 
+				(select id from (select id FROM ' . $this->archive_table . ' WHERE cat = ' . $cat . ' ORDER BY hits DESC LIMIT 10, 1000) x)';
+		$this->db->sql_query($sql);
 	}
 
 	public function get_config()

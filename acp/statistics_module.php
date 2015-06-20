@@ -26,13 +26,13 @@ class statistics_module
 		$this->phpbb_root_path		= $phpbb_root_path;
 //		parent::__construct($user);
 	}
-		include($phpbb_root_path . 'ext/forumhulp/statistics/vendor/stat_functions.php');
 		$tables['config']	= $phpbb_container->getParameter('tables.config_table');
 		$tables['online'] 	= $phpbb_container->getParameter('tables.online_table');
 		$tables['domain'] 	= $phpbb_container->getParameter('tables.domain_table');
 		$tables['se']	  	= $phpbb_container->getParameter('tables.se_table');
 		$tables['archive']	= $phpbb_container->getParameter('tables.archive_table');
 		$tables['stats']	= $phpbb_container->getParameter('tables.stats_table');
+		include($phpbb_root_path . 'ext/forumhulp/statistics/vendor/stat_functions.php');
 
 		\stat_functions::get_config();
 
