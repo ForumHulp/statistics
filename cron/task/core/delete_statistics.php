@@ -189,7 +189,7 @@ class delete_statistics extends \phpbb\cron\task\base
 		$sql = 'SELECT id FROM ' . $this->archive_table . ' WHERE cat = ' . $cat . ' AND hits = ' . current($array);
 		$result = $this->db->sql_query($sql);
 		$id = $this->db->sql_fetchfield('id');
-		
+
 		if ($id)
 		{
 			$sql = 'UPDATE ' . $this->archive_table . ' SET hits = ' . current($array) . ', name = ' . key($array) . ', last = ' . key($array)  . '  WHERE id = ' . $id;
@@ -199,8 +199,8 @@ class delete_statistics extends \phpbb\cron\task\base
 			$sql = 'INSERT INTO ' . $this->archive_table . ' (cat, name, hits, first, last) 
 					VALUES(' . $cat . ', ' . key($array)  . ', ' . current($array) . ', ' . key($array) . ', ' . key($array) . ')';
 			$this->db->sql_query($sql);
-		}		
-		
+		}
+
 		$sql = 'DELETE FROM ' . $this->archive_table . ' WHERE cat = ' . $cat . ' AND id IN 
 				(select id from (select id FROM ' . $this->archive_table . ' WHERE cat = ' . $cat . ' ORDER BY hits DESC LIMIT 10, 1000) x)';
 		$this->db->sql_query($sql);
