@@ -55,6 +55,7 @@ class install_statistics extends \phpbb\db\migration\migration
 						'start_screen'		=> array('VCHAR:25', 'default'),
 						'archive'			=> array('UINT:4', 0),
 						'botsinc'			=> array('UINT:4', 0),
+						'log'				=> array('UINT:4', 0),
 					),
 				),
 				$this->table_prefix . 'statistics_domains'	=> array(

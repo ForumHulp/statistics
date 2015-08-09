@@ -93,6 +93,9 @@ $lang = array_merge($lang, array(
 	'BOTS_INC'					=> 'ボットを含める',
 	'BOTS_INC_EXPLAIN'			=> 'オンライン表示にボットを含めます。',
 
+	'LOG'						=> 'Logs',
+	'LOG_EXPLAIN'				=> 'Add logs to maintenance log.',
+
 	'DEL_STAT'					=> 'アーカイブテーブルを空にする',
 	'DEL_STAT_EXPLAIN'			=> 'アーカイブテーブルを空にして掲示板統計情報をリセットします。',
 

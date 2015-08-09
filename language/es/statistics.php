@@ -92,6 +92,9 @@ $lang = array_merge($lang, array(
 	'BOTS_INC'					=> 'Incluir robots',
 	'BOTS_INC_EXPLAIN'			=> 'Incluir robots en la pantalla de conectados.',
 
+	'LOG'						=> 'Logs',
+	'LOG_EXPLAIN'				=> 'Add logs to maintenance log.',
+
 	'DEL_STAT'					=> 'Vaciar tablas de archivo',
 	'DEL_STAT_EXPLAIN'			=> 'Vaciar tablas de archivo y resetear Estadísticas del foro.',
 

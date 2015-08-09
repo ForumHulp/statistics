@@ -93,6 +93,9 @@ $lang = array_merge($lang, array(
 	'BOTS_INC'					=> 'Include bots',
 	'BOTS_INC_EXPLAIN'			=> 'Include bots in online display.',
 
+	'LOG'						=> 'Logs',
+	'LOG_EXPLAIN'				=> 'Add logs to maintenance log.',
+
 	'DEL_STAT'					=> 'Empty archive tables',
 	'DEL_STAT_EXPLAIN'			=> 'Empty archive tables and reset Board Statistics.',
 
