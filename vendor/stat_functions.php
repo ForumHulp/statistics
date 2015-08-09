@@ -1268,6 +1268,12 @@ class stat_functions
 			$db->sql_query($sql);
 		}
 
+		if ($request->is_set('logbtn'))
+		{
+			$sql = 'UPDATE ' . $tables['config'] . ' SET log = "' . $request->variable('log', 0) . '"';
+			$db->sql_query($sql);
+		}
+
 		if ($request->is_set('submit_del_stat'))
 		{
 			if (!confirm_box(true))
@@ -1299,7 +1305,7 @@ class stat_functions
 		$result = $db->sql_query($sql);
 		$row = $db->sql_fetchrow($result);
 
-		for ($i = 0; $i < floor(sizeof($row) / 2) - 2; $i++)
+		for ($i = 0; $i < floor(sizeof($row) / 2) - 3; $i++)
 		{
 			$template->assign_block_vars('options', array(
 				'KEY'			=> strtoupper(key($row)),
@@ -1335,6 +1341,7 @@ class stat_functions
 			'OPTIONLISTSC'		=> $optionssc,
 			'ARCHIVE'			=> ($row['archive']) ? ' checked= "checked"' : '',
 			'BOTS_INC_ENABLED'	=> ($row['botsinc']) ? true : false,
+			'LOG_ENABLED'		=> ($row['log']) ? true : false,
 			'U_ACTION'			=> $uaction . '&amp;screen=config',
 			'SUB_DISPLAY'		=> 'config'
 		));

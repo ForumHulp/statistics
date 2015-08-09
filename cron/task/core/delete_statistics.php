@@ -52,20 +52,18 @@ class delete_statistics extends \phpbb\cron\task\base
 	public function run()
 	{
 		global $phpbb_root_path, $phpbb_container, $user;
-
+		$sconfig = $this->get_config();
 		$unique_aray = $module_aray = $browser_aray = $os_aray = $country_aray = $user_aray = $screen_aray = $referer_aray = $search_aray = array();
 
-		$sql = 'SELECT UNIX_TIMESTAMP(FROM_UNIXTIME(MIN(time), "%Y-%m-%d")) AS start_time, TIMESTAMPDIFF(SECOND, utc_timestamp(), now()) AS off_set 
-				FROM ' . $this->online_table . ' ORDER BY time ASC LIMIT 1';
+		$sql = 'SELECT MIN(time) AS start_time FROM ' . $this->online_table;
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
-		$start_time = ($row['start_time']) ?  $row['start_time'] + $row['off_set'] : 0;
-		$off_set = $row['off_set'];
+		$start_time = ($row && $row['start_time']) ?  $row['start_time'] : 0;
 
 		if ($start_time)
 		{
 			$sql = 'SELECT time, uname, agent, ip_addr, module, host, domain, scr_res, page, referer, se_terms FROM ' . $this->online_table . ' 
-					WHERE time BETWEEN ' . $start_time . ' AND ' . ($start_time + 86400) . ' ORDER BY id ASC';
+					WHERE time BETWEEN ' . $start_time . ' AND ' . strtotime("24:00", $start_time) . ' ORDER BY id ASC';
 			$result = $this->db->sql_query($sql);
 			$starttime = explode(' ', microtime());
 			$starttime = $starttime[1] + $starttime[0];
@@ -103,7 +101,7 @@ class delete_statistics extends \phpbb\cron\task\base
 			$this->store_unique_visitors($unique_visiors, 9);
 
 			unset($module_aray, $browser_aray, $os_aray, $country_aray, $user_aray, $screen_aray, $referer_aray, $search_aray, $unique_visiors, $unique_aray);
-			$sql = 'DELETE FROM ' . $this->online_table . ' WHERE time BETWEEN ' . $start_time . ' AND ' . ($start_time + 86400);
+			$sql = 'DELETE FROM ' . $this->online_table . ' WHERE time BETWEEN ' . $start_time . ' AND ' . strtotime("24:00", $start_time);
 			$this->db->sql_query($sql);
 			$sql = 'OPTIMIZE TABLE ' . $this->online_table;
 			$this->db->sql_query($sql);
@@ -122,18 +120,22 @@ class delete_statistics extends \phpbb\cron\task\base
 			$totaltime = $mtime[0] + $mtime[1] - $starttime;
 			$rows_per_second = $row_count / $totaltime;
 
-			add_log('admin', 'LOG_STATISTICS_PRUNED', $totaltime, $rows_per_second);
+			($sconfig['log']) ? add_log('admin', 'LOG_STATISTICS_PRUNED', $totaltime, $rows_per_second) : null;
 		} else
 		{
-			add_log('admin', 'LOG_STATISTICS_NO_PRUNE');
+			($sconfig['log']) ? add_log('admin', 'LOG_STATISTICS_NO_PRUNE') : null;
 		}
-		$sql = 'SELECT UNIX_TIMESTAMP(FROM_UNIXTIME(MIN(time), "%Y-%m-%d")) AS start_time, TIMESTAMPDIFF(SECOND, utc_timestamp(), now()) AS off_set 
-				FROM ' . $this->online_table . ' ORDER BY time ASC LIMIT 1';
+
+		$sql = 'SELECT MIN(time) AS start_time FROM ' . $this->online_table;
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
-		$start_time = ($row['start_time']) ?  $row['start_time'] + $row['off_set'] : 0;
-		date_default_timezone_set('UTC');
-		$newtime = ((mktime(0, 0, 0) - $start_time) >= 86400) ? $start_time + 3600 : mktime(0, 10, 0);
+		if ($row)
+		{
+			$newtime = ((mktime(0, 0, 0) - $row['start_time']) >= 0) ? time() + 3600 : mktime(0, 0, 0);
+		} else
+		{
+			$newtime = mktime(0, 0, 0);
+		}
 		$this->config->set('delete_statistics_last_gc', $newtime);
 	}
 

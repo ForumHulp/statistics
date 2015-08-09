@@ -70,6 +70,20 @@
 	</p>
 	{S_FORM_TOKEN}
 	</form>
+	<form class="acp_statistics_cfg" method="post" action="{U_ACTION}" style="float:right; width:50%;">
+    <br /><hr />
+    	<dl>
+        	<dt><label for="log">{L_LOG}{L_COLON}</label><br /><span>{L_LOG_EXPLAIN}</span></dt>
+            <dd><label><input type="radio" class="radio" id="log" name="log" value="1"<!-- IF LOG_ENABLED --> checked="checked"<!-- ENDIF --> /> {L_ENABLED}</label>
+				<label><input type="radio" class="radio" name="log" value="0"<!-- IF not LOG_ENABLED --> checked="checked"<!-- ENDIF --> /> {L_DISABLED}</label></dd>
+		</dl>
+
+	<p class="submit-buttons">
+        <input class="button1" type="submit" id="logbtn" name="logbtn" value="{L_SUBMIT}" />&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+	</p>
+	{S_FORM_TOKEN}
+	</form>
 	<form class="acp_statistics_cfg" id="del_stat" method="post" action="{U_ACTION}" style="float:right; width:50%;" data-ajax="true">
     <br /><hr />
     	<dl>
