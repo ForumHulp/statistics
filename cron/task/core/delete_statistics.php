@@ -52,7 +52,11 @@ class delete_statistics extends \phpbb\cron\task\base
 	public function run()
 	{
 		global $phpbb_root_path, $phpbb_container, $user;
-		$sconfig = $this->get_config();
+
+		$sql = 'SELECT log FROM ' . $this->config_table;
+		$result = $this->db->sql_query($sql);
+		$sconfig['log'] = $this->db->sql_fetchfield('log');
+
 		$unique_aray = $module_aray = $browser_aray = $os_aray = $country_aray = $user_aray = $screen_aray = $referer_aray = $search_aray = array();
 
 		$sql = 'SELECT MIN(time) AS start_time FROM ' . $this->online_table;
