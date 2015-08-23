@@ -22,14 +22,14 @@ class ext extends \phpbb\extension\base
 
 				// Run parent enable step method
 				return parent::enable_step($old_state);
-			
+
 			break;
-			
+
 			default:
-			
+
 				// Run parent enable step method
 				return parent::enable_step($old_state);
-				
+
 			break;
 		}
 	}
