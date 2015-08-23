@@ -23,5 +23,6 @@ $lang = array_merge($lang, array(
 	'LOG_STATISTICS_NO_PRUNE'	=> '<strong>Board Statistics</strong><br />» No records pruned',
 
 	'STAT_DELETE_SUCCESS'		=> 'Archive tables emptyed',
-	'STAT_DELETE_ERROR'			=> 'Truncate error emptying archive tables.'
+	'STAT_DELETE_ERROR'			=> 'Truncate error emptying archive tables.',
+	'STATISTICS_NOTICE'			=> '<div style="width:80%%;margin:20px auto;"><p style="text-align:left;">Config setting of this extension are in %1$s » %2$s » %3$s.</p></div>',
 ));

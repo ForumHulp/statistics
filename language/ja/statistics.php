@@ -100,4 +100,8 @@ $lang = array_merge($lang, array(
 	'DEL_STAT_EXPLAIN'			=> 'アーカイブテーブルを空にして掲示板統計情報をリセットします。',
 
 	'STAT_DELETE_CONFIRM'		=> 'アーカイブテーブルを空にしますか？',
+
+	'BS_STATUS_TIMEOUT'			=> 'Refresh timeout',
+	'BS_STATUS_ERROR'			=> 'Refresh error',
+	'BS_STATUS_ERROR_EXPLAIN'	=> 'An error occurred during refreshing the page.',
 ));

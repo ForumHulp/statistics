@@ -23,5 +23,6 @@ $lang = array_merge($lang, array(
 	'LOG_STATISTICS_NO_PRUNE'	=> '<strong>Estadísticas del foro</strong><br />» No hay registros limpiados',
 
 	'STAT_DELETE_SUCCESS'		=> 'Tablas del archivo vaciadas',
-	'STAT_DELETE_ERROR'			=> 'Truncate error en el vaciado de tablas del archivo.'
+	'STAT_DELETE_ERROR'			=> 'Truncate error en el vaciado de tablas del archivo.',
+	'STATISTICS_NOTICE'			=> '<div style="width:80%%;margin:20px auto;"><p style="text-align:left;">Config setting of this extension are in %1$s » %2$s » %3$s.</p></div>',
 ));

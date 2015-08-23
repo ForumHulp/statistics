@@ -100,4 +100,8 @@ $lang = array_merge($lang, array(
 
 	'STAT_DELETE_CONFIRM'		=> '¿Vaciar tablas de archivo?',
 
+	'BS_STATUS_TIMEOUT'			=> 'Refresh timeout',
+	'BS_STATUS_ERROR'			=> 'Refresh error',
+	'BS_STATUS_ERROR_EXPLAIN'	=> 'An error occurred during refreshing the page.',
+
 ));

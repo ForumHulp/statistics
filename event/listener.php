@@ -123,7 +123,7 @@ class listener implements EventSubscriberInterface
 				$module_pages = array('index.php' => 'FORUM_INDEX', 'faq.php' => 'VIEWING_FAQ', 'mcp.php' => 'VIEWING_MCP', 'search.php' => 'SEARCHING_FORUMS', 'viewonline.php',  'VIEWING_ONLINE', 'memberlist.php' => 'VIEWING_MEMBERS', 'ucp.php' => 'VIEWING_UCP');
 
 				$sql = 'SELECT custom_pages FROM ' . $this->config_table;
-				$result = $this->db->sql_query($sql);
+				$result = $this->db->sql_query($sql, 3000);
 				$row = $this->db->sql_fetchfield('custom_pages');
 				$row = unserialize($row);
 

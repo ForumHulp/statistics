@@ -24,6 +24,6 @@ $lang = array_merge($lang, array(
 	'LOG_STATISTICS_NO_PRUNE'	=> '<strong>Forumstatistik</strong><br />Â» inga poster raderade',
 
 	'STAT_DELETE_SUCCESS'		=> 'Arkivtabeller tömda',
-	'STAT_DELETE_ERROR'			=> 'Trunkeringsfel under tömning av arkivtabeller'
-
+	'STAT_DELETE_ERROR'			=> 'Trunkeringsfel under tömning av arkivtabeller',
+	'STATISTICS_NOTICE'			=> '<div style="width:80%%;margin:20px auto;"><p style="text-align:left;">Config setting of this extension are in %1$s » %2$s » %3$s.</p></div>',
 ));

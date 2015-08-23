@@ -97,4 +97,8 @@ $lang = array_merge($lang, array(
 	'DEL_STAT_EXPLAIN'			=> 'Radera arkivtabellerna och nollställ forumstatistiken.',
 
 	'STAT_DELETE_CONFIRM'		=> 'Radera arkivtabellerna?',
+
+	'BS_STATUS_TIMEOUT'			=> 'Refresh timeout',
+	'BS_STATUS_ERROR'			=> 'Refresh error',
+	'BS_STATUS_ERROR_EXPLAIN'	=> 'An error occurred during refreshing the page.',
 ));

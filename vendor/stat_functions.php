@@ -442,7 +442,7 @@ class stat_functions
 		$sort_key	= $request->variable('sk', 'd');
 		$sort_dir	= $request->variable('sd', 'd');
 		$sort_by_sql = array('d' => 'domain', 't' => 'total_per_referer', 'p' => 'percent');
-		$sql_sort = $sort_by_sql[$sort_key] . ' ' . (($sort_dir == 'd') ? 'DESC' : 'ASC');
+		$sql_sort = ((!$overall && $sort_key == 'p') ? 'total' :  $sort_by_sql[$sort_key]) . ' ' . (($sort_dir == 'd') ? 'DESC' : 'ASC');
 
 		$template->assign_vars(array(
 			'U_ACTION'			=> $uaction,
@@ -677,8 +677,8 @@ class stat_functions
 		// sort keys, direction en sql
 		$sort_key	= $request->variable('sk', 'd');
 		$sort_dir	= $request->variable('sd', 'd');
-		$sort_by_sql = array('d' => ($overall) ? 'a.name' : 'a.uname', 't' => 'total_per_users', 'p' => 'percent');
-		$sql_sort = $sort_by_sql[$sort_key] . ' ' . (($sort_dir == 'd') ? 'DESC' : 'ASC');
+		$sort_by_sql = array('d' => ($overall) ? 'a.name' : 'a.uname', 't' => 'total_per_users', 'p' => 'total');
+		$sql_sort = ((!$overall && $sort_key == 't') ? 'total' :  $sort_by_sql[$sort_key]) . ' ' . (($sort_dir == 'd') ? 'DESC' : 'ASC');
 
 		$template->assign_vars(array(
 			'U_ACTION'			=> $uaction,
@@ -980,7 +980,7 @@ class stat_functions
 		// sort keys, direction en sql
 		$sort_key	= $request->variable('sk', 'd');
 		$sort_dir	= $request->variable('sd', 'd');
-		$sort_by_sql = array('d' => ($overall) ? 'a.name' : 'a.uname', 't' => 'total_per_users', 'p' => 'percent');
+		$sort_by_sql = array('d' => ($overall) ? 'a.name' : 'a.uname', 't' => 'total_per_users', 'p' => 'total');
 		$sql_sort = $sort_by_sql[$sort_key] . ' ' . (($sort_dir == 'd') ? 'DESC' : 'ASC');
 
 		$template->assign_vars(array(
@@ -1028,7 +1028,7 @@ class stat_functions
 				FROM    ' . $tables['archive'] . ' a
 						LEFT JOIN ' . BOTS_TABLE . ' b
 							ON a.name = b.bot_name
-				WHERE  a.cat = 5 AND b.bot_name IS NULL) AS total
+				WHERE  a.cat = 5 AND b.bot_name IS NULL) AS total, a.hits / total AS percent
 				FROM    ' . $tables['archive'] . ' a
 						LEFT JOIN ' . BOTS_TABLE . ' b
 							ON a.name = b.bot_name
@@ -1046,7 +1046,7 @@ class stat_functions
 							ON a.uname = b.bot_name
 						LEFT JOIN ' . USERS_TABLE . ' u ON u.username = a.uname
 				WHERE  b.bot_name IS NULL GROUP BY a.uname ORDER BY ' . $sql_sort;
-
+echo $sql;
 		$result = $db->sql_query_limit($sql, $sconfig['statistics_max_users'], $start);
 		$counter = 0;
 		$graphstr = '';

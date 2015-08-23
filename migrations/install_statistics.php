@@ -86,7 +86,7 @@ class install_statistics extends \phpbb\db\migration\migration
 						'time'			=> array('TIMESTAMP', 0),
 						'uname' 		=> array('VCHAR:25', ''),
 						'agent' 		=> array('VCHAR:255', ''),
-						'ip_addr' 		=> array('VCHAR:25', ''),
+						'ip_addr' 		=> array('VCHAR:50', ''),
 						'host' 			=> array('VCHAR:100', ''),
 						'domain'		=> array('VCHAR:20', ''),
 						'module'		=> array('VCHAR:50', ''),

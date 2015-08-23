@@ -23,6 +23,6 @@ $lang = array_merge($lang, array(
 	'LOG_STATISTICS_NO_PRUNE'	=> '<strong>掲示板統計情報</strong><br />» 切り詰めるログはありません',
 
 	'STAT_DELETE_SUCCESS'		=> 'アーカイブテーブルを空にしました',
-	'STAT_DELETE_ERROR'			=> 'アーカイブテーブルを空にする際の切り詰めエラーです。'
-
+	'STAT_DELETE_ERROR'			=> 'アーカイブテーブルを空にする際の切り詰めエラーです。',
+	'STATISTICS_NOTICE'			=> '<div style="width:80%%;margin:20px auto;"><p style="text-align:left;">Config setting of this extension are in %1$s » %2$s » %3$s.</p></div>',
 ));
