@@ -1024,11 +1024,11 @@ class stat_functions
 									'OVERALLSORT'	=> ($overall) ? '&amp;overall=1' : ''));
 
 		$sql = ($overall) ? 'SELECT  a.name AS uname, a.hits AS total_per_users, u.user_id,
-				(SELECT  sum(a.hits)
+				a.hits / (SELECT  sum(a.hits)
 				FROM    ' . $tables['archive'] . ' a
 						LEFT JOIN ' . BOTS_TABLE . ' b
 							ON a.name = b.bot_name
-				WHERE  a.cat = 5 AND b.bot_name IS NULL) AS total, a.hits / total AS percent
+				WHERE  a.cat = 5 AND b.bot_name IS NULL) AS total
 				FROM    ' . $tables['archive'] . ' a
 						LEFT JOIN ' . BOTS_TABLE . ' b
 							ON a.name = b.bot_name
@@ -1036,7 +1036,7 @@ class stat_functions
 				WHERE  a.cat = 5 AND b.bot_name IS NULL ORDER BY ' . $sql_sort :
 
 				'SELECT  a.uname, COUNT(a.uname) AS total_per_users, u.user_id,
-				(SELECT  COUNT(a.uname)
+				COUNT(a.uname) / (SELECT  COUNT(a.uname)
 				FROM    ' . $tables['online'] . ' a
 						LEFT JOIN ' . BOTS_TABLE . ' b
 							ON a.uname = b.bot_name
@@ -1046,7 +1046,7 @@ class stat_functions
 							ON a.uname = b.bot_name
 						LEFT JOIN ' . USERS_TABLE . ' u ON u.username = a.uname
 				WHERE  b.bot_name IS NULL GROUP BY a.uname ORDER BY ' . $sql_sort;
-echo $sql;
+
 		$result = $db->sql_query_limit($sql, $sconfig['statistics_max_users'], $start);
 		$counter = 0;
 		$graphstr = '';
@@ -1059,8 +1059,8 @@ echo $sql;
 				'USER_ID'		=> $row['user_id'],
 				'MODULECOUNT'	=> self::roundk($row['total_per_users']),
 				'TMODULECOUNT'	=> $row['total_per_users'],
-				'MODULETOTAL'	=> round((($row['total_per_users'] / $row['total']) * 100), 1) . ' % (' . self::roundk($row['total_per_users']) . ' of ' . self::roundk($row['total']) . ')',
-				'TMODULETOTAL'	=> round((($row['total_per_users'] / $row['total']) * 100), 1) . ' % (' . $row['total_per_users'] . ' of ' . $row['total'] . ')'
+				'MODULETOTAL'	=> round((($row['total']) * 100), 1) . ' % (' . self::roundk($row['total_per_users']) . ' of ' . self::roundk($row['total'] * 100) . ')',
+				'TMODULETOTAL'	=> round((($row['total']) * 100), 1) . ' % (' . $row['total_per_users'] . ' of ' . $row['total'] * 100 . ')'
 				)
 			);
 			$graphstr .= (($graphstr == '') ? '' : ', ') . '[\'' . html_entity_decode($db->sql_escape($row['uname'])) . '\', ' . $row['total_per_users'] . ']';
