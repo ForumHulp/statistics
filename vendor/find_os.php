@@ -436,7 +436,6 @@ class find_os
 				$this->setVersion($aversion[1]);
 			}
 			$this->_browser_name = self::BROWSER_OPERA_MINI;
-			$this->setMobile(true);
 			return true;
 		} else if (stripos($this->_agent, 'opera') !== false) {
 			$resultant = stristr($this->_agent, 'opera');
