@@ -39,6 +39,7 @@ $lang = array_merge($lang, array(
 	'USERSTATS'		=> 'Users Stats Graphs',
 	'LASTVISITS'	=> 'Last visits page',
 	'FL_DATE'		=> 'Archive table info',
+	'UGROUPS'		=> 'User groups',
 	'UNIQUE'		=> 'Unique visitors',
 
 	// Online

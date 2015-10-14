@@ -102,9 +102,9 @@ class stat_functions
 		// sort keys, direction en sql
 		$sort_key	= $request->variable('sk', 't');
 		$sort_dir	= $request->variable('sd', 'd');
-		$sort_by_sql = array('t' => 'time', 'u' => 'uname', 'm' => 'module', 'd' => 'domain', 'h' => 'host');
+		$sort_by_sql = array('t' => 'time', 'u' => 'uname', 'm' => 'module', 'd' => 'domain', 'h' => 'host', 'g' => 'ugroup');
 		$sql_sort = $sort_by_sql[$sort_key] . ' ' . (($sort_dir == 'd') ? 'DESC' : 'ASC');
-
+		
 		$template->assign_vars(array(
 			'U_ACTION'			=> $uaction,
 			'S_SORT_KEY'		=> $sort_key,
@@ -132,8 +132,9 @@ class stat_functions
 		$base_url = $uaction . '&amp;screen=online&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir;
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $total_entries, $sconfig['statistics_max_online'], $start);
 
-		$sql = 'SELECT o.time, o.uname, o.agent, o.ip_addr, o.host, o.domain, d.description, o.module, o.page, o.referer FROM ' . $tables['online'] . ' o
-				LEFT JOIN ' . $tables['domain'] . ' d ON (d.domain = o.domain)' 
+		$sql = 'SELECT o.time, o.uname, o.ugroup, g.group_name, g.group_type, o.agent, o.ip_addr, o.host, o.domain, d.description, o.module, o.page, o.referer FROM ' . $tables['online'] . ' o
+				LEFT JOIN ' . $tables['domain'] . ' d ON (d.domain = o.domain) 
+				LEFT JOIN ' . GROUPS_TABLE . ' g ON (g.group_id = o.ugroup) '
 				. ((!$sconfig['statistics_botsinc']) ? $botswhere : '') . ' ORDER BY o.' . $sql_sort;
 
 		$result = $db->sql_query_limit($sql, $sconfig['statistics_max_online'], $start);
@@ -141,12 +142,14 @@ class stat_functions
 		while ($row = $db->sql_fetchrow($result))
 		{
 			$counter += 1;
+			$group_name = ($row['group_type'] == GROUP_SPECIAL) ? $user->lang['G_' . $row['group_name']] : $row['group_name'];
 			$template->assign_block_vars('onlinerow', array(
 				'COUNTER'   => $start + $counter,
 				'TIJD'		=> $user->format_date($row['time'], 'H:i'),
 				'DATE'		=> $user->format_date($row['time'], 'D M d, Y'),
 				'FLAG'		=> ($row['uname'] != 'Anonymous') ? 'online-user.gif' : 'offline-user.gif',
 				'UNAME'		=> $row['uname'],
+				'UGROUP'	=> $group_name,
 				'AGENT'		=> $row['agent'],
 				'MODULE'	=> isset($modules[$row['module']]) ? $modules[$row['module']] : 'Module not found',
 				'MODULEURL'	=> '/' . $row['page'],
@@ -1072,7 +1075,7 @@ class stat_functions
 	{
 		global $db, $config, $sconfig, $user, $table_prefix, $tables, $request, $template, $phpbb_container;
 		$module_aray = array(0 => 'COUNTRIES', 1 => 'REFERRALS', 2 => 'SEARCHENG', 3 => 'SEARCHTERMS', 4 => 'BROWSERS', 5 => 'CRAWLERS', 6 => 'SYSTEMS', 7 => 'MODULES',
-							8 => 'RESOLUTIONS', 9 => 'USERS', 10 => 'FL_DATE', 11 => 'POSTS', 12 => 'UNIQUE');
+							8 => 'RESOLUTIONS', 9 => 'USERS', 10 => 'FL_DATE', 11 => 'POSTS', 12 => 'UGROUPS', 13 => 'UNIQUE');
 		$modules = self::get_modules();
 		
 		$db_tools = new \phpbb\db\tools($db);
@@ -1102,9 +1105,8 @@ class stat_functions
 					   WHERE table_schema = "' . $db->get_db_name() . '" AND table_name = "' . $tables['archive'] . '"' . 
 					   (($searchresulttabel) ? ' UNION SELECT "Searchwords" AS name, COUNT(search_key) AS hits FROM ' . $table_prefix . 'searchresults' : '');
 		$sql_aray[] = '';
+		$sql_aray[] = 'SELECT g.group_name AS name, g.group_type, hits FROM ' . $tables['archive'] . ' LEFT JOIN ' . GROUPS_TABLE . ' g ON g.group_id = name WHERE cat = 10 ORDER BY hits DESC';
 		$sql_aray[] = 'SELECT name, hits FROM ' . $tables['archive'] . ' WHERE cat = 9 ORDER BY hits DESC';
-
-
 
 		$pagination = $phpbb_container->get('pagination');
 		$base_url = $uaction . '&amp;screen=top10';
@@ -1117,7 +1119,7 @@ class stat_functions
 				'TITLE'			=> $user->lang[$module_aray[$i]],
 			));
 
-			if ($i < 12)
+			if ($i < 13)
 			{
 				$result = $db->sql_query_limit($sql_aray[$i], 10, 0);
 				$counter = 0;
@@ -1126,7 +1128,8 @@ class stat_functions
 					$counter += 1;
 					$template->assign_block_vars('blocks.block', array(
 						'COUNTER'  	=> $counter,
-						'NAME'		=> ($i == 7) ? ((isset($modules[$row['name']])) ? $modules[$row['name']] : 'Not found') : $row['name'],
+						'NAME'		=> ($i == 7) ? ((isset($modules[$row['name']])) ? $modules[$row['name']] : 'Not found') : 
+										(($i == 12 && $row['group_type'] == GROUP_SPECIAL) ? $user->lang['G_' . $row['name']] : $row['name']),
 						'HITS'		=> ($i == 10 && isset($row['hits']) && $counter < 3) ? $user->format_date($row['hits'], 'd m \'y') : self::roundk($row['hits']),
 						'THITS'		=> ($i == 10 && isset($row['hits']) && $counter < 3) ? $user->format_date($row['hits']) : $row['hits']
 						)

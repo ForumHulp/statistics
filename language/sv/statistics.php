@@ -40,6 +40,8 @@ $lang = array_merge($lang, array(
 	'USERSTATS'		=> 'Användardiagram',
 	'LASTVISITS'	=> 'Senaste besökta sida',
 	'FL_DATE'		=> 'Arkivtabellinformation',
+	'UGROUPS'		=> 'User groups',
+	'UNIQUE'		=> 'Unique visitors',
 
 	// Online
 	'TIME'		=> 'Tid',

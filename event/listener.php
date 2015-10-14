@@ -215,6 +215,7 @@ class listener implements EventSubscriberInterface
 				$fields = array(
 					'time'			=> time(),
 					'uname'			=> $this->user->data['username'],
+					'ugroup'		=> (int) $this->user->data['group_id'],
 					'agent'			=> $this->user->browser,
 					'ip_addr'		=> $this->user->data['session_ip'],
 					'host'			=> $data['host'],

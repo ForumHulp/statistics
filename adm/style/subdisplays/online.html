@@ -10,6 +10,10 @@
         	<a href="{U_ACTION}&amp;screen=online&amp;sk=u&amp;sd=a" title="{L_ASCENDING}"><i class="fa fa-arrow-up"<!-- IF S_SORT_KEY == 'u' and S_SORT_DIR == 'a' --> id="act-arrow"<!-- ENDIF -->></i></a> 
             <a href="{U_ACTION}&amp;screen=online&amp;sk=u&amp;sd=d" title="{L_DESCENDING}"><i class="fa fa-arrow-down"<!-- IF S_SORT_KEY == 'u' and S_SORT_DIR == 'd' --> id="act-arrow"<!-- ENDIF -->></i></a>
        	</th>
+        <th class="row-3 row-user">{L_GROUP}
+        	<a href="{U_ACTION}&amp;screen=online&amp;sk=g&amp;sd=a" title="{L_ASCENDING}"><i class="fa fa-arrow-up"<!-- IF S_SORT_KEY == 'g' and S_SORT_DIR == 'a' --> id="act-arrow"<!-- ENDIF -->></i></a> 
+            <a href="{U_ACTION}&amp;screen=online&amp;sk=g&amp;sd=d" title="{L_DESCENDING}"><i class="fa fa-arrow-down"<!-- IF S_SORT_KEY == 'g' and S_SORT_DIR == 'd' --> id="act-arrow"<!-- ENDIF -->></i></a>
+       	</th>
         <th class="row-4 row-module">{L_MODULE}
            	<a href="{U_ACTION}&amp;screen=online&amp;sk=m&amp;sd=a" title="{L_ASCENDING}"><i class="fa fa-arrow-up"<!-- IF S_SORT_KEY == 'm' and S_SORT_DIR == 'a' --> id="act-arrow"<!-- ENDIF -->></i></a> 
             <a href="{U_ACTION}&amp;screen=online&amp;sk=m&amp;sd=d" title="{L_DESCENDING}"><i class="fa fa-arrow-down"<!-- IF S_SORT_KEY == 'm' and S_SORT_DIR == 'd' --> id="act-arrow"<!-- ENDIF -->></i></a>
@@ -31,6 +35,7 @@
         <td>{onlinerow.COUNTER}</td>
         <td title="{onlinerow.DATE}">{onlinerow.TIJD}</td>
         <td title="{onlinerow.AGENT}"><img src="{EXT_PATH}/adm/style/images/{onlinerow.FLAG}" alt="{onlinerow.UNAME}" height="10" border="0" />{onlinerow.UNAME}</td>
+        <td>{onlinerow.UGROUP}</td>
         <td><a href="{onlinerow.MODULEURL}">{onlinerow.MODULE}</a></td>
         <td><img src="{EXT_PATH}/adm/style/images/flags/{onlinerow.DFLAG}" alt="{onlinerow.DDESC}" border="0" width="16" height="10" />{onlinerow.DDESC}</td>
         <td title="{onlinerow.HOST}"><img src="{EXT_PATH}/adm/style/images/host.gif" border="0" />{onlinerow.HOST}</td>
@@ -43,7 +48,7 @@
     <!-- END onlinerow -->
     <!-- IF .pagination -->
 	<tr class="row3">
-        <td colspan="7">
+        <td colspan="8">
             <div class="pagination">
                 <!-- INCLUDE pagination.html -->
             </div>

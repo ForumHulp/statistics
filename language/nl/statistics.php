@@ -40,6 +40,7 @@ $lang = array_merge($lang, array(
 	'USERSTATS'		=> 'Bezoekers Stats Grafieken',
 	'LASTVISITS'	=> 'Laatste Pagina bezoeken',
 	'FL_DATE'		=> 'Archief tabel info',
+	'UGROUPS'		=> 'Gebruikers groupen',
 	'UNIQUE'		=> 'Unieke bezoekers',
 
 	// Online

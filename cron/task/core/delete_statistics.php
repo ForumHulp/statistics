@@ -57,7 +57,7 @@ class delete_statistics extends \phpbb\cron\task\base
 		$result = $this->db->sql_query($sql);
 		$sconfig['log'] = $this->db->sql_fetchfield('log');
 
-		$unique_aray = $module_aray = $browser_aray = $os_aray = $country_aray = $user_aray = $screen_aray = $referer_aray = $search_aray = array();
+		$unique_aray = $module_aray = $browser_aray = $os_aray = $country_aray = $user_aray = $screen_aray = $referer_aray = $search_aray = $group_aray	= array();
 
 		$sql = 'SELECT MIN(time) AS start_time FROM ' . $this->online_table;
 		$result = $this->db->sql_query($sql);
@@ -66,7 +66,7 @@ class delete_statistics extends \phpbb\cron\task\base
 
 		if ($start_time)
 		{
-			$sql = 'SELECT time, uname, agent, ip_addr, module, host, domain, scr_res, page, referer, se_terms FROM ' . $this->online_table . ' 
+			$sql = 'SELECT time, uname, ugroup, agent, ip_addr, module, host, domain, scr_res, page, referer, se_terms FROM ' . $this->online_table . ' 
 					WHERE time BETWEEN ' . $start_time . ' AND ' . strtotime("24:00", $start_time) . ' ORDER BY id ASC';
 			$result = $this->db->sql_query($sql);
 			$starttime = explode(' ', microtime());
@@ -88,6 +88,7 @@ class delete_statistics extends \phpbb\cron\task\base
 				$referer_aray	= ($row['referer'] != '') ? $this->count_array($referer_aray, $this->url_to_domain($row['referer'])) : null;
 				$search_aray	= ($row['se_terms'] != '') ? $this->split_array($search_aray, $row['se_terms']) : null;
 				$unique_aray	= ($row['ip_addr'] != '') ? $this->count_array($unique_aray, $row['ip_addr']) : null;
+				$group_aray		= ($row['ugroup'] != '') ? $this->count_array($group_aray, $row['ugroup']) : null;
 				$row_count++;
 			}
 			$this->db->sql_freeresult($result);
@@ -103,6 +104,7 @@ class delete_statistics extends \phpbb\cron\task\base
 			$this->store($referer_aray, 7);
 			$this->store($search_aray, 8);
 			$this->store_unique_visitors($unique_visiors, 9);
+			$this->store($group_aray, 10);
 
 			unset($module_aray, $browser_aray, $os_aray, $country_aray, $user_aray, $screen_aray, $referer_aray, $search_aray, $unique_visiors, $unique_aray);
 			$sql = 'DELETE FROM ' . $this->online_table . ' WHERE time BETWEEN ' . $start_time . ' AND ' . strtotime("24:00", $start_time);
