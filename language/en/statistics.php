@@ -3,7 +3,7 @@
 *
 * @package Statistics
 * @copyright (c) 2014 ForumHulp.com
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+* @license Proprietary
 *
 */
 
@@ -37,10 +37,15 @@ $lang = array_merge($lang, array(
 	'ADMIN'			=> 'Administer',
 	'USERS'			=> 'Users',
 	'USERSTATS'		=> 'Users Stats Graphs',
-	'LASTVISITS'	=> 'Last visits page',
+	'ONLINE'		=> 'Last visits page',
 	'FL_DATE'		=> 'Archive table info',
 	'UGROUPS'		=> 'User groups',
 	'UNIQUE'		=> 'Unique visitors',
+	
+	'HOV'			=> 'Hourly overview',
+	'DOV'			=> 'Daily overview',
+	'MOV'			=> 'Monthly overview',
+	'YOV'			=> 'Yearly overview',
 
 	// Online
 	'TIME'		=> 'Time',
@@ -55,6 +60,16 @@ $lang = array_merge($lang, array(
 	'VIEWS'			=> 'Views',
 	'PERC'			=> 'Percentage',
 	'GRAPH'			=> 'Graph',
+
+	// Top10
+	'PPD'			=>	'Posts per day',
+	'PPM'			=>	'Posts per month',
+	'TPD'			=>	'Topics per day',
+	'TPM'			=>	'Topics per month',
+	'FORUMDAYS'		=>	'Forumdays',
+	'APPT'			=>	'Average posts per topic',
+	'APPU'			=>	'Average posts per user',
+	'SEARCHRESULTS'	=> 'Searchresult',
 
 	//Config
 	'MAX_COUNTRIES'		=> 'Countries',
@@ -105,5 +120,4 @@ $lang = array_merge($lang, array(
 	'BS_STATUS_TIMEOUT'			=> 'Refresh timeout',
 	'BS_STATUS_ERROR'			=> 'Refresh error',
 	'BS_STATUS_ERROR_EXPLAIN'	=> 'An error occurred during refreshing the page.',
-
 ));

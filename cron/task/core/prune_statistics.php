@@ -3,7 +3,7 @@
 *
 * @package Statistics
 * @copyright (c) 2014 ForumHulp.com
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+* @license Proprietary
 *
 */
 
@@ -13,7 +13,7 @@ namespace forumhulp\statistics\cron\task\core;
 * @ignore
 */
 
-class delete_statistics extends \phpbb\cron\task\base
+class prune_statistics extends \phpbb\cron\task\base
 {
 	protected $phpbb_root_path;
 	protected $php_ext;
@@ -51,8 +51,6 @@ class delete_statistics extends \phpbb\cron\task\base
 	*/
 	public function run()
 	{
-		global $phpbb_root_path, $phpbb_container, $user;
-
 		$sql = 'SELECT log FROM ' . $this->config_table;
 		$result = $this->db->sql_query($sql);
 		$sconfig['log'] = $this->db->sql_fetchfield('log');
@@ -72,7 +70,7 @@ class delete_statistics extends \phpbb\cron\task\base
 			$starttime = explode(' ', microtime());
 			$starttime = $starttime[1] + $starttime[0];
 			$row_count = 0;
-			include($phpbb_root_path . 'ext/forumhulp/statistics/vendor/find_os.' . $this->php_ext);
+			include($this->phpbb_root_path . 'ext/forumhulp/statistics/vendor/find_os.' . $this->php_ext);
 			while (still_on_time() && $row = $this->db->sql_fetchrow($result))
 			{
 				$module_aray	= ($row['module'] != '') ? $this->count_array($module_aray, $row['module']) : null;
@@ -105,6 +103,9 @@ class delete_statistics extends \phpbb\cron\task\base
 			$this->store($search_aray, 8);
 			$this->store_unique_visitors($unique_visiors, 9);
 			$this->store($group_aray, 10);
+
+			$sql = 'OPTIMIZE TABLE ' . $this->archive_table;
+			$this->db->sql_query($sql);
 
 			unset($module_aray, $browser_aray, $os_aray, $country_aray, $user_aray, $screen_aray, $referer_aray, $search_aray, $unique_visiors, $unique_aray);
 			$sql = 'DELETE FROM ' . $this->online_table . ' WHERE time BETWEEN ' . $start_time . ' AND ' . strtotime("24:00", $start_time);
@@ -142,18 +143,14 @@ class delete_statistics extends \phpbb\cron\task\base
 		{
 			$newtime = mktime(0, 0, 0);
 		}
-		$this->config->set('delete_statistics_last_gc', $newtime);
+		$this->config->set('prune_statistics_last_gc', $newtime);
 	}
 
 	// Store Archive
 	public function store($aray, $cat)
 	{
-		global $phpbb_container;
-
 		if (sizeof($aray))
 		{
-			$this->archive_table	= $phpbb_container->getParameter('tables.archive_table');
-
 			$sconfig = $this->get_config();
 
 			foreach ($aray as $key => $value)
@@ -177,18 +174,16 @@ class delete_statistics extends \phpbb\cron\task\base
 					$sql = 'UPDATE ' . $this->archive_table . ' SET hits = hits + ' . $value . ', last = ' . time() .' WHERE cat = ' . $cat . ' AND name = "' . $key . '"';
 				}
 				$this->db->sql_query($sql);
-
-				$sql = 'SELECT hits, last FROM ' . $this->archive_table . ' WHERE cat = ' . $cat . ' ORDER BY hits DESC LIMIT '. $sconfig[$cat] .', 1';
-				$result = $this->db->sql_query($sql);
-				$prune = $this->db->sql_fetchrow($result);
-				if ($prune)
-				{
-					$sql = 'DELETE FROM ' . $this->archive_table . ' WHERE cat = ' . $cat . ' AND hits < ' . $prune['hits'] . ' AND last < ' . $prune['last'];
-					$this->db->sql_query($sql);
-				}
 			}
-			$sql = 'OPTIMIZE TABLE ' . $this->archive_table;
-			$this->db->sql_query($sql);
+
+			$sql = 'SELECT hits, last FROM ' . $this->archive_table . ' WHERE cat = ' . $cat . ' ORDER BY hits DESC LIMIT '. $sconfig[$cat] .', 1';
+			$result = $this->db->sql_query($sql);
+			$prune = $this->db->sql_fetchrow($result);
+			if ($prune)
+			{
+				$sql = 'DELETE FROM ' . $this->archive_table . ' WHERE cat = ' . $cat . ' AND hits < ' . $prune['hits'] . ' AND last < ' . $prune['last'];
+				$this->db->sql_query($sql);
+			}
 		}
 	}
 
@@ -216,11 +211,9 @@ class delete_statistics extends \phpbb\cron\task\base
 
 	public function get_config()
 	{
-		global $db, $phpbb_container;
-
 		$sql = 'SELECT * FROM ' . $this->config_table;
-		$result = $db->sql_query($sql);
-		$row = $db->sql_fetchrow($result);
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
 		$sconfig = array();
 		foreach ($row as $key => $value)
 		{
@@ -296,6 +289,6 @@ class delete_statistics extends \phpbb\cron\task\base
 	*/
 	public function should_run()
 	{
-		return $this->config['delete_statistics_last_gc'] < (time() - $this->config['delete_statistics_gc']) && (date('Y-m-d', time()) != date('Y-m-d', $this->config['delete_statistics_last_gc']));
+		return $this->config['prune_statistics_last_gc'] < (time() - $this->config['prune_statistics_gc']) && (date('Y-m-d', time()) != date('Y-m-d', $this->config['prune_statistics_last_gc']));
 	}
 }

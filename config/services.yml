@@ -6,18 +6,19 @@ services:
         class: forumhulp\statistics\event\listener
         arguments:
             - @config
-            - @controller.helper
+            - @request
             - @user
             - @dbal.conn
+            - @template
+            - @cache.driver
             - %tables.online_table%
             - %tables.config_table%
             - %tables.se_table%
-            - %tables.stats_table%
             - %core.php_ext%
         tags:
             - { name: event.listener }
-    cron.task.core.statistics:
-        class: forumhulp\statistics\cron\task\core\delete_statistics
+    forumhulp.cron.statistics:
+        class: forumhulp\statistics\cron\task\core\prune_statistics
         arguments:
             - %core.root_path%
             - %core.php_ext%
@@ -28,13 +29,12 @@ services:
             - %tables.archive_table%
             - %tables.stats_table%
         calls:
-            - [set_name, [cron.task.core.statistics]]
+            - [set_name, [forumhulp.cron.statistics]]
         tags:
             - { name: cron.task }
     forumhulp.statistics.acp.statistics_module:
         class: forumhulp\statistics\acp\statistics_module
         arguments:
             - @user
-            - @controller.provider
             - @ext.manager
             - %core.root_path%

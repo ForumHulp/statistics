@@ -3,7 +3,7 @@
 *
 * @package Statistics
 * @copyright (c) 2014 ForumHulp.com
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+* @license Proprietary
 *
 * Translated By : Bassel Taha Alhitary - www.alhitary.net
 */
@@ -43,6 +43,11 @@ $lang = array_merge($lang, array(
 	'UGROUPS'		=> 'User groups',
 	'UNIQUE'		=> 'زائرين وحيدين',
 
+	'HOV'			=> 'Hourly overview',
+	'DOV'			=> 'Daily overview',
+	'MOV'			=> 'Monthly overview',
+	'YOV'			=> 'Yearly overview',
+
 	// Online
 	'TIME'		=> 'الوقت',
 	'USER'		=> 'العضو',
@@ -56,6 +61,15 @@ $lang = array_merge($lang, array(
 	'VIEWS'			=> 'مُشاهدات',
 	'PERC'			=> 'النسبة',
 	'GRAPH'			=> 'رسم بياني',
+
+	// Top10
+	'PPD'		=>	'Posts per day',
+	'PPM'		=>	'Posts per month',
+	'TPD'		=>	'Topics per day',
+	'TPM'		=>	'Topics per month',
+	'FORUMDAYS'	=>	'Forumdays',
+	'APPT'		=>	'Average posts per topic',
+	'APPU'		=>	'Average posts per user',
 
 	//Config
 	'MAX_COUNTRIES'		=> 'الدول',
@@ -106,5 +120,4 @@ $lang = array_merge($lang, array(
 	'BS_STATUS_TIMEOUT'			=> 'تحديث الجلسة',
 	'BS_STATUS_ERROR'			=> 'تحديث الخطأ',
 	'BS_STATUS_ERROR_EXPLAIN'	=> 'هناك خطأ حدث أثناء تحديث الصفحة.',
-
 ));

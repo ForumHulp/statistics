@@ -2,10 +2,11 @@
 <!-- IF S_ALLOW_CDN -->
 <!-- INCLUDECSS //maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css -->
 <!-- ELSE -->
-<!-- INCLUDECSS css/font-awesome.min.css -->
+<!-- INCLUDECSS {ROOT_PATH}ext/forumhulp/helper/css/font-awesome.min.css -->
 <!-- ENDIF -->
 <!-- INCLUDECSS css/statistics.css -->
-<!-- INCLUDECSS css/jquery.simpledialog.css -->
+<!-- INCLUDECSS {ROOT_PATH}ext/forumhulp/helper/css/jquery.simpledialog.css -->
+<!-- INCLUDECSS {ROOT_PATH}ext/forumhulp/helper/css/ext_details.css -->
 <!-- INCLUDE overall_header.html -->
 
 <a name="maincontent"></a>
@@ -23,29 +24,29 @@
 </tr>
 <tr>
 	<td></td>
-    <td><i<!-- IF ACT == 'countries' --> style="color:red;"<!-- ENDIF --> class="fa fa-flag"></i> <a href="{U_ACTION}&amp;screen=countries">{L_COUNTRIES}</a></td>
-    <td><i<!-- IF ACT == 'referrals' --> style="color:red;"<!-- ENDIF --> class="fa fa-anchor"></i> <a href="{U_ACTION}&amp;screen=referrals">{L_REFERRALS}</a></td>
-    <td><i<!-- IF ACT == 'se' --> style="color:red;"<!-- ENDIF --> class="fa fa-search"></i> <a href="{U_ACTION}&amp;screen=se">{L_SEARCHENG}</a></td>
-    <td><i<!-- IF ACT == 'se_terms' --> style="color:red;"<!-- ENDIF --> class="fa fa-search-plus"></i> <a href="{U_ACTION}&amp;screen=se_terms">{L_SEARCHTERMS}</a></td>
-    <td><i<!-- IF ACT == 'browsers' --> style="color:red;"<!-- ENDIF --> class="fa fa-eye"></i> <a href="{U_ACTION}&amp;screen=browsers">{L_BROWSERS}</a></td>
+    <td><i class="fa fa-flag<!-- IF ACT == 'countries' --> active<!-- ENDIF -->"></i> <a href="{U_ACTION}&amp;screen=countries">{L_COUNTRIES}</a></td>
+    <td><i class="fa fa-anchor<!-- IF ACT == 'referrals' --> active<!-- ENDIF -->"></i> <a href="{U_ACTION}&amp;screen=referrals">{L_REFERRALS}</a></td>
+    <td><i class="fa fa-search<!-- IF ACT == 'se' --> active<!-- ENDIF -->"></i> <a href="{U_ACTION}&amp;screen=se">{L_SEARCHENG}</a></td>
+    <td><i class="fa fa-search-plus<!-- IF ACT == 'se_terms' --> active<!-- ENDIF -->"></i> <a href="{U_ACTION}&amp;screen=se_terms">{L_SEARCHTERMS}</a></td>
+    <td><i class="fa fa-eye<!-- IF ACT == 'browsers' --> active<!-- ENDIF -->"></i> <a href="{U_ACTION}&amp;screen=browsers">{L_BROWSERS}</a></td>
     <td></td>
 </tr>
 <tr>
 	<td></td>
-    <td><i<!-- IF ACT == 'crawl' --> style="color:red;"<!-- ENDIF --> class="fa fa-google"></i> <a href="{U_ACTION}&amp;screen=crawl">{L_CRAWLERS}</a></td>
-    <td><i<!-- IF ACT == 'os' --> style="color:red;"<!-- ENDIF --> class="fa fa-linux"></i> <a href="{U_ACTION}&amp;screen=os">{L_SYSTEMS}</a></td>
-    <td><i<!-- IF ACT == 'modules' --> style="color:red;"<!-- ENDIF --> class="fa fa-tasks"></i> <a href="{U_ACTION}&amp;screen=modules">{L_MODULES}</a></td>
-    <td><i<!-- IF ACT == 'stats' --> style="color:red;"<!-- ENDIF --> class="fa fa-align-left fa-rotate-270"></i> <a href="{U_ACTION}&amp;screen=stats">{L_AVERAGES}</a></td>
-    <td><i<!-- IF ACT == 'screens' --> style="color:red;"<!-- ENDIF --> class="fa fa-compress"></i>  <a href="{U_ACTION}&amp;screen=screens">{L_RESOLUTIONS}</a></td>
+    <td><i class="fa fa-google<!-- IF ACT == 'crawl' --> active<!-- ENDIF -->"></i> <a href="{U_ACTION}&amp;screen=crawl">{L_CRAWLERS}</a></td>
+    <td><i class="fa fa-linux<!-- IF ACT == 'os' --> active<!-- ENDIF -->"></i> <a href="{U_ACTION}&amp;screen=os">{L_SYSTEMS}</a></td>
+    <td><i class="fa fa-tasks<!-- IF ACT == 'modules' --> active<!-- ENDIF -->"></i> <a href="{U_ACTION}&amp;screen=modules">{L_MODULES}</a></td>
+    <td><i class="fa fa-align-left fa-rotate-270<!-- IF ACT == 'stats' --> active<!-- ENDIF -->"></i> <a href="{U_ACTION}&amp;screen=stats">{L_AVERAGES}</a></td>
+    <td><i class="fa fa-compress<!-- IF ACT == 'screens' --> active<!-- ENDIF -->"></i>  <a href="{U_ACTION}&amp;screen=screens">{L_RESOLUTIONS}</a></td>
 	<td></td>
 </tr>
 <tr>
 	<td></td>
-    <td><i<!-- IF ACT == 'top10' --> style="color:red;"<!-- ENDIF --> class="fa fa-table"></i> <a href="{U_ACTION}&amp;screen=top10">{L_OVERVIEW}</a></td>
-    <td><i<!-- IF ACT == 'config' --> style="color:red;"<!-- ENDIF --> class="fa fa-wrench"></i> <a href="{U_ACTION}&amp;screen=config">{L_ADMIN}</a></td>
-    <td><i<!-- IF ACT == 'users' --> style="color:red;"<!-- ENDIF --> class="fa fa-users"></i> <a href="{U_ACTION}&amp;screen=users">{L_USERS}</a></td>
-    <td><i<!-- IF ACT == 'ustats' --> style="color:red;"<!-- ENDIF --> class="fa fa-align-left fa-rotate-270"></i> <a href="{U_ACTION}&amp;screen=ustats">{L_USERSTATS}</a></td>
-    <td><i<!-- IF ACT == 'online' --> style="color:red;"<!-- ENDIF --> class="fa fa-history"></i> <a href="{U_ACTION}&amp;screen=online">{L_LASTVISITS}</a></td>
+    <td><i class="fa fa-table<!-- IF ACT == 'top10' --> active<!-- ENDIF -->"></i> <a href="{U_ACTION}&amp;screen=top10">{L_OVERVIEW}</a></td>
+    <td><i class="fa fa-wrench<!-- IF ACT == 'config' --> active<!-- ENDIF -->"></i> <a href="{U_ACTION}&amp;screen=config">{L_ADMIN}</a></td>
+    <td><i class="fa fa-users<!-- IF ACT == 'users' --> active<!-- ENDIF -->"></i> <a href="{U_ACTION}&amp;screen=users">{L_USERS}</a></td>
+    <td><i class="fa fa-align-left fa-rotate-270<!-- IF ACT == 'ustats' --> active<!-- ENDIF -->"></i> <a href="{U_ACTION}&amp;screen=ustats">{L_USERSTATS}</a></td>
+    <td><i class="fa fa-history<!-- IF ACT == 'online' --> active<!-- ENDIF -->"></i> <a href="{U_ACTION}&amp;screen=online">{L_ONLINE}</a></td>
 	<td></td>
 </tr>
 <tr>
@@ -57,12 +58,12 @@
 
 <!-- INCLUDE subdisplays/{SUB_DISPLAY}.html -->
 <!-- IF SUB_DISPLAY eq 'graph' or SUB_DISPLAY eq 'stats' -->
-	<!-- INCLUDEJS js/highcharts.js -->
+	<!-- INCLUDEJS {ROOT_PATH}ext/forumhulp/helper/js/highcharts.js -->
 <!-- ENDIF -->
 <!-- IF not VIEW_TABLE -->
 </div>
 
-<!-- INCLUDEJS js/jquery.simpledialog.js -->
+<!-- INCLUDEJS {ROOT_PATH}ext/forumhulp/helper/js/jquery.simpledialog.js -->
 <!-- INCLUDEJS js/statistics.js -->
 
 <!-- INCLUDE overall_footer.html -->

@@ -3,7 +3,7 @@
 *
 * @package Statistics
 * @copyright (c) 2014 ForumHulp.com
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+* @license Proprietary
 *
 */
 
@@ -20,9 +20,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class listener implements EventSubscriberInterface
 {
 	protected $config;
-	protected $helper;
+	protected $request;
 	protected $user;
 	protected $db;
+	protected $template;
+	protected $cache;
 	protected $online_table;
 	protected $config_table;
 	protected $se_table;
@@ -31,14 +33,15 @@ class listener implements EventSubscriberInterface
 	/**
     * Constructor
     *
-    * @param \phpbb\controller\helper    $helper        Controller helper object
     */
-	public function __construct(\phpbb\config\config $config, \phpbb\controller\helper $helper, \phpbb\user $user, \phpbb\db\driver\driver_interface $db, $online_table, $config_table, $se_table, $php_ext)
+	public function __construct(\phpbb\config\config $config, \phpbb\request\request $request, \phpbb\user $user, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\cache\driver\driver_interface $cache, $online_table, $config_table, $se_table, $php_ext)
 	{
 		$this->config = $config;
-		$this->helper = $helper;
+		$this->request = $request;
 		$this->user = $user;
 		$this->db = $db;
+		$this->template = $template;
+		$this->cache = $cache;
 		$this->online_table = $online_table;
 		$this->config_table = $config_table;
 		$this->se_table = $se_table;
@@ -53,35 +56,31 @@ class listener implements EventSubscriberInterface
 	}
 
 	/**
-	 * @param object $event The event object
-	 * @return null
+	 * @return modules
 	 * @access public
 	 */
 
 	public function get_modules()
 	{
-		global $db, $user;
-		$user->add_lang(array('ucp', 'mcp', 'common'));
+		$this->user->add_lang(array('ucp', 'mcp', 'common'));
 		$modules = array();
 		$sql = 'SELECT forum_id, forum_name FROM ' . FORUMS_TABLE;
-		$result = $db->sql_query($sql);
-		while ($row = $db->sql_fetchrow($result))
+		$result = $this->db->sql_query($sql, 3600);
+		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$modules[$row['forum_id']] = $row['forum_name'];
 		}
 		$sql = 'SELECT module_langname FROM ' . MODULES_TABLE . ' WHERE module_class = "ucp" OR module_class = "mcp"';
-		$result = $db->sql_query($sql);
-		while ($row = $db->sql_fetchrow($result))
+		$result = $this->db->sql_query($sql, 3600);
+		while ($row = $this->db->sql_fetchrow($result))
 		{
-			(isset($user->lang[$row['module_langname']])) ? $modules[$row['module_langname']] = $user->lang[$row['module_langname']] : null;
+			(isset($this->user->lang[$row['module_langname']])) ? $modules[$row['module_langname']] = $this->user->lang[$row['module_langname']] : null;
 		}
 		return $modules;
 	}
 
 	function get_ref($event)
 	{
-		global $request, $template, $cache;
-
 		if ($this->user->page['script_path'] != '/adm/')
 		{
 			$ref_url = strtolower($this->user->referer);
@@ -118,7 +117,7 @@ class listener implements EventSubscriberInterface
 			if ($this->user->page['forum'] && is_numeric($this->user->page['forum']))
 			{
 				$data['module'] = $this->user->page['forum'];
-			} else if ($this->user->page['page_dir'] == '' && !$request->is_set('i'))
+			} else if ($this->user->page['page_dir'] == '' && !$this->request->is_set('i'))
 			{
 				$module_pages = array('index.php' => 'FORUM_INDEX', 'faq.php' => 'VIEWING_FAQ', 'mcp.php' => 'VIEWING_MCP', 'search.php' => 'SEARCHING_FORUMS', 'viewonline.php',  'VIEWING_ONLINE', 'memberlist.php' => 'VIEWING_MEMBERS', 'ucp.php' => 'VIEWING_UCP');
 
@@ -144,22 +143,22 @@ class listener implements EventSubscriberInterface
 				}
 			} else
 			{
-				if (is_numeric($request->variable('i', '')))
+				if (is_numeric($this->request->variable('i', '')))
 				{
-					$sql = 'SELECT module_langname FROM ' . MODULES_TABLE . ' WHERE module_id = ' . $request->variable('i', 0);
+					$sql = 'SELECT module_langname FROM ' . MODULES_TABLE . ' WHERE module_id = ' . $this->request->variable('i', 0);
 					$result = $this->db->sql_query($sql);
 					$module_langname = $this->db->sql_fetchfield('module_langname');
 					$data['module'] = $module_langname;
 				} else
 				{
 					$modules = $this->get_modules();
-					(in_array(strtoupper($request->variable('i', '')), $modules)) ? $data['module'] = strtoupper($request->variable('i', '')) : null;
+					(in_array(strtoupper($this->request->variable('i', '')), $modules)) ? $data['module'] = strtoupper($this->request->variable('i', '')) : null;
 				}
 			}
 
 			if (isset($data['module']) && $data['module'] !== '')
 			{
-				if (($this->ip_cache = $cache->get('_ip_cache')) !== false)
+				if (($this->ip_cache = $this->cache->get('_ip_cache')) !== false)
 				{
 					if (!isset($this->ip_cache[$this->user->data['session_ip']]))
 					{
@@ -171,7 +170,7 @@ class listener implements EventSubscriberInterface
 							$this->ip_cache[$this->user->data['session_ip']]['countryCode'] = strtolower($ip_aray['countryCode']);
 							$this->ip_cache[$this->user->data['session_ip']]['reverse'] = strtolower($ip_aray['reverse']);
 							$this->ip_cache = array_slice($this->ip_cache, -50, 50, true);
-							$cache->put('_ip_cache', $this->ip_cache);
+							$this->cache->put('_ip_cache', $this->ip_cache);
 						} else
 						{
 							$this->ip_cache[$this->user->data['session_ip']]['reverse'] = @gethostbyaddr(($this->user->data['session_ip']));
@@ -189,7 +188,7 @@ class listener implements EventSubscriberInterface
 						$this->ip_cache[$this->user->data['session_ip']]['countryCode'] = strtolower($ip_aray['countryCode']);
 						$this->ip_cache[$this->user->data['session_ip']]['reverse'] = strtolower($ip_aray['reverse']);
 
-						$cache->put('_ip_cache', $this->ip_cache);
+						$this->cache->put('_ip_cache', $this->ip_cache);
 					} else
 					{
 						$this->ip_cache[$this->user->data['session_ip']]['reverse'] = @gethostbyaddr(($this->user->data['session_ip']));
@@ -203,13 +202,13 @@ class listener implements EventSubscriberInterface
 
 				$data['domain'] = (!file_exists('./ext/forumhulp/statistics//adm/style/images/flags/' . $data['domain'] . '.png')) ? 'un' : $data['domain'];
 
-				if (!$request->is_set($this->config['cookie_name'] . '_statistics_res', \phpbb\request\request_interface::COOKIE))
+				if (!$this->request->is_set($this->config['cookie_name'] . '_statistics_res', \phpbb\request\request_interface::COOKIE))
 				{
-					$template->assign_vars(array('ACOOKIE' => true, 'COOKIENAME' => $this->config['cookie_name']));
+					$this->template->assign_vars(array('ACOOKIE' => true, 'COOKIENAME' => $this->config['cookie_name']));
 					$data['screen_res'] = '1920x1080x24';
 				} else
 				{
-					$data['screen_res'] = $request->variable($this->config['cookie_name'] . '_statistics_res', '1920x1080x24', false, \phpbb\request\request_interface::COOKIE);
+					$data['screen_res'] = $this->request->variable($this->config['cookie_name'] . '_statistics_res', '1920x1080x24', false, \phpbb\request\request_interface::COOKIE);
 				}
 
 				$fields = array(
@@ -222,9 +221,9 @@ class listener implements EventSubscriberInterface
 					'domain'		=> $data['domain'],
 					'module'		=> $data['module'],
 					'scr_res'		=> $data['screen_res'],
-					'referer'		=> isset($ref_url) ? $ref_url: '',
+					'referer'		=> isset($ref_url) ? $ref_url : '',
 					'page'			=> $this->user->page['page'],
-					'se_terms'		=> isset($searchwords) ? $searchwords: '',
+					'se_terms'		=> isset($searchwords) ? $searchwords : '',
 				);
 				$sql = 'INSERT INTO ' . $this->online_table . ' ' . $this->db->sql_build_array('INSERT', $fields);
 				$this->db->sql_query($sql);
