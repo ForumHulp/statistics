@@ -16,7 +16,7 @@ class ext extends \phpbb\extension\base
 		if (!class_exists('forumhulp\helper\helper'))
 		{
 			$this->container->get('user')->add_lang_ext('forumhulp/statistics', 'info_acp_statistics');
-			trigger_error($this->container->get('user')->lang['FH_HELPER_NOTICE'], E_USER_WARNING);	
+			trigger_error($this->container->get('user')->lang['FH_HELPER_NOTICE'], E_USER_WARNING);
 		}
 
 		if (!$this->container->get('ext.manager')->is_enabled('forumhulp/helper'))
@@ -33,7 +33,7 @@ class ext extends \phpbb\extension\base
 		{
 			case '': // Empty means nothing has run yet
 				$this->container->get('user')->add_lang_ext('forumhulp/statistics', 'info_acp_statistics');
-				$this->container->get('template')->assign_var('L_EXTENSION_ENABLE_SUCCESS', $this->container->get('user')->lang['EXTENSION_ENABLE_SUCCESS'] . 
+				$this->container->get('template')->assign_var('L_EXTENSION_ENABLE_SUCCESS', $this->container->get('user')->lang['EXTENSION_ENABLE_SUCCESS'] .
 				(isset($this->container->get('user')->lang['STATISTICS_NOTICE']) ?
 						sprintf($this->container->get('user')->lang['STATISTICS_NOTICE'],
 								$this->container->get('user')->lang['ACP_CAT_GENERAL'],

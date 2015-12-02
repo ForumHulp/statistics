@@ -321,7 +321,6 @@ class m2_initial_data extends \phpbb\db\migration\migration
 		// Flush the buffer
 		$insert_buffer->flush();
 
-
 		$insert_buffer = new \phpbb\db\sql_insert_buffer($this->db, $this->table_prefix . 'statistics_se');
 
 		$searche = array(

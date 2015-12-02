@@ -23,7 +23,6 @@ class statistics_module
 	{
 		$this->extension_manager	= $extension_manager;
 		$this->phpbb_root_path		= $phpbb_root_path;
-//		parent::__construct($user);
 	}
 		$tables['config']	= $phpbb_container->getParameter('tables.config_table');
 		$tables['online'] 	= $phpbb_container->getParameter('tables.online_table');

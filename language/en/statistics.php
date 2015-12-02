@@ -41,7 +41,7 @@ $lang = array_merge($lang, array(
 	'FL_DATE'		=> 'Archive table info',
 	'UGROUPS'		=> 'User groups',
 	'UNIQUE'		=> 'Unique visitors',
-	
+
 	'HOV'			=> 'Hourly overview',
 	'DOV'			=> 'Daily overview',
 	'MOV'			=> 'Monthly overview',
