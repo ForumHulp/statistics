@@ -250,7 +250,7 @@ class prune_statistics extends \phpbb\cron\task\base
 	public function split_array($aray, $row2)
 	{
 		$words = explode(' ', $row2);
-		foreach($words as $word)
+		foreach ($words as $word)
 		{
 			$aray = $this->count_array($aray, $word);
 		}

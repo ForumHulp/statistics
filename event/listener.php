@@ -31,9 +31,9 @@ class listener implements EventSubscriberInterface
 	protected $php_ext;
 
 	/**
-    * Constructor
-    *
-    */
+	* Constructor
+	*
+	*/
 	public function __construct(\phpbb\config\config $config, \phpbb\request\request $request, \phpbb\user $user, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\cache\driver\driver_interface $cache, $online_table, $config_table, $se_table, $php_ext)
 	{
 		$this->config = $config;
@@ -128,7 +128,7 @@ class listener implements EventSubscriberInterface
 
 				if (sizeof($row) > 0)
 				{
-					foreach($row as $key => $value)
+					foreach ($row as $key => $value)
 					{
 						$module_pages[$key] = $value;
 					}

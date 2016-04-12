@@ -9,7 +9,6 @@
 
 namespace forumhulp\statistics\acp;
 
-
 class statistics_module
 {
 	public $u_action;
@@ -39,7 +38,7 @@ class statistics_module
 		$start		= $request->variable('start', 0);
 		$overall	= (int) $request->variable('overall', $config['statistics_archive']);
 
-		if($overall != (int) $config['statistics_archive'])
+		if ($overall != (int) $config['statistics_archive'])
 		{
 			$config->set('statistics_archive', (int) $overall);
 		}
