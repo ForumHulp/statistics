@@ -139,6 +139,7 @@ class stat_functions
 
 		$result = $db->sql_query_limit($sql, $sconfig['statistics_max_online'], $start);
 		$counter = 0;
+		$url = generate_board_url() . '/';
 		while ($row = $db->sql_fetchrow($result))
 		{
 			$counter += 1;
@@ -152,7 +153,7 @@ class stat_functions
 				'UGROUP'	=> $group_name,
 				'AGENT'		=> $row['agent'],
 				'MODULE'	=> isset($modules[$row['module']]) ? $modules[$row['module']] : 'Module not found',
-				'MODULEURL'	=> '/' . $row['page'],
+				'MODULEURL'	=> $url . $row['page'],
 				'DFLAG'		=> $row['domain'].'.png',
 				'DDESC'		=> $row['description'],
 				'HOST'		=> $row['host'],
@@ -1114,7 +1115,7 @@ class stat_functions
 		$sql_aray[] = '';
 		$sql_aray[] = 'SELECT g.group_name AS name, g.group_type, hits FROM ' . $tables['archive'] . ' LEFT JOIN ' . GROUPS_TABLE . ' g ON g.group_id = name WHERE cat = 10 ORDER BY hits DESC';
 		$sql_aray[] = (!$phpbb_container->get('ext.manager')->is_enabled('forumhulp/searchresults')) ?
-						'SELECT "<a href=\"http://github\" target=\"_blank\">Searchresult extension</a> not enabled" AS name, "" AS hits' :
+						'SELECT "<a href=\"https://github.com/ForumHulp/searchresults\" target=\"_blank\">Searchresult extension</a> not enabled" AS name, "" AS hits' :
 						'SELECT search_keywords AS name, hits FROM ' . $phpbb_container->getParameter('tables.searchresults') . ' ORDER BY hits DESC';
 		$sql_aray[] = 'SELECT name, hits FROM ' . $tables['archive'] . ' WHERE cat = 9 ORDER BY hits DESC';
 
