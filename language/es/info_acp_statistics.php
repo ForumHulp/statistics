@@ -24,25 +24,25 @@ $lang = array_merge($lang, array(
 
 	'STAT_DELETE_SUCCESS'		=> 'Tablas del archivo vaciadas',
 	'STAT_DELETE_ERROR'			=> 'Truncate error en el vaciado de tablas del archivo.',
-	'FH_HELPER_NOTICE'			=> 'Forumhulp helper application does not exist!<br />Download <a href="">forumhulp/helper</a> and copy the helper folder to your forumhulp extension folder.',
-	'STATISTICS_NOTICE'			=> '<div class="phpinfo"><p class="entry">Config setting of this extension are in %1$s » %2$s » %3$s.</p></div>',
+	'FH_HELPER_NOTICE'			=> '¡La aplicación Forumhulp helper no existe!<br />Descargar <a href="https://github.com/ForumHulp/helper" target="_blank">forumhulp/helper</a> y copie la carpeta helper dentro de la carpeta de extensión forumhulp.',
+	'STATISTICS_NOTICE'			=> '<div class="phpinfo"><p class="entry">Los ajustes de configuración de está extensión están en %1$s » %2$s » %3$s.</p></div>',
 ));
 
 // Description of extension
 $lang = array_merge($lang, array(
-	'DESCRIPTION_PAGE'		=> 'Description',
-	'DESCRIPTION_NOTICE'	=> 'Extension note',
+	'DESCRIPTION_PAGE'		=> 'Descripción',
+	'DESCRIPTION_NOTICE'	=> 'Nota de la extensión',
 	'ext_details' => array(
 		'details' => array(
-			'DESCRIPTION_1'		=> 'Graphical overview of visitors',
-			'DESCRIPTION_2'		=> 'Possibile to view custom pages',
-			'DESCRIPTION_3'		=> 'Online and total overviews',
+			'DESCRIPTION_1'		=> 'Resumen gráfico de los visitantes',
+			'DESCRIPTION_2'		=> 'Posibilidad de ver páginas personalizadas',
+			'DESCRIPTION_3'		=> 'Resumen de en línea y total',
 			'DESCRIPTION_4'		=> 'Configurable',
 		),
 		'note' => array(
-			'NOTICE_1'			=> 'Highchart graphics',
+			'NOTICE_1'			=> 'Gráficos de alta calidad',
 			'NOTICE_2'			=> 'Top 10',
-			'NOTICE_3'			=> 'phpBB 3.2 ready'
+			'NOTICE_3'			=> 'Preparado para phpBB 3.2'
 		)
 	)
 ));
