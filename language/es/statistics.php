@@ -39,13 +39,13 @@ $lang = array_merge($lang, array(
 	'USERSTATS'		=> 'Gráficos de estadísticas de usuarios',
 	'LASTVISITS'	=> 'Página de últimas visitas',
 	'FL_DATE'		=> 'Información de la trabla de archivo',
-	'UGROUPS'		=> 'User groups',
-	'UNIQUE'		=> 'Unique visitors',
+	'UGROUPS'		=> 'Grupo de usuarios',
+	'UNIQUE'		=> 'Visitantes únicos',
 
-	'HOV'			=> 'Hourly overview',
-	'DOV'			=> 'Daily overview',
-	'MOV'			=> 'Monthly overview',
-	'YOV'			=> 'Yearly overview',
+	'HOV'			=> 'Resumen horario',
+	'DOV'			=> 'Resumen diario',
+	'MOV'			=> 'Resumen mensual',
+	'YOV'			=> 'Resumen anual',
 
 	// Online
 	'TIME'		=> 'Fecha',
@@ -62,13 +62,13 @@ $lang = array_merge($lang, array(
 	'GRAPH'			=> 'Gráfico',
 
 	// Top10
-	'PPD'		=>	'Posts per day',
-	'PPM'		=>	'Posts per month',
-	'TPD'		=>	'Topics per day',
-	'TPM'		=>	'Topics per month',
-	'FORUMDAYS'	=>	'Forumdays',
-	'APPT'		=>	'Average posts per topic',
-	'APPU'		=>	'Average posts per user',
+	'PPD'		=>	'Mensajes por día',
+	'PPM'		=>	'Mensajes por mes',
+	'TPD'		=>	'Temas por día',
+	'TPM'		=>	'Temas por mes',
+	'FORUMDAYS'	=>	'Días del foro',
+	'APPT'		=>	'Promedio de mensajes por tema',
+	'APPU'		=>	'Promedio de mensajes por usuario',
 
 	//Config
 	'MAX_COUNTRIES'		=> 'Países',
@@ -107,15 +107,15 @@ $lang = array_merge($lang, array(
 	'BOTS_INC'					=> 'Incluir robots',
 	'BOTS_INC_EXPLAIN'			=> 'Incluir robots en la pantalla de conectados.',
 
-	'LOG'						=> 'Logs',
-	'LOG_EXPLAIN'				=> 'Add logs to maintenance log.',
+	'LOG'						=> 'Registros',
+	'LOG_EXPLAIN'				=> 'Añadir registros al registro de mantenimiento.',
 
 	'DEL_STAT'					=> 'Vaciar tablas de archivo',
 	'DEL_STAT_EXPLAIN'			=> 'Vaciar tablas de archivo y resetear Estadísticas del foro.',
 
 	'STAT_DELETE_CONFIRM'		=> '¿Vaciar tablas de archivo?',
 
-	'BS_STATUS_TIMEOUT'			=> 'Refresh timeout',
-	'BS_STATUS_ERROR'			=> 'Refresh error',
-	'BS_STATUS_ERROR_EXPLAIN'	=> 'An error occurred during refreshing the page.',
+	'BS_STATUS_TIMEOUT'			=> 'Tiempo de espera de actualización',
+	'BS_STATUS_ERROR'			=> 'Error de actualización',
+	'BS_STATUS_ERROR_EXPLAIN'	=> 'Se ha producido un error durante la actualización de la página.',
 ));
