@@ -162,7 +162,7 @@ class listener implements EventSubscriberInterface
 				{
 					if (!isset($this->ip_cache[$this->user->data['session_ip']]))
 					{
-						if ($this->user->data['session_ip'] != '127.0.0.1' && fsockopen('www.ip-api.com', 80))
+						if ($this->user->data['session_ip'] != '127.0.0.1' && !$x = @fsockopen('www.ip-api.com', 80, $errno, $errstr, 10))
 						{
 							$ip_query = file_get_contents('http://ip-api.com/json/' . $this->user->data['session_ip'] . '?fields=status,countryCode,reverse');
 							$ip_aray = json_decode($ip_query, true);

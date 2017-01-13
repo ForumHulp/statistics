@@ -3,7 +3,7 @@
 	"type": "phpbb-extension",
 	"description": "Board Statistics displays an overview of your user's visits in Quick Access module of ACP. This extension logs all visits of your users. A cron job will prune statistics.",
 	"homepage": "http://forumhulp.com",
-	"version": "3.1.1",
+	"version": "3.1.2",
 	"keywords": ["forumhulp", "phpbb", "extension", "statistics"],
 	"license": "GPL-2.0",
 	"authors": [
