@@ -149,7 +149,7 @@ class prune_statistics extends \phpbb\cron\task\base
 	// Store Archive
 	public function store($aray, $cat)
 	{
-		if (sizeof($aray))
+		if (is_array($aray) && sizeof($aray))
 		{
 			$sconfig = $this->get_config();
 

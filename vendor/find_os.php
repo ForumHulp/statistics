@@ -65,6 +65,7 @@ class find_os
 
 	const PLATFORM_UNKNOWN = 'unknown';
 	const OPERATING_SYSTEM_UNKNOWN = 'unknown';
+	const PLATFORM_WINDOWS_CE = 'Windows CE';
 
 
 	public function setUserAgent($agent_string)

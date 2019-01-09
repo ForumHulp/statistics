@@ -14,7 +14,7 @@ class statistics_info
 	function module()
 	{
 		return array(
-			'filename'	=> 'forumhulp\statistics\acp\statistics_info',
+			'filename'	=> '\forumhulp\statistics\acp\statistics_info',
 			'title'		=> 'ACP_STATISTICS',
 			'version'	=> '1.0.0',
 			'modes'		=> array(

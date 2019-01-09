@@ -9,7 +9,8 @@ h1 {position: relative;}
 #LoadError i {display: inline-block; margin-right: 5px;}
 
 .overview {
-/*  table-layout: fixed; */
+  background: url(../images/spacer.png) repeat;
+  background-color:transparent;
   width: 100%;
   white-space: nowrap;
 }
