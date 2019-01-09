@@ -8,15 +8,21 @@ matrix:
   include:
     - php: 5.5
       env: DB=none;NOTESTS=1
+    - php: 5.3
+      env: PHPBB_BRANCH="3.1.x";DB=mysqli
     - php: 5.4
+      env: PHPBB_BRANCH="3.1.x";DB=mysqli
+    - php: 5.5
+      env: PHPBB_BRANCH="3.1.x";DB=mysqli
+    - php: 5.5
       env: DB=mysqli #myisam
-    - php: 5.4
+    - php: 5.5
       env: DB=mysql
-    - php: 5.4
+    - php: 5.5
       env: DB=mariadb
-    - php: 5.4
+    - php: 5.5
       env: DB=postgres
-    - php: 5.4
+    - php: 5.5
       env: DB=sqlite3
     - php: 5.5
       env: DB=mysqli
@@ -26,18 +32,19 @@ matrix:
       env: DB=mysqli
     - php: 7.1
       env: DB=mysqli
+    - php: 7.2
+      env: DB=mysqli
+    - php: 7.2
+      env: PHPBB_BRANCH="master";DB=mysqli
     - php: nightly
-      env: DB=mysqli
-    - php: hhvm
-      env: DB=mysqli
+      env: PHPBB_BRANCH="master";DB=mysqli
   allow_failures:
-    - php: nightly
-    - php: hhvm
+    - env: PHPBB_BRANCH="master";DB=mysqli
   fast_finish: true
 
 env:
   global:
-    - EXTNAME="ForumHulp/statistics"  # CHANGE name of the extension HERE
+    - EXTNAME="forumhulp/statistics"  # CHANGE name of the extension HERE
     - SNIFF="0"            # Should we run code sniffer on your code?
     - IMAGE_ICC="0"        # Should we run icc profile sniffer on your images?
     - EPV="0"              # Should we run EPV (Extension Pre Validator) on your code?
@@ -48,6 +55,8 @@ branches:
     - master
     - develop
     - /^develop-.*$/
+    - /^.*_prep$/
+    - /^\d+(\.\d+)?\.x$/
 
 before_install:
   - sudo mkdir travis
@@ -71,5 +80,3 @@ script:
   - sh -c "if [ '$IMAGE_ICC' != '0' ]; then travis/check-image-icc-profiles.sh $DB $TRAVIS_PHP_VERSION $NOTESTS; fi"
   - sh -c "if [ '$EPV' != '0' ] && [ '$NOTESTS' = '1' ]; then phpBB/vendor/bin/EPV.php run --dir='phpBB/ext/$EXTNAME/'; fi"
   - sh -c "if [ '$NOTESTS' != '1' ]; then phpBB/vendor/bin/phpunit --configuration phpBB/ext/$EXTNAME/travis/phpunit-$DB-travis.xml --bootstrap ./tests/bootstrap.php; fi"
-
-
