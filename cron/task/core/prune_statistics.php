@@ -127,10 +127,10 @@ class prune_statistics extends \phpbb\cron\task\base
 			$totaltime = $mtime[0] + $mtime[1] - $starttime;
 			$rows_per_second = $row_count / $totaltime;
 
-			($sconfig['log']) ? add_log('admin', 'LOG_STATISTICS_PRUNED', $totaltime, $rows_per_second) : null;
+			($sconfig['log']) ? $phpbb_log->add('admin', 'LOG_STATISTICS_PRUNED', $totaltime, $rows_per_second) : null;
 		} else
 		{
-			($sconfig['log']) ? add_log('admin', 'LOG_STATISTICS_NO_PRUNE') : null;
+			($sconfig['log']) ? $phpbb_log->add('admin', 'LOG_STATISTICS_NO_PRUNE') : null;
 		}
 
 		$sql = 'SELECT MIN(time) AS start_time FROM ' . $this->online_table;
@@ -155,7 +155,7 @@ class prune_statistics extends \phpbb\cron\task\base
 
 			foreach ($aray as $key => $value)
 			{
-				$sql = 'SELECT COUNT(name) AS counter FROM ' . $this->archive_table . ' WHERE cat = ' . $cat . ' AND name = "' . $key . '"';
+				$sql = 'SELECT COUNT(name) AS counter FROM ' . $this->archive_table . ' WHERE cat = ' . $cat . ' AND name = "' . $this->db->sql_escape($key) . '"';
 				$result = $this->db->sql_query($sql);
 				$counter = (int) $this->db->sql_fetchfield('counter');
 				if ($counter == 0)
@@ -171,7 +171,7 @@ class prune_statistics extends \phpbb\cron\task\base
 					$sql = 'INSERT INTO ' . $this->archive_table . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 				} else
 				{
-					$sql = 'UPDATE ' . $this->archive_table . ' SET hits = hits + ' . $value . ', last = ' . time() .' WHERE cat = ' . $cat . ' AND name = "' . $key . '"';
+					$sql = 'UPDATE ' . $this->archive_table . ' SET hits = hits + ' . $value . ', last = ' . time() .' WHERE cat = ' . $cat . ' AND name = "' . $this->db->sql_escape($key) . '"';
 				}
 				$this->db->sql_query($sql);
 			}

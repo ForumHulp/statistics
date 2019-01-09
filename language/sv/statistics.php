@@ -38,6 +38,7 @@ $lang = array_merge($lang, array(
 	'ADMIN'			=> 'Administrera',
 	'USERS'			=> 'Användare',
 	'USERSTATS'		=> 'Användardiagram',
+	'ONLINE'		=> 'Last visits page',
 	'LASTVISITS'	=> 'Senaste besökta sida',
 	'FL_DATE'		=> 'Arkivtabellinformation',
 	'UGROUPS'		=> 'User groups',
@@ -70,6 +71,7 @@ $lang = array_merge($lang, array(
 	'FORUMDAYS'	=>	'Forumdays',
 	'APPT'		=>	'Average posts per topic',
 	'APPU'		=>	'Average posts per user',
+	'SEARCHRESULTS'	=> 'Searchresult',
 
 	//Config
 	'MAX_COUNTRIES'		=> 'Länder',
@@ -108,6 +110,9 @@ $lang = array_merge($lang, array(
 
 	'BOTS_INC'					=> 'Inkludera botar',
 	'BOTS_INC_EXPLAIN'			=> 'Inkludera botar i onlinevisningen.',
+
+	'LOG'						=> 'Logs',
+	'LOG_EXPLAIN'				=> 'Add logs to maintenance log.',
 
 	'DEL_STAT'					=> 'Radera arkivtabellerna',
 	'DEL_STAT_EXPLAIN'			=> 'Radera arkivtabellerna och nollställ forumstatistiken.',

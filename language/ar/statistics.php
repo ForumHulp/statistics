@@ -38,6 +38,7 @@ $lang = array_merge($lang, array(
 	'ADMIN'			=> 'إدارة',
 	'USERS'			=> 'الأعضاء',
 	'USERSTATS'		=> 'رسم بياني لإحصائيات الأعضاء',
+	'ONLINE'		=> 'Last visits page',
 	'LASTVISITS'	=> 'صفحة آخر الزيارات',
 	'FL_DATE'		=> 'معلومات جدول الأرشيف',
 	'UGROUPS'		=> 'User groups',
@@ -70,6 +71,7 @@ $lang = array_merge($lang, array(
 	'FORUMDAYS'	=>	'Forumdays',
 	'APPT'		=>	'Average posts per topic',
 	'APPU'		=>	'Average posts per user',
+	'SEARCHRESULTS'	=> 'Searchresult',
 
 	//Config
 	'MAX_COUNTRIES'		=> 'الدول',

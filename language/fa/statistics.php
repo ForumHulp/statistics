@@ -35,6 +35,7 @@ $lang = array_merge($lang, array(
 'ADMIN'	=> 'مدیر کل',
 'USERS'	=> 'کاربران',
 'USERSTATS'	=> 'گراف وضعیت کاربران',
+'ONLINE'		=> 'Last visits page',
 'LASTVISITS'	=> 'آخرین صفحه بازدید شده',
 	'FL_DATE'		=> 'Archive table info',
 	'UGROUPS'		=> 'User groups',
@@ -65,6 +66,7 @@ $lang = array_merge($lang, array(
 	'FORUMDAYS'	=>	'Forumdays',
 	'APPT'		=>	'Average posts per topic',
 	'APPU'		=>	'Average posts per user',
+	'SEARCHRESULTS'	=> 'Searchresult',
 
 //Config
 'MAX_COUNTRIES'	=> 'کشورها',
@@ -80,6 +82,8 @@ $lang = array_merge($lang, array(
 'MAX_SCREENS'	=> 'رزولوشن صفحه',
 'MAX_ONLINE'	=> 'آنلاین',
 	'DELL'				=> 'Delete',
+	'SEARCHENG_EXPLAIN'	=> 'Change, edit, add or delete searchengines.',
+
 'MAX_COUNTRIES_EXPLAIN'	=> 'حداکثر گزارش های قابل نمایش قبل از صفحه بندی بر اساس دستورات, در جدول بیشترین گزارش جهت پاکسازی.',
 'MAX_REFERER_EXPLAIN'	=> 'حداکثر گزارش های قابل نمایش قبل از صفحه بندی بر اساس دستورات, در جدول بیشترین گزارش جهت پاکسازی.',
 'MAX_SE_EXPLAIN'	=> 'حداکثر گزارش های قابل نمایش قبل از صفحه بندی بر اساس دستورات, در جدول بیشترین گزارش جهت پاکسازی.',

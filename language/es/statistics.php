@@ -37,6 +37,7 @@ $lang = array_merge($lang, array(
 	'ADMIN'			=> 'Administrar',
 	'USERS'			=> 'Usuarios',
 	'USERSTATS'		=> 'Gráficos de estadísticas de usuarios',
+	'ONLINE'		=> 'Last visits page',
 	'LASTVISITS'	=> 'Página de últimas visitas',
 	'FL_DATE'		=> 'Información de la trabla de archivo',
 	'UGROUPS'		=> 'Grupo de usuarios',
@@ -69,6 +70,7 @@ $lang = array_merge($lang, array(
 	'FORUMDAYS'	=>	'Días del foro',
 	'APPT'		=>	'Promedio de mensajes por tema',
 	'APPU'		=>	'Promedio de mensajes por usuario',
+	'SEARCHRESULTS'	=> 'Searchresult',
 
 	//Config
 	'MAX_COUNTRIES'		=> 'Países',
@@ -84,6 +86,7 @@ $lang = array_merge($lang, array(
 	'MAX_SCREENS'		=> 'Resoluciones de pantalla',
 	'MAX_ONLINE'		=> 'Conectado',
 	'DELL'				=> 'Borrar',
+	'SEARCHENG_EXPLAIN'	=> 'Change, edit, add or delete searchengines.',
 
 	'MAX_COUNTRIES_EXPLAIN'		=> 'Número máximo de registros en la vista de pantalla antes de la paginación está en orden, en la tabla de registros máximos para purgar',
 	'MAX_REFERER_EXPLAIN'		=> 'Número máximo de registros en la vista de pantalla antes de la paginación está en orden, en la tabla de registros máximos para purgar',

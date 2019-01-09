@@ -37,6 +37,7 @@ $lang = array_merge($lang, array(
 	'ADMIN'			=> '管理',
 	'USERS'			=> 'ユーザー',
 	'USERSTATS'		=> 'ユーザー統計グラフ',
+	'ONLINE'		=> 'Last visits page',
 	'LASTVISITS'	=> '最新の訪問ページ',
 	'FL_DATE'		=> 'アーカイブテーブル情報',
 	'UGROUPS'		=> 'User groups',
@@ -69,6 +70,7 @@ $lang = array_merge($lang, array(
 	'FORUMDAYS'	=>	'Forumdays',
 	'APPT'		=>	'Average posts per topic',
 	'APPU'		=>	'Average posts per user',
+	'SEARCHRESULTS'	=> 'Searchresult',
 
 	//Config
 	'MAX_COUNTRIES'		=> '国',

@@ -38,6 +38,7 @@ $lang = array_merge($lang, array(
 	'ADMIN'			=> 'Admininstratie',
 	'USERS'			=> 'Gebruikers',
 	'USERSTATS'		=> 'Bezoekers Stats Grafieken',
+	'ONLINE'		=> 'Last visits page',
 	'LASTVISITS'	=> 'Laatste Pagina bezoeken',
 	'FL_DATE'		=> 'Archief tabel info',
 	'UGROUPS'		=> 'Gebruikers groupen',
@@ -70,6 +71,7 @@ $lang = array_merge($lang, array(
 	'FORUMDAYS'	=>	'Forumdays',
 	'APPT'		=>	'Average posts per topic',
 	'APPU'		=>	'Average posts per user',
+	'SEARCHRESULTS'	=> 'Searchresult',
 
 	//Config
 	'MAX_COUNTRIES'		=> 'Landen',
@@ -85,6 +87,7 @@ $lang = array_merge($lang, array(
 	'MAX_SCREENS'		=> 'Scherm Resoluties',
 	'MAX_ONLINE'		=> 'Online',
 	'DELL'				=> 'Delete',
+	'SEARCHENG_EXPLAIN'	=> 'Change, edit, add or delete searchengines.',
 
 	'MAX_COUNTRIES_EXPLAIN'		=> 'Aantal records in online modus per pagina, in table maximum aantal records.',
 	'MAX_REFERER_EXPLAIN'		=> 'Aantal records in online modus per pagina, in table maximum aantal records',
