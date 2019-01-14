@@ -9,16 +9,23 @@
 
 namespace forumhulp\statistics\cron\task\core;
 
+use phpbb\config\config;
+use phpbb\user;
+use phpbb\db\driver\driver_interface;
+use phpbb\log\log;
+
 /**
 * @ignore
 */
 
 class prune_statistics extends \phpbb\cron\task\base
 {
+	protected $config;
+	protected $user;
+	protected $db;
+	protected $log;
 	protected $phpbb_root_path;
 	protected $php_ext;
-	protected $config;
-	protected $db;
 	protected $online_table;
 	protected $config_table;
 	protected $archive_table;
@@ -27,21 +34,26 @@ class prune_statistics extends \phpbb\cron\task\base
 	/**
 	* Constructor.
 	*
+	* @param phpbb_config $config The config
+	* @param phpbb_user $user The user
+	* @param phpbb_db_driver $db The db connection
+	* @param phpbb_log $log The log
 	* @param string $phpbb_root_path The root path
 	* @param string $php_ext The PHP extension
-	* @param phpbb_config $config The config
-	* @param phpbb_db_driver $db The db connection
 	*/
-	public function __construct($phpbb_root_path, $php_ext, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, $online_table, $config_table, $archive_table, $stats_table)
+	public function __construct(config $config, user $user, driver_interface $db, log $log, $phpbb_root_path, $php_ext, $online_table, $config_table, $archive_table, $stats_table)
 	{
+		$this->config = $config;
+		$this->user = $user;
+		$this->db = $db;
+		$this->log = $log;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
-		$this->config = $config;
-		$this->db = $db;
 		$this->online_table = $online_table;
 		$this->config_table = $config_table;
 		$this->archive_table = $archive_table;
 		$this->stats_table = $stats_table;
+		$this->sconfig = $this->get_config();
 	}
 
 	/**
@@ -51,11 +63,7 @@ class prune_statistics extends \phpbb\cron\task\base
 	*/
 	public function run()
 	{
-		$sql = 'SELECT log FROM ' . $this->config_table;
-		$result = $this->db->sql_query($sql);
-		$sconfig['log'] = $this->db->sql_fetchfield('log');
-
-		$unique_aray = $module_aray = $browser_aray = $os_aray = $country_aray = $user_aray = $screen_aray = $referer_aray = $search_aray = $group_aray	= array();
+		$unique_aray = $module_aray = $browser_aray = $os_aray = $country_aray = $user_aray = $screen_aray = $referer_aray = $search_aray = $group_aray	= [];
 
 		$sql = 'SELECT MIN(time) AS start_time FROM ' . $this->online_table;
 		$result = $this->db->sql_query($sql);
@@ -127,10 +135,10 @@ class prune_statistics extends \phpbb\cron\task\base
 			$totaltime = $mtime[0] + $mtime[1] - $starttime;
 			$rows_per_second = $row_count / $totaltime;
 
-			($sconfig['log']) ? $phpbb_log->add('admin', 'LOG_STATISTICS_PRUNED', $totaltime, $rows_per_second) : null;
+			($this->sconfig['log']) ? $this->log->add('admin', $this->user->data['user_id'], $this->user->data['session_ip'], 'LOG_STATISTICS_PRUNED', $totaltime, $rows_per_second) : null;
 		} else
 		{
-			($sconfig['log']) ? $phpbb_log->add('admin', 'LOG_STATISTICS_NO_PRUNE') : null;
+			($this->sconfig['log']) ? $this->log->add('admin', $this->user->data['user_id'], $this->user->data['session_ip'], 'LOG_STATISTICS_NO_PRUNE') : null;
 		}
 
 		$sql = 'SELECT MIN(time) AS start_time FROM ' . $this->online_table;
@@ -151,8 +159,6 @@ class prune_statistics extends \phpbb\cron\task\base
 	{
 		if (is_array($aray) && sizeof($aray))
 		{
-			$sconfig = $this->get_config();
-
 			foreach ($aray as $key => $value)
 			{
 				$sql = 'SELECT COUNT(name) AS counter FROM ' . $this->archive_table . ' WHERE cat = ' . $cat . ' AND name = "' . $this->db->sql_escape($key) . '"';
@@ -176,7 +182,7 @@ class prune_statistics extends \phpbb\cron\task\base
 				$this->db->sql_query($sql);
 			}
 
-			$sql = 'SELECT hits, last FROM ' . $this->archive_table . ' WHERE cat = ' . $cat . ' ORDER BY hits DESC LIMIT '. $sconfig[$cat] .', 1';
+			$sql = 'SELECT hits, last FROM ' . $this->archive_table . ' WHERE cat = ' . $cat . ' ORDER BY hits DESC LIMIT '. $this->sconfig[$cat] .', 1';
 			$result = $this->db->sql_query($sql);
 			$prune = $this->db->sql_fetchrow($result);
 			if ($prune)
@@ -220,6 +226,9 @@ class prune_statistics extends \phpbb\cron\task\base
 			if (strpos($key, 't_') !== false)
 			{
 				$sconfig[] = $value;
+			} else
+			{
+				$sconfig[$key] = $value;
 			}
 		}
 		return $sconfig;
@@ -289,6 +298,6 @@ class prune_statistics extends \phpbb\cron\task\base
 	*/
 	public function should_run()
 	{
-		return $this->config['prune_statistics_last_gc'] < (time() - $this->config['prune_statistics_gc']) && (date('Y-m-d', time()) != date('Y-m-d', $this->config['prune_statistics_last_gc']));
+		return $this->config['prune_statistics_last_gc'] < time() - $this->config['prune_statistics_gc']; //) && (date('Y-m-d', time()) != date('Y-m-d', $this->config['prune_statistics_last_gc']));
 	}
 }

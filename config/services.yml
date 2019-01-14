@@ -5,29 +5,31 @@ services:
     forumhulp.statistics.listener:
         class: forumhulp\statistics\event\listener
         arguments:
-            - @config
-            - @request
-            - @user
-            - @dbal.conn
-            - @template
-            - @cache.driver
-            - %tables.online_table%
-            - %tables.config_table%
-            - %tables.se_table%
-            - %core.php_ext%
+            - '@config'
+            - '@request'
+            - '@user'
+            - '@dbal.conn'
+            - '@template'
+            - '@cache.driver'
+            - '%tables.online_table%'
+            - '%tables.config_table%'
+            - '%tables.se_table%'
+            - '%core.php_ext%'
         tags:
             - { name: event.listener }
     forumhulp.cron.statistics:
         class: forumhulp\statistics\cron\task\core\prune_statistics
         arguments:
-            - %core.root_path%
-            - %core.php_ext%
-            - @config
-            - @dbal.conn
-            - %tables.online_table%
-            - %tables.config_table%
-            - %tables.archive_table%
-            - %tables.stats_table%
+            - '@config'
+            - '@user'
+            - '@dbal.conn'
+            - '@log'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+            - '%tables.online_table%'
+            - '%tables.config_table%'
+            - '%tables.archive_table%'
+            - '%tables.stats_table%'
         calls:
             - [set_name, [forumhulp.cron.statistics]]
         tags:
@@ -35,6 +37,6 @@ services:
     forumhulp.statistics.acp.statistics_module:
         class: forumhulp\statistics\acp\statistics_module
         arguments:
-            - @user
-            - @ext.manager
-            - %core.root_path%
+            - '@user'
+            - '@ext.manager'
+            - '%core.root_path%'
