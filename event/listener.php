@@ -13,6 +13,12 @@ namespace forumhulp\statistics\event;
 * @ignore
 */
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use phpbb\config\config;
+use phpbb\request\request;
+use phpbb\user;
+use phpbb\db\driver\driver_interface;
+use phpbb\template\template;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
 * Event listener
@@ -25,6 +31,7 @@ class listener implements EventSubscriberInterface
 	protected $db;
 	protected $template;
 	protected $cache;
+	protected $container;
 	protected $online_table;
 	protected $config_table;
 	protected $se_table;
@@ -34,18 +41,21 @@ class listener implements EventSubscriberInterface
 	* Constructor
 	*
 	*/
-	public function __construct(\phpbb\config\config $config, \phpbb\request\request $request, \phpbb\user $user, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\cache\driver\driver_interface $cache, $online_table, $config_table, $se_table, $php_ext)
+	public function __construct(config $config, request $request, user $user, driver_interface $db, template $template, \phpbb\cache\driver\driver_interface $cache, ContainerInterface $container, $online_table, $config_table, $se_table, $php_ext)
 	{
-		$this->config = $config;
-		$this->request = $request;
-		$this->user = $user;
-		$this->db = $db;
-		$this->template = $template;
-		$this->cache = $cache;
+		$this->config		= $config;
+		$this->request		= $request;
+		$this->user			= $user;
+		$this->db			= $db;
+		$this->template		= $template;
+		$this->cache		= $cache;
+		$this->container	= $container;
 		$this->online_table = $online_table;
 		$this->config_table = $config_table;
-		$this->se_table = $se_table;
-		$this->php_ext = $php_ext;
+		$this->se_table		= $se_table;
+		$this->php_ext		= $php_ext;
+		
+		$this->modules		=  $this->get_modules();
 	}
 
 	static public function getSubscribedEvents()
@@ -53,30 +63,6 @@ class listener implements EventSubscriberInterface
 		return array(
 			'core.page_footer'	=> 'get_ref',
 		);
-	}
-
-	/**
-	 * @return modules
-	 * @access public
-	 */
-
-	public function get_modules()
-	{
-		$this->user->add_lang(array('ucp', 'mcp', 'common'));
-		$modules = array();
-		$sql = 'SELECT forum_id, forum_name FROM ' . FORUMS_TABLE;
-		$result = $this->db->sql_query($sql, 3600);
-		while ($row = $this->db->sql_fetchrow($result))
-		{
-			$modules[$row['forum_id']] = $row['forum_name'];
-		}
-		$sql = 'SELECT module_langname FROM ' . MODULES_TABLE . ' WHERE module_class = "ucp" OR module_class = "mcp"';
-		$result = $this->db->sql_query($sql, 3600);
-		while ($row = $this->db->sql_fetchrow($result))
-		{
-			(isset($this->user->lang[$row['module_langname']])) ? $modules[$row['module_langname']] = $this->user->lang[$row['module_langname']] : null;
-		}
-		return $modules;
 	}
 
 	function get_ref($event)
@@ -114,46 +100,38 @@ class listener implements EventSubscriberInterface
 				$ref_url = '';
 			}
 
-			if ($this->user->page['forum'] && is_numeric($this->user->page['forum']))
-			{
-				$data['module'] = $this->user->page['forum'];
-			} else if ($this->user->page['page_dir'] == '' && !$this->request->is_set('i'))
-			{
-				$module_pages = array('index.php' => 'FORUM_INDEX', 'faq.php' => 'VIEWING_FAQ', 'mcp.php' => 'VIEWING_MCP', 'search.php' => 'SEARCHING_FORUMS', 'viewonline.php',  'VIEWING_ONLINE', 'memberlist.php' => 'VIEWING_MEMBERS', 'ucp.php' => 'VIEWING_UCP');
-
-				$sql = 'SELECT custom_pages FROM ' . $this->config_table;
-				$result = $this->db->sql_query($sql, 3000);
-				$row = $this->db->sql_fetchfield('custom_pages');
-				$row = unserialize($row);
-
-				if (sizeof($row) > 0)
-				{
-					foreach ($row as $key => $value)
-					{
-						$module_pages[$key] = $value;
-					}
-				}
-				if (strpos($this->user->page['page_name'], 'app.php') === false)
-				{
-					$data['module'] = (isset($module_pages[$this->user->page['page_name']])) ? $module_pages[$this->user->page['page_name']] : null;
-				} else
-				{
-					$pagename = substr($this->user->page['page_name'], 0, strrpos ($this->user->page['page_name'], '/'));
-					$data['module'] = (isset($module_pages[$pagename])) ? $module_pages[$pagename] : null;
-				}
-			} else
+			if ($this->request->is_set('i'))
 			{
 				if (is_numeric($this->request->variable('i', '')))
 				{
-					$sql = 'SELECT module_langname FROM ' . MODULES_TABLE . ' WHERE module_id = ' . $this->request->variable('i', 0);
-					$result = $this->db->sql_query($sql);
-					$module_langname = $this->db->sql_fetchfield('module_langname');
-					$data['module'] = $module_langname;
+					$data['module'] = $this->request->variable('i', 0);
 				} else
 				{
-					$modules = $this->get_modules();
-					(in_array(strtoupper($this->request->variable('i', '')), $modules)) ? $data['module'] = strtoupper($this->request->variable('i', '')) : null;
+					$data['module'] = ltrim(strtoupper($this->request->variable('i', '')), '-');
+
+					if ($this->request->is_set('mode'))
+					{
+						$data['module'] = (isset($this->modules[substr($data['module'], 0, 3) . '_' . strtoupper($this->request->variable('mode', ''))]) ?
+											substr($data['module'], 0, 3) . '_' . strtoupper($this->request->variable('mode', '')) : 
+											(isset($this->modules[$data['module']]) ? $this->modules[$data['module']] : 
+											$data['module'] . '_' . strtoupper($this->request->variable('mode', ''))));
+					}
 				}
+			} else if (strpos($this->user->page['page_name'], 'app.php') !== false)
+			{
+				$path_parts = pathinfo($this->user->page['page_name']);
+				$path_parts['dirname'] = strtok(strtolower(str_replace('app.php/', '', $path_parts['dirname'])), '/');
+				$data['module'] = (isset($this->modules[$path_parts['dirname']])) ? $this->modules[$path_parts['dirname']] : null;
+				if ($this->container->get('ext.manager')->is_enabled('forumhulp/portal'))
+				{
+					$data['module'] = (isset($this->modules[$path_parts['filename']])) ? $this->modules[$path_parts['filename']] : null;
+				}
+			} else if (!$this->user->page['forum'])
+			{
+				$data['module'] = $this->modules[$this->user->page['page_name']];
+			} else
+			{
+				$data['module'] = $this->user->page['forum'];
 			}
 
 			if (isset($data['module']) && $data['module'] !== '')
@@ -229,5 +207,66 @@ class listener implements EventSubscriberInterface
 				$this->db->sql_query($sql);
 			}
 		}
+	}
+
+	/**
+	 * @return modules
+	 * @access public
+	 */
+	public function get_modules()
+	{
+		if (($this->modules = $this->cache->get('_modules_stats')) === false)
+		{
+			$this->modules = ['index.php' => 'FORUM_INDEX', 'help' => 'VIEWING_FAQ', 'mcp.php' => 'VIEWING_MCP', 'search.php' => 'SEARCHING_FORUMS',
+							  'viewonline.php' => 'VIEWING_ONLINE', 'memberlist.php' => 'VIEWING_MEMBERS', 'ucp.php' => 'VIEWING_UCP'];
+			
+			if (defined('FORUMS_TABLE'))
+			{
+				$sql = 'SELECT forum_id, forum_name FROM ' . FORUMS_TABLE;
+				$result = $this->db->sql_query($sql);
+				while ($row = $this->db->sql_fetchrow($result))
+				{
+					$this->modules[$row['forum_id']] = $row['forum_name'];
+				}
+			}
+
+			if ($this->container->get('ext.manager')->is_enabled('forumhulp/portal'))
+			{
+				$sql = 'SELECT a.route, c.title FROM ' . $this->container->getParameter('forumhulp.tables.articles') . ' a 
+						LEFT JOIN ' . $this->container->getParameter('forumhulp.tables.categories') . ' c ON c.cid = a.cid';
+				$result = $this->db->sql_query($sql);
+				while ($row = $this->db->sql_fetchrow($result))
+				{
+					$this->modules[$row['route']] = $row['title'];			
+				}
+			}
+			
+			$sql = 'SELECT module_id, module_basename, module_langname FROM ' . MODULES_TABLE . " WHERE module_class IN ('ucp', 'mcp')";
+			$result = $this->db->sql_query($sql);
+			while ($row = $this->db->sql_fetchrow($result))
+			{
+				if (strpos($row['module_basename'], '\\') !== false)
+				{
+					$this->modules[strtoupper(ltrim(str_replace('\\', '-', $row['module_basename']), '-'))] = $row['module_langname'];
+				}
+				$this->modules[$row['module_langname']] = $row['module_langname'];
+				$this->modules[$row['module_id']] = $row['module_langname'];
+			}
+			
+			$sql = 'SELECT custom_pages FROM ' . $this->config_table;
+			$result = $this->db->sql_query($sql);
+			$row = $this->db->sql_fetchfield('custom_pages');
+			$row = unserialize($row);
+	
+			if (sizeof($row) > 0)
+			{
+				foreach ($row as $key => $value)
+				{
+					$this->modules[$key] = $value;
+				}
+			}
+			$this->cache->put('_modules_stats', $this->modules, 3600);
+		}
+		return $this->modules;
 	}
 }

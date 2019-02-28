@@ -68,7 +68,7 @@ class prune_statistics extends \phpbb\cron\task\base
 		$sql = 'SELECT MIN(time) AS start_time FROM ' . $this->online_table;
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
-		$start_time = ($row && $row['start_time']) ?  $row['start_time'] : 0;
+		$start_time = ($row && $row['start_time'] && ($row['start_time'] < mktime(0, 0, 0))) ?  $row['start_time'] : 0;
 
 		if ($start_time)
 		{
@@ -144,14 +144,14 @@ class prune_statistics extends \phpbb\cron\task\base
 		$sql = 'SELECT MIN(time) AS start_time FROM ' . $this->online_table;
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
-		if ($row)
+		if ($row && $row['start_time'])
 		{
-			$newtime = ((mktime(0, 0, 0) - $row['start_time']) >= 0) ? time() + 3600 : mktime(0, 0, 0);
+			$newtime = ((mktime(0, 0, 0) - $row['start_time']) >= 0) ? time() - 82800 : mktime(0, 0, 0);
 		} else
 		{
 			$newtime = mktime(0, 0, 0);
 		}
-		$this->config->set('prune_statistics_last_gc', $newtime);
+		$this->config->set('statistics_last_gc', $newtime);
 	}
 
 	// Store Archive
@@ -241,7 +241,7 @@ class prune_statistics extends \phpbb\cron\task\base
 		{
 			foreach ($aray as $key => $value)
 			{
-				if ($key == $row1)
+				if (array_key_exists($row1, $aray) && $key == $row1)
 				{
 					$aray[$row1] += 1;
 					$found = 1;
@@ -298,6 +298,6 @@ class prune_statistics extends \phpbb\cron\task\base
 	*/
 	public function should_run()
 	{
-		return $this->config['prune_statistics_last_gc'] < time() - $this->config['prune_statistics_gc']; //) && (date('Y-m-d', time()) != date('Y-m-d', $this->config['prune_statistics_last_gc']));
+		return $this->config['statistics_last_gc'] < time() - $this->config['statistics_gc']; //) && (date('Y-m-d', time()) != date('Y-m-d', $this->config['prune_statistics_last_gc']));
 	}
 }

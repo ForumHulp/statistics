@@ -45,7 +45,7 @@ class stat_functions
 		{
 			foreach ($aray as $key => $value)
 			{
-				if ($key == $row1)
+				if (array_key_exists($row1, $aray) && $key == $row1)
 				{
 					$aray[$row1] += 1;
 					$found = 1;
@@ -62,35 +62,55 @@ class stat_functions
 
 	public static function get_modules()
 	{
-		global $db, $config, $sconfig, $user;
-		$user->add_lang(array('ucp', 'mcp', 'common'));
-		$modules = $cp = array();
-		$sql = 'SELECT forum_id, forum_name FROM ' . FORUMS_TABLE;
-		$result = $db->sql_query($sql);
-		while ($row = $db->sql_fetchrow($result))
-		{
-			$modules[$row['forum_id']] = $row['forum_name'];
-		}
-		$sql = 'SELECT module_langname FROM ' . MODULES_TABLE . ' WHERE module_class = "ucp" OR module_class = "mcp"';
-		$result = $db->sql_query($sql);
-		while ($row = $db->sql_fetchrow($result))
-		{
-			(isset($user->lang[$row['module_langname']])) ? $modules[$row['module_langname']] = $user->lang[$row['module_langname']] : null;
-		}
+		global $db, $cache, $sconfig, $user, $phpbb_container;
 
-		$module_pages = array('FORUM_INDEX' => $user->lang['FORUM_INDEX'], 'VIEWING_FAQ' => $user->lang['VIEWING_FAQ'], 'VIEWING_MCP' => $user->lang['VIEWING_MCP'],
-							'SEARCHING_FORUMS' => $user->lang['SEARCHING_FORUMS'], 'VIEWING_ONLINE' => $user->lang['VIEWING_ONLINE'], 'VIEWING_MEMBERS' => $user->lang['VIEWING_MEMBERS'],
-							'VIEWING_UCP' => $user->lang['VIEWING_UCP']);
-
-		$m = unserialize($sconfig['statistics_custom_pages']);
-		if (sizeof($m) > 0)
+		if (($modules = $cache->get('_modules_stats_lang')) === false)
 		{
-			foreach($m as $value)
+			$user->add_lang(array('ucp', 'mcp', 'common'));
+			$modules = ['FORUM_INDEX' => $user->lang['FORUM_INDEX'], 'VIEWING_FAQ' => $user->lang['VIEWING_FAQ'], 'VIEWING_MCP' => $user->lang['VIEWING_MCP'],
+						'SEARCHING_FORUMS' => $user->lang['SEARCHING_FORUMS'], 'VIEWING_ONLINE' => $user->lang['VIEWING_ONLINE'],
+						'VIEWING_MEMBERS' => $user->lang['VIEWING_MEMBERS'], 'VIEWING_UCP' => $user->lang['VIEWING_UCP']];
+						
+			if (defined('FORUMS_TABLE'))
 			{
-				(isset($user->lang[$value])) ? $cp[$value] = $user->lang[$value] : null;
+				$sql = 'SELECT forum_id, forum_name FROM ' . FORUMS_TABLE;
+				$result = $db->sql_query($sql);
+				while ($row = $db->sql_fetchrow($result))
+				{
+					$modules[$row['forum_id']] = $row['forum_name'];
+				}
 			}
+			
+			$sql = 'SELECT module_id, module_langname FROM ' . MODULES_TABLE . " WHERE module_class IN ('ucp', 'mcp')";
+			$result = $db->sql_query($sql);
+			while ($row = $db->sql_fetchrow($result))
+			{
+				(isset($user->lang[$row['module_langname']])) ? $modules[$row['module_langname']] = $user->lang[$row['module_langname']] : null;
+				(isset($user->lang[$row['module_langname']])) ? $modules[$row['module_id']] = $user->lang[$row['module_langname']] : null;
+			}
+	
+			$m = unserialize($sconfig['statistics_custom_pages']);
+			if (sizeof($m) > 0)
+			{
+				foreach($m as $value)
+				{
+					(isset($user->lang[$value])) ? $modules[$value] = $user->lang[$value] : null;
+				}
+			}
+
+			if ($phpbb_container->get('ext.manager')->is_enabled('forumhulp/portal'))
+			{
+				$sql = 'SELECT title FROM ' . $phpbb_container->getParameter('forumhulp.tables.categories');
+				$result = $db->sql_query($sql);
+				while ($row = $db->sql_fetchrow($result))
+				{
+					$modules[$row['title']] = $row['title'];			
+				}
+			}
+
+			$cache->put('_modules_stats_lang', $modules, 3600);
 		}
-		return array_replace($module_pages, $modules, $cp);
+		return $modules;
 	}
 
 	public static function online($start = 0, $uaction = '')
@@ -1268,6 +1288,7 @@ class stat_functions
 			$result = $db->sql_query($sql);
 			$row = $db->sql_fetchfield('custom_pages');
 			$row = unserialize($row);
+			
 			if ($request->is_set('dell_custom_page'))
 			{
 				unset($row[$request->variable('custom_page', '')]);
@@ -1342,6 +1363,23 @@ class stat_functions
 		}
 
 		$modules_ext = unserialize($row['custom_pages']);
+
+		if (!$modules_ext)
+		{
+			$router = $phpbb_container->get('router');
+			foreach ($router->getRouteCollection()->all() as $route_name => $route)
+			{
+				if (strpos($route_name, 'phpbb') === false)
+				{
+					$route = explode("/", $route->getPath());
+					$modules_ext[strtolower($route[1])] = strtoupper($route[1]);
+				}
+			}
+			asort($modules_ext);
+			$sql = 'UPDATE ' . $tables['config'] . ' SET custom_pages = "' . $db->sql_escape(serialize($modules_ext)) . '"';
+			$db->sql_query($sql);
+		}
+
 		$options = $optionssc = '';
 		if (sizeof($modules_ext) > 0)
 		{

@@ -11,6 +11,7 @@ services:
             - '@dbal.conn'
             - '@template'
             - '@cache.driver'
+            - '@service_container'
             - '%tables.online_table%'
             - '%tables.config_table%'
             - '%tables.se_table%'
