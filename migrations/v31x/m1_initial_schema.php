@@ -95,7 +95,7 @@ class m1_initial_schema extends \phpbb\db\migration\migration
 					'COLUMNS'			=> array(
 						'id'			=> array('UINT', null, 'auto_increment'),
 						'time'			=> array('TIMESTAMP', 0),
-						'uname' 		=> array('VCHAR:25', ''),
+						'uname' 		=> array('VCHAR:255', ''),
 						'ugroup'		=> array('UINT:11', 0),
 						'agent' 		=> array('VCHAR:255', ''),
 						'ip_addr' 		=> array('VCHAR:50', ''),
